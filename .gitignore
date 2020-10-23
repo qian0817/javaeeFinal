@@ -1,6 +1,6 @@
 # Project exclude paths
 /back/.gradle/
 /back/build/
-/back/build/classes/java/main/
-/back/build/classes/java/test/
 /front/node_modules/
+*.iml
+/.idea
