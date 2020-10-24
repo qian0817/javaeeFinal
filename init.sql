@@ -1,13 +1,6 @@
 CREATE DATABASE IF NOT EXISTS zhifou;
 USE zhifou;
 
-CREATE TABLE IF NOT EXISTS zhifou_user
-(
-    id       INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name     VARCHAR(20) NOT NULL,
-    password CHAR(64)    NOT NULL
-) COMMENT '用户表';
-
 CREATE TABLE IF NOT EXISTS zhifou_question
 (
     id      INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,

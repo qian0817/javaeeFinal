@@ -1,25 +1,30 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.entity.User;
+import cn.authing.core.types.User;
+import com.qianlei.zhifou.common.BaseResponse;
 import com.qianlei.zhifou.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-/** @author qianlei */
-@RestController
-@RequestMapping("/user")
-public class UserController {
-  @Autowired private IUserService userService;
+import java.util.Map;
 
-  @GetMapping("/{id}")
-  public Mono<User> getUser(@PathVariable Integer id) {
-    return userService.getUserById(id);
-  }
+/**
+ * @author qianlei
+ */
+@RestController
+@RequestMapping("/api/user")
+public class UserController {
+  @Autowired
+  private IUserService userService;
 
   @PostMapping("/")
-  public Mono<User> register(@RequestBody User user) {
-    user.setId(null);
-    return userService.register(user);
+  public Mono<BaseResponse<User>> register(@RequestBody Map<String, Object> user) {
+    String username = (String) user.get("username");
+    String password = (String) user.get("password");
+    return userService.registerByUsername(username, password);
   }
 }
