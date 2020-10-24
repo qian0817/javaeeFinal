@@ -1,24 +1,25 @@
 import React from "react";
 import {Button, Form, Input, message} from "antd";
-import {register} from "../../service/userService";
+import axios from 'axios';
+import {User} from "../../entity/User";
+import {BaseResponse} from "../../entity/BaseResponse";
 import {useHistory} from "react-router";
 
-interface Interface {
+interface LoginProps {
     setLoginStatus: (status: boolean) => void
 }
 
-const Register: React.FC<Interface> = ({setLoginStatus}) => {
-    const history = useHistory();
+const Login: React.FC<LoginProps> = ({setLoginStatus}) => {
+    const history = useHistory()
     const onFinish = async (values: any) => {
-        const username = values.username;
+        const username = values.username
         const password = values.password
-        const response = await register(username, password)
-        if (response.id !== 0) {
-            setLoginStatus(false)
-            message.warn(response.message)
+        const response = await axios.post<BaseResponse<User>>('/api/token/', {username, password})
+        if (response.data.id !== 0) {
+            message.warn(response.data.message)
         } else {
-            setLoginStatus(true);
-            history.push("/login")
+            setLoginStatus(true)
+            history.push("/")
         }
     }
     return (
@@ -53,4 +54,4 @@ const Register: React.FC<Interface> = ({setLoginStatus}) => {
     )
 }
 
-export default Register;
+export default Login;

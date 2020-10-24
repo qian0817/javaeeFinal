@@ -17,5 +17,22 @@ public interface IUserService {
    */
   Mono<BaseResponse<User>> registerByUsername(String username, String password);
 
+  /**
+   * 用户登录
+   *
+   * @param username 用户名
+   * @param password 密码
+   * @return 登录信息
+   */
+  Mono<BaseResponse<User>> login(String username, String password);
 
+  /**
+   * 根据token获取用户信息
+   *
+   * @param token token
+   * @return 用户信息
+   */
+  Mono<BaseResponse<User>> getUserInfo(String token);
+
+  Mono<BaseResponse<String>> refreshToken(String oldToken);
 }

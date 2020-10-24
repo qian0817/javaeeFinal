@@ -3,6 +3,7 @@ import Header from "./component/header/header";
 import {Route, Switch} from "react-router";
 import CreateQuestion from "./page/createQuestion";
 import Register from "./page/register";
+import Login from "./page/login";
 
 function App() {
     const [loginStatus, setLoginStatus] = useState(false)
@@ -14,6 +15,7 @@ function App() {
             <Header loginStatus={loginStatus} setLoginStatus={setLoginStatus}/>
             <Switch>
                 <Route path="/register" exact component={() => <Register setLoginStatus={setLoginStatus}/>}/>
+                <Route path="/login" exact component={() => <Login setLoginStatus={setLoginStatus}/>}/>
                 <Route path="/question/action/create" exact component={CreateQuestion}/>
             </Switch>
         </div>
