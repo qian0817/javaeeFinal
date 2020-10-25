@@ -1,25 +1,29 @@
 package com.qianlei.zhifou.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.NoArgsConstructor;
 
-/**
- * @author qianlei
- */
-@Table("zhifou_question")
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+/** @author qianlei */
+@Table(name = "zhifou_question")
+@Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Question {
-    @Id
-    private Integer id;
+  @Id private Integer id;
 
-    @Column("title")
-    private String title;
+  @Column(name = "title")
+  private String title;
 
-    @Column("tags")
-    private String tags;
+  @Column(name = "tags")
+  private String tags;
 
-    @Column("content")
-    private String content;
+  @Column(name = "content")
+  private String content;
 }

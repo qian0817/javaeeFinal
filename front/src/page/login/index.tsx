@@ -1,8 +1,8 @@
 import React from "react";
 import {Button, Form, Input, message} from "antd";
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {User} from "../../entity/User";
-import {BaseResponse} from "../../entity/BaseResponse";
+import {ErrorResponse} from "../../entity/ErrorResponse";
 import {useHistory} from "react-router";
 
 interface LoginProps {
@@ -14,12 +14,14 @@ const Login: React.FC<LoginProps> = ({setLoginStatus}) => {
     const onFinish = async (values: any) => {
         const username = values.username
         const password = values.password
-        const response = await axios.post<BaseResponse<User>>('/api/token/', {username, password})
-        if (response.data.id !== 0) {
-            message.warn(response.data.message)
-        } else {
+        try {
+            await axios.post<User>('/api/token/', {username, password});
             setLoginStatus(true)
             history.push("/")
+        } catch (e) {
+            const ex: AxiosError<ErrorResponse> = e
+            message.warn(ex.response?.data.message)
+
         }
     }
     return (

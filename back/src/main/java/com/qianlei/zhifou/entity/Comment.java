@@ -1,22 +1,29 @@
 package com.qianlei.zhifou.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.NoArgsConstructor;
 
-/**
- * @author qianlei
- */
-@Table("zhifou_comment")
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+/** @author qianlei */
+@Table(name = "zhifou_comment")
+@Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
-    @Id
-    private Integer id;
-    @Column("answer_id")
-    private Integer answerId;
-    @Column("content")
-    private String content;
-    @Column("user_id")
-    private String userId;
+  @Id private Integer id;
+
+  @Column(name = "answer_id")
+  private Integer answerId;
+
+  @Column(name = "content")
+  private String content;
+
+  @Column(name = "user_id")
+  private String userId;
 }

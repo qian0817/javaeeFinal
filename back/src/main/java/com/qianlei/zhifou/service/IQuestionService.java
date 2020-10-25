@@ -1,12 +1,11 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.common.BaseResponse;
 import com.qianlei.zhifou.entity.Question;
-import reactor.core.publisher.Mono;
+import com.qianlei.zhifou.vo.QuestionDetailVo;
 
-/**
- * @author qianlei
- */
+import java.util.List;
+
+/** @author qianlei */
 public interface IQuestionService {
   /**
    * 创建问题
@@ -14,5 +13,21 @@ public interface IQuestionService {
    * @param question 问题内容
    * @return 问题内容，添加id信息
    */
-  Mono<BaseResponse<Question>> createQuestion(Question question);
+  Question createQuestion(Question question);
+
+  /**
+   * 根据id获取问题信息
+   *
+   * @param id 问题id
+   * @return 问题信息
+   */
+  QuestionDetailVo getQuestionById(Integer id);
+
+  /**
+   * 获取指定数量的数量的随机问题
+   *
+   * @param num 数量
+   * @return 随机的问题
+   */
+  List<Question> getRandomQuestion(int num);
 }

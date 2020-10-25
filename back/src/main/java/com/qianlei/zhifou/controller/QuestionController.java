@@ -1,26 +1,31 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.common.BaseResponse;
 import com.qianlei.zhifou.entity.Question;
 import com.qianlei.zhifou.service.IQuestionService;
+import com.qianlei.zhifou.vo.QuestionDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.*;
 
-/**
- * @author qianlei
- */
+import java.util.List;
+
+/** @author qianlei */
 @RestController
 @RequestMapping("/api/question")
 public class QuestionController {
-  @Autowired
-  private IQuestionService questionService;
+  @Autowired private IQuestionService questionService;
 
   @PostMapping("/")
-  public Mono<BaseResponse<Question>> createQuestion(@RequestBody Question question) {
+  public Question createQuestion(@RequestBody Question question) {
     return questionService.createQuestion(question);
+  }
+
+  @GetMapping("/id/{id}")
+  public QuestionDetailVo getQuestionById(@PathVariable Integer id) {
+    return questionService.getQuestionById(id);
+  }
+
+  @GetMapping("/random")
+  public List<Question> getRandomQuestion(int num) {
+    return questionService.getRandomQuestion(num);
   }
 }

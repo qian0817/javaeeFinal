@@ -1,58 +1,46 @@
 package com.qianlei.zhifou.filter;
 
-import com.qianlei.zhifou.common.BaseResponse;
 import com.qianlei.zhifou.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
 
-/**
- * @author qianlei
- */
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/** @author qianlei */
 @Order
 @Slf4j
 @Component
-public class TokenFilter implements WebFilter {
-    @Autowired
-    private IUserService userService;
+@WebFilter(value = "tokenFilter", urlPatterns = "/**")
+public class TokenFilter implements Filter {
+  @Autowired private IUserService userService;
 
-    @NotNull
-    @Override
-    public Mono<Void> filter(@NotNull ServerWebExchange exchange, @NotNull WebFilterChain chain) {
-        var tokenCookie = exchange.getRequest().getCookies().getFirst("token");
-        if (tokenCookie != null) {
-            String token = tokenCookie.getValue();
-            log.info("token " + token);
-            // TODO 判断过期
-            return userService
-                    .refreshToken(token)
-                    .doOnSuccess(
-                            response -> {
-                                var newToken = response.getData().getToken();
-                                if (newToken == null) {
-                                    return;
-                                }
-                                exchange.getResponse().getCookies().remove("token");
-                                exchange
-                                        .getResponse()
-                                        .addCookie(
-                                                ResponseCookie.from("token", newToken)
-                                                        .httpOnly(true)
-                                                        .secure(true)
-                                                        .maxAge(3600 * 24 * 7)
-                                                        .build());
-                            })
-                    .onErrorReturn(new BaseResponse<>())
-                    .then(chain.filter(exchange));
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    var httpRequest = (HttpServletRequest) request;
+    var httpResponse = (HttpServletResponse) response;
+    var cookies = httpRequest.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if ("token".equals(cookie.getName())) {
+          var newToken = userService.refreshToken(cookie.getValue());
+          // 设置刷新后的 cookie
+          Cookie newCookie = new Cookie("token", newToken.getToken());
+          newCookie.setSecure(true);
+          newCookie.setHttpOnly(true);
+          newCookie.setMaxAge(3600 * 24 * 7);
+          httpResponse.addCookie(newCookie);
+          break;
         }
-
-        return chain.filter(exchange);
+      }
     }
+    chain.doFilter(request, response);
+  }
 }

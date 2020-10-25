@@ -3,9 +3,9 @@ import {Button, Form, Input, message} from "antd";
 import {useHistory} from "react-router";
 import {Store} from "rc-field-form/lib/interface";
 import BraftEditor from "braft-editor";
-import axios from 'axios';
-import {BaseResponse} from "../../entity/BaseResponse";
+import axios, {AxiosError} from 'axios';
 import {Question} from "../../entity/Question";
+import {ErrorResponse} from "../../entity/ErrorResponse";
 
 const CreateQuestion = () => {
     const [form] = Form.useForm();
@@ -15,11 +15,12 @@ const CreateQuestion = () => {
         const title = value.title
         const content = value.content.toHTML()
         const tags = value.tags
-        const response = await axios.post<BaseResponse<Question>>('/api/question/', {title, content, tags})
-        if (response.data.id !== 0) {
-            message.warn(response.data.message)
-        } else {
-            history.push(`/question/${response.data.data.id}`)
+        try {
+            const response = await axios.post<Question>('/api/question/', {title, content, tags})
+            history.push(`/question/${response.data.id}`)
+        } catch (e) {
+            const ex: AxiosError<ErrorResponse> = e
+            message.warn(ex.response?.data.message)
         }
     }
 

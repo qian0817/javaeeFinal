@@ -1,7 +1,9 @@
 import React from "react";
 import {Button, Form, Input, message} from "antd";
-import {register} from "../../service/userService";
 import {useHistory} from "react-router";
+import axios, {AxiosError} from "axios";
+import {User} from "../../entity/User";
+import {ErrorResponse} from "../../entity/ErrorResponse";
 
 interface Interface {
     setLoginStatus: (status: boolean) => void
@@ -12,13 +14,14 @@ const Register: React.FC<Interface> = ({setLoginStatus}) => {
     const onFinish = async (values: any) => {
         const username = values.username;
         const password = values.password
-        const response = await register(username, password)
-        if (response.id !== 0) {
-            setLoginStatus(false)
-            message.warn(response.message)
-        } else {
+        try {
+            await axios.post<User>("/api/user/", {username, password})
             setLoginStatus(true);
             history.push("/login")
+        } catch (e) {
+            const ex: AxiosError<ErrorResponse> = e;
+            setLoginStatus(false)
+            message.warn(ex.response?.data.message)
         }
     }
     return (

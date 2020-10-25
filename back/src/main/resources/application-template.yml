@@ -3,7 +3,7 @@ authing:
     id:
     secret:
 spring:
-  r2dbc:
+  datasource:
     url:
     username:
     password:

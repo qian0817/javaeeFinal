@@ -1,26 +1,36 @@
 package com.qianlei.zhifou.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
-/**
- * @author qianlei
- */
-@Table("zhifou_answer")
+/** @author qianlei */
+@Table(name = "zhifou_answer")
+@Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Answer {
-    @Id
-    private Integer id;
-    @Column("user_id")
-    private String userId;
-    @Column("content")
-    private String content;
-    @Column("create_time")
-    private LocalDateTime createTime;
-    @Column("update_time")
-    private LocalDateTime updateTime;
+  @Id private Integer id;
+
+  @Column(name = "user_id")
+  private String userId;
+
+  @Column(name = "question_id")
+  private Integer questionId;
+
+  @Column(name = "content")
+  private String content;
+
+  @Column(name = "create_time")
+  private LocalDateTime createTime;
+
+  @Column(name = "update_time")
+  private LocalDateTime updateTime;
 }

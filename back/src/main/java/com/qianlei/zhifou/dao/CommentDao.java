@@ -1,7 +1,7 @@
 package com.qianlei.zhifou.dao;
 
 import com.qianlei.zhifou.entity.Comment;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /** @author qianlei */
-public interface CommentDao extends ReactiveCrudRepository<Comment, Integer> {}
+public interface CommentDao extends JpaRepository<Comment, Integer> {}

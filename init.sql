@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS zhifou_question
 CREATE TABLE IF NOT EXISTS zhifou_answer
 (
     id          INT        NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    question_id INT        NOT NULL COMMENT '问题id',
     user_id     CHAR(24)   NOT NULL COMMENT '回答者用户id',
     content     MEDIUMTEXT NOT NULL COMMENT '回答正文',
     create_time TIMESTAMP  NOT NULL DEFAULT NOW() COMMENT '创建时间',

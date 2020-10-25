@@ -4,7 +4,6 @@ import {Button} from "antd";
 import {Link, useHistory} from "react-router-dom";
 import axios from 'axios'
 import {User} from "../../entity/User";
-import {BaseResponse} from "../../entity/BaseResponse";
 
 interface Interface {
     loginStatus: boolean,
@@ -15,10 +14,10 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
     const history = useHistory();
     useEffect(() => {
         const checkLoginStatus = async () => {
-            const resposne = await axios.get<BaseResponse<User>>("/api/token/")
-            if (resposne.data.id === 0) {
+            try {
+                await axios.get<User>("/api/token/")
                 setLoginStatus(true)
-            } else {
+            } catch (e) {
                 setLoginStatus(false)
             }
         }
