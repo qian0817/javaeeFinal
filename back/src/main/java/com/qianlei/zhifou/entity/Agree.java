@@ -12,7 +12,7 @@ public class Agree {
   @Id private Integer id;
 
   @Column("user_id")
-  private Integer userId;
+  private String userId;
 
   @Column("answer_id")
   private Integer answerId;

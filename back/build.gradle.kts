@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 //	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("cn.authing:java-core:3.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.8.0")
     compileOnly("org.projectlombok:lombok")
@@ -34,6 +35,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+    testRuntimeOnly("io.r2dbc:r2dbc-h2")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
 }

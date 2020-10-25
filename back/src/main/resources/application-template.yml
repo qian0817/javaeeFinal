@@ -1,0 +1,9 @@
+authing:
+  userpool:
+    id:
+    secret:
+spring:
+  r2dbc:
+    url:
+    username:
+    password:

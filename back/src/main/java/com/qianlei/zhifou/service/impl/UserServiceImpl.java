@@ -3,6 +3,7 @@ package com.qianlei.zhifou.service.impl;
 import cn.authing.core.auth.AuthenticationClient;
 import cn.authing.core.graphql.GraphQLException;
 import cn.authing.core.types.LoginByUsernameInput;
+import cn.authing.core.types.RefreshToken;
 import cn.authing.core.types.RegisterByUsernameInput;
 import cn.authing.core.types.User;
 import com.qianlei.zhifou.common.BaseResponse;
@@ -13,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.Objects;
 
 /**
  * @author qianlei
@@ -44,7 +43,9 @@ public class UserServiceImpl implements IUserService {
   public Mono<BaseResponse<User>> login(String username, String password) {
     var client = new AuthenticationClient(authingProperties.getId());
     var request = client.loginByUsername(new LoginByUsernameInput(username, password));
-    return Mono.fromCallable(request::execute).map(BaseResponse::new);
+    return Mono.fromCallable(request::execute)
+            .map(BaseResponse::new)
+            .onErrorMap(GraphQLException.class, this::mapGraphException);
   }
 
   @Override
@@ -53,17 +54,25 @@ public class UserServiceImpl implements IUserService {
     var client = new AuthenticationClient(authingProperties.getId());
     client.setAccessToken(token);
     var request = client.getCurrentUser();
-    return Mono.fromCallable(request::execute).map(BaseResponse::new);
+    return Mono.fromCallable(request::execute)
+            .map(BaseResponse::new)
+            .onErrorMap(GraphQLException.class, this::mapGraphException);
   }
 
   @Override
-  public Mono<BaseResponse<String>> refreshToken(String oldToken) {
+  public Mono<BaseResponse<RefreshToken>> refreshToken(String oldToken) {
     var client = new AuthenticationClient(authingProperties.getId());
     client.setAccessToken(oldToken);
     log.info("refreshToken");
     var request = client.refreshToken();
     return Mono.fromCallable(request::execute)
-            .map(token -> Objects.requireNonNull(token.getToken()))
-            .map(BaseResponse::new);
+            .map(BaseResponse::new)
+            .onErrorMap(GraphQLException.class, this::mapGraphException);
+  }
+
+  private ZhiFouException mapGraphException(GraphQLException e) {
+    // 截取 GraphQLException 中的 message 字段
+    var message = e.getMessage().substring(52, e.getMessage().length() - 4);
+    return new ZhiFouException(message);
   }
 }

@@ -1,5 +1,6 @@
 package com.qianlei.zhifou.service;
 
+import cn.authing.core.types.RefreshToken;
 import cn.authing.core.types.User;
 import com.qianlei.zhifou.common.BaseResponse;
 import reactor.core.publisher.Mono;
@@ -34,5 +35,11 @@ public interface IUserService {
    */
   Mono<BaseResponse<User>> getUserInfo(String token);
 
-  Mono<BaseResponse<String>> refreshToken(String oldToken);
+  /**
+   * 刷新token
+   *
+   * @param oldToken 旧的token
+   * @return 新的token
+   */
+  Mono<BaseResponse<RefreshToken>> refreshToken(String oldToken);
 }

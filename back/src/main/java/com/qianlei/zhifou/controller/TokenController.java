@@ -10,7 +10,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author qianlei
@@ -18,26 +17,39 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/token")
 public class TokenController {
-  @Autowired
-  private IUserService userService;
+    @Autowired
+    private IUserService userService;
 
-  @PostMapping("/")
-  public Mono<BaseResponse<User>> login(
-          @RequestBody Map<String, Object> user, ServerWebExchange exchange) {
-    String username = (String) user.get("username");
-    String password = (String) user.get("password");
-    var userInfo = userService.login(username, password);
-    return userInfo.doOnSuccess(
-            u ->
+    @PostMapping("/")
+    public Mono<BaseResponse<User>> login(
+            @RequestBody Map<String, Object> user, ServerWebExchange exchange) {
+        String username = (String) user.get("username");
+        String password = (String) user.get("password");
+        var userInfo = userService.login(username, password);
+        return userInfo.doOnSuccess(
+                u -> {
+                    var token = u.getData().getToken();
+                    if (token == null) {
+                        return;
+                    }
+                    // 设置cookie
                     exchange
                             .getResponse()
                             .addCookie(
-                                    ResponseCookie.from("token", Objects.requireNonNull(u.getData().getToken()))
-                                            .build()));
-  }
+                                    ResponseCookie.from("token", token)
+                                            .httpOnly(true)
+                                            .secure(true)
+                                            .maxAge(3600 * 24 * 7)
+                                            .build());
+                });
+    }
 
-  @GetMapping("/")
-  public Mono<BaseResponse<User>> getUserInfo(@CookieValue("token") String token) {
-    return userService.getUserInfo(token);
-  }
+    @GetMapping("/")
+    public Mono<BaseResponse<User>> getUserInfo(ServerWebExchange exchange) {
+        var token = exchange.getRequest().getCookies().getFirst("token");
+        if (token == null) {
+            return Mono.just(new BaseResponse<>(1, "用户未登录"));
+        }
+        return userService.getUserInfo(token.getValue());
+    }
 }
