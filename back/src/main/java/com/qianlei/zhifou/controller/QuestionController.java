@@ -25,7 +25,7 @@ public class QuestionController {
   }
 
   @GetMapping("/random")
-  public List<Question> getRandomQuestion(int num) {
+  public List<Question> getRandomQuestion(@RequestParam(defaultValue = "10") int num) {
     return questionService.getRandomQuestion(num);
   }
 }
