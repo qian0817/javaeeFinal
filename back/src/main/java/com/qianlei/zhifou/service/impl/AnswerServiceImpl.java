@@ -8,8 +8,6 @@ import com.qianlei.zhifou.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 /** @author qianlei */
 @Service
 public class AnswerServiceImpl implements IAnswerService {
@@ -20,8 +18,6 @@ public class AnswerServiceImpl implements IAnswerService {
   public Answer createAnswer(Answer answer, String token) {
     var user = userService.getUserInfo(token);
     answer.setUserId(user.getId());
-    answer.setCreateTime(LocalDateTime.now());
-    answer.setUpdateTime(LocalDateTime.now());
     answerDao.save(answer);
     return answer;
   }
