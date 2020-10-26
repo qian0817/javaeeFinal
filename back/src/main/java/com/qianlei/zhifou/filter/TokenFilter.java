@@ -36,6 +36,7 @@ public class TokenFilter implements Filter {
           newCookie.setSecure(true);
           newCookie.setHttpOnly(true);
           newCookie.setMaxAge(3600 * 24 * 7);
+          newCookie.setPath("/");
           httpResponse.addCookie(newCookie);
           break;
         }

@@ -28,6 +28,7 @@ public class TokenController {
       cookie.setMaxAge(3600 * 24 * 7);
       cookie.setHttpOnly(true);
       cookie.setSecure(true);
+      cookie.setPath("/");
       response.addCookie(cookie);
     }
     return userInfo;

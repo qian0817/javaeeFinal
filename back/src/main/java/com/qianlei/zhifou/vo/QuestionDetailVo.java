@@ -1,6 +1,5 @@
 package com.qianlei.zhifou.vo;
 
-import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.entity.Question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class QuestionDetailVo {
   private Question question;
-  private List<Answer> answers;
+  private List<AnswerVo> answers;
 }

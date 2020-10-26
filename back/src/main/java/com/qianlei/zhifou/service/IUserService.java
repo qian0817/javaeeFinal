@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service;
 
 import cn.authing.core.types.RefreshToken;
 import cn.authing.core.types.User;
+import com.qianlei.zhifou.vo.UserVo;
 
 /** @author qianlei */
 public interface IUserService {
@@ -38,4 +39,12 @@ public interface IUserService {
    * @return 新的token
    */
   RefreshToken refreshToken(String oldToken);
+
+  /**
+   * 根据用户 id 获取用户信息
+   *
+   * @param userId 用户id
+   * @return 用户信息
+   */
+  UserVo getUserInfoByUserId(String userId);
 }

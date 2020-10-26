@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Form, Input, message} from "antd";
 import axios, {AxiosError} from 'axios';
-import {User} from "../../entity/User";
+import {UserDetailVo} from "../../entity/UserDetailVo";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import {useHistory} from "react-router";
 
@@ -15,7 +15,7 @@ const Login: React.FC<LoginProps> = ({setLoginStatus}) => {
         const username = values.username
         const password = values.password
         try {
-            await axios.post<User>('/api/token/', {username, password});
+            await axios.post<UserDetailVo>('/api/token/', {username, password});
             setLoginStatus(true)
             history.push("/")
         } catch (e) {

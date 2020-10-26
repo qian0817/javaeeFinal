@@ -3,7 +3,7 @@ import {LogoWrapper, TopContentWrapper, TopWrapper} from "./style";
 import {Button} from "antd";
 import {Link, useHistory} from "react-router-dom";
 import axios from 'axios'
-import {User} from "../../entity/User";
+import {UserDetailVo} from "../../entity/UserDetailVo";
 
 interface Interface {
     loginStatus: boolean,
@@ -15,7 +15,7 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                await axios.get<User>("/api/token/")
+                await axios.get<UserDetailVo>("/api/token/")
                 setLoginStatus(true)
             } catch (e) {
                 setLoginStatus(false)

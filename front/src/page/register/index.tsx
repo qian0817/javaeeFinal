@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Form, Input, message} from "antd";
 import {useHistory} from "react-router";
 import axios, {AxiosError} from "axios";
-import {User} from "../../entity/User";
+import {UserDetailVo} from "../../entity/UserDetailVo";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 
 interface Interface {
@@ -15,7 +15,7 @@ const Register: React.FC<Interface> = ({setLoginStatus}) => {
         const username = values.username;
         const password = values.password
         try {
-            await axios.post<User>("/api/user/", {username, password})
+            await axios.post<UserDetailVo>("/api/user/", {username, password})
             setLoginStatus(true);
             history.push("/login")
         } catch (e) {
