@@ -2,6 +2,7 @@ package com.qianlei.zhifou.controller;
 
 import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
+import com.qianlei.zhifou.vo.AnswerVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ public class AnswerController {
   @Autowired public IAnswerService answerService;
 
   @GetMapping("/id/{id}")
-  public Answer getAnswerById(@PathVariable int id) {
+  public AnswerVo getAnswerById(@PathVariable int id) {
     return answerService.getAnswerById(id);
   }
 

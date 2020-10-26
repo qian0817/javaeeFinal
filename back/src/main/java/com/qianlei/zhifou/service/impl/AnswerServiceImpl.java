@@ -5,6 +5,7 @@ import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IUserService;
+import com.qianlei.zhifou.vo.AnswerVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public Answer getAnswerById(int id) {
-    return answerDao.findById(id).orElseThrow(() -> new ZhiFouException("不存在的问题id"));
+  public AnswerVo getAnswerById(int id) {
+    var answer = answerDao.findById(id).orElseThrow(() -> new ZhiFouException("不存在的问题id"));
+    var user = userService.getUserInfoByUserId(answer.getUserId());
+    return new AnswerVo(answer, user);
   }
 }

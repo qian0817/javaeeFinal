@@ -5,6 +5,7 @@ import CreateQuestion from "./page/createQuestion";
 import Register from "./page/register";
 import Login from "./page/login";
 import QuestionDetail from "./page/questionDetail";
+import AnswerDetail from "./page/answerDetail/AnswerDetail";
 
 function App() {
     const [loginStatus, setLoginStatus] = useState(false)
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/login" exact component={() => <Login setLoginStatus={setLoginStatus}/>}/>
                 <Route path="/question/action/create" exact component={CreateQuestion}/>
                 <Route path="/question/:id" exact component={QuestionDetail}/>
+                <Route path="/question/:questionId/answer/:answerId" exact component={AnswerDetail}/>
             </Switch>
         </div>
     );
