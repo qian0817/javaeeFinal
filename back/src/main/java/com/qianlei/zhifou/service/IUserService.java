@@ -6,23 +6,6 @@ import com.qianlei.zhifou.vo.UserVo;
 
 /** @author qianlei */
 public interface IUserService {
-  /**
-   * 注册
-   *
-   * @param username 用户名
-   * @param password 密码
-   * @return 用户信息
-   */
-  User registerByUsername(String username, String password);
-
-  /**
-   * 用户登录
-   *
-   * @param username 用户名
-   * @param password 密码
-   * @return 登录信息
-   */
-  User login(String username, String password);
 
   /**
    * 根据token获取用户信息

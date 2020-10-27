@@ -3,9 +3,7 @@ package com.qianlei.zhifou.service.impl;
 import cn.authing.core.auth.AuthenticationClient;
 import cn.authing.core.graphql.GraphQLException;
 import cn.authing.core.mgmt.ManagementClient;
-import cn.authing.core.types.LoginByUsernameInput;
 import cn.authing.core.types.RefreshToken;
-import cn.authing.core.types.RegisterByUsernameInput;
 import cn.authing.core.types.User;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.config.AuthingProperties;
@@ -23,34 +21,6 @@ import java.io.IOException;
 public class UserServiceImpl implements IUserService {
   @Autowired private AuthingProperties authingProperties;
   @Autowired private ManagementClient managementClient;
-
-  @Override
-  public User registerByUsername(String username, String password) {
-    var client = new AuthenticationClient(authingProperties.getId());
-    var request = client.registerByUsername(new RegisterByUsernameInput(username, password));
-    try {
-      return request.execute();
-    } catch (IOException e) {
-      log.error("请求 authing 服务器错误", e);
-      throw new RuntimeException(e);
-    } catch (GraphQLException e) {
-      throw mapGraphException(e);
-    }
-  }
-
-  @Override
-  public User login(String username, String password) {
-    var client = new AuthenticationClient(authingProperties.getId());
-    var request = client.loginByUsername(new LoginByUsernameInput(username, password));
-    try {
-      return request.execute();
-    } catch (IOException e) {
-      log.error("请求 authing 服务器错误", e);
-      throw new RuntimeException(e);
-    } catch (GraphQLException e) {
-      throw mapGraphException(e);
-    }
-  }
 
   @Override
   public User getUserInfo(String token) {

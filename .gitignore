@@ -5,3 +5,4 @@
 *.iml
 /.idea
 /back/src/main/resources/application-prod.yml
+/front/public/login.html

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <script src="https://cdn.jsdelivr.net/npm/@authing/guard/dist/Guard.umd.min.js"></script>
+    <script src="docCookies.js"></script>
+</head>
+<body>
+
+<div id="my-form"></div>
+
+
+<script>
+    const userPoolId = "YOUR_AUTHING_USERPOOL_ID";
+    const guard = new Guard(userPoolId, {
+        logo: "https://usercontents.authing.cn/client/logo@2.png",
+        title: "Authing",
+        // 把表单插入到 id 为 my-form 的标签
+        mountId: "my-form",
+        hideClose: true,
+    });
+    guard.on("authenticated", userInfo => {
+        // 用户登录成功后，你可以直接在这里获取他的用户信息
+        console.log(userInfo);
+        //设置 cookie
+        docCookies.setItem("token", userInfo.token, Infinity, "", null, true)
+        window.close()
+    });
+</script>
+</body>
+</html>
+
+
