@@ -4,6 +4,7 @@ import axios from 'axios';
 import {AnswerVo} from "../../entity/AnswerVo";
 import {Button, Skeleton} from "antd";
 import {Wrapper} from "./style";
+import AnswerFooter from "./answerFooter";
 
 const AnswerDetail = () => {
     const {questionId, answerId} = useParams();
@@ -36,6 +37,7 @@ const AnswerDetail = () => {
             <Button type="link" onClick={() => history.push(`/question/${questionId}`)}>查看其他回答</Button>
             <h2>{answer.user.username}</h2>
             <div dangerouslySetInnerHTML={{__html: answer.content}}/>
+            <AnswerFooter/>
         </Wrapper>
     )
 }
