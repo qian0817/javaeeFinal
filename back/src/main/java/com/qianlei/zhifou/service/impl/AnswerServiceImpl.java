@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service.impl;
 
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AnswerDao;
+import com.qianlei.zhifou.dao.QuestionDao;
 import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IUserService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AnswerServiceImpl implements IAnswerService {
   @Autowired private AnswerDao answerDao;
+  @Autowired private QuestionDao questionDao;
   @Autowired private IUserService userService;
 
   @Override
@@ -27,6 +29,7 @@ public class AnswerServiceImpl implements IAnswerService {
   public AnswerVo getAnswerById(int id) {
     var answer = answerDao.findById(id).orElseThrow(() -> new ZhiFouException("不存在的问题id"));
     var user = userService.getUserInfoByUserId(answer.getUserId());
-    return new AnswerVo(answer, user);
+    var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
+    return new AnswerVo(answer, user, question);
   }
 }

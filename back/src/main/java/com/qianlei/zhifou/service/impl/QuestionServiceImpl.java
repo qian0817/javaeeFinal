@@ -50,7 +50,7 @@ public class QuestionServiceImpl implements IQuestionService {
                 answer -> {
                   var userId = answer.getUserId();
                   var user = userService.getUserInfoByUserId(userId);
-                  return new AnswerVo(answer, user);
+                  return new AnswerVo(answer, user, question);
                 });
     return new QuestionDetailVo(question, answerVos);
   }
