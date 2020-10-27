@@ -3,7 +3,7 @@ import {useParams} from "react-router";
 import axios, {AxiosError} from 'axios';
 import {QuestionDetailVo} from "../../entity/QuestionDetailVo";
 import {ErrorResponse} from "../../entity/ErrorResponse";
-import {Button, message} from "antd";
+import {Button, message, Skeleton} from "antd";
 import QuestionView from "./QuestionView";
 import AnswerView from "./AnswerView";
 import {Wrapper} from "./style";
@@ -28,7 +28,14 @@ const QuestionDetail = () => {
         loadQuesion()
     }, [id]);
     if (questionDetail == null) {
-        return <div>加载中</div>
+        return (
+            <Wrapper>
+                <Skeleton active/>
+                <Skeleton active/>
+                <Skeleton active/>
+                <Skeleton active/>
+            </Wrapper>
+        )
     }
     return (
         <Wrapper>

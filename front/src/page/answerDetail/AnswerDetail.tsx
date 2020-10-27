@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
 import axios from 'axios';
 import {AnswerVo} from "../../entity/AnswerVo";
-import {Button} from "antd";
+import {Button, Skeleton} from "antd";
 import {Wrapper} from "./style";
 
 const AnswerDetail = () => {
@@ -23,7 +23,12 @@ const AnswerDetail = () => {
     }, [questionId, answerId, history])
     if (answer == null) {
         return (
-            <Wrapper>加载中</Wrapper>
+            <Wrapper>
+                <Skeleton active/>
+                <Skeleton active/>
+                <Skeleton active/>
+                <Skeleton active/>
+            </Wrapper>
         )
     }
     return (
