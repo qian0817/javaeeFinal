@@ -42,12 +42,13 @@ const QuestionDetail = () => {
             <QuestionView question={questionDetail.question}/>
             <Button style={{marginBottom: 20}} type="primary"
                     onClick={() => setFormHidden(false)}>写回答</Button>
+            <div>共{questionDetail.answers.totalElements}个回答</div>
             <WriteAnswerForm
                 hidden={formHidden}
                 setHidden={setFormHidden}
                 questionId={id}
             />
-            {questionDetail.answers.map((item) => <AnswerView answer={item} key={item.id}/>)}
+            {questionDetail.answers.content.map(item => <AnswerView answer={item} key={item.id}/>)}
         </Wrapper>
     )
 }

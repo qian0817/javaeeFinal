@@ -20,8 +20,13 @@ public class QuestionController {
   }
 
   @GetMapping("/id/{id}")
-  public QuestionDetailVo getQuestionById(@PathVariable Integer id) {
-    return questionService.getQuestionById(id);
+  public QuestionDetailVo getQuestionById(
+      @PathVariable Integer id,
+      @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
+      @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
+      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    return questionService.getQuestionById(id, sortBy,sortDirection, pageNum, pageSize);
   }
 
   @GetMapping("/random")

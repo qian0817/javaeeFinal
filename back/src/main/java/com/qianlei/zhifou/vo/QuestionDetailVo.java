@@ -4,8 +4,7 @@ import com.qianlei.zhifou.entity.Question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 /** @author qianlei */
 @Data
@@ -13,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class QuestionDetailVo {
   private Question question;
-  private List<AnswerVo> answers;
+  private Page<AnswerVo> answers;
 }
