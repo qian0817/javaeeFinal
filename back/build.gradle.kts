@@ -25,6 +25,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("cn.authing:java-core:3.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.8.0")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.1.1")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testRuntimeOnly("com.h2database:h2")

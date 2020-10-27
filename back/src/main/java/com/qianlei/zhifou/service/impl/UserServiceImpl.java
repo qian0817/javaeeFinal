@@ -3,6 +3,7 @@ package com.qianlei.zhifou.service.impl;
 import cn.authing.core.auth.AuthenticationClient;
 import cn.authing.core.graphql.GraphQLException;
 import cn.authing.core.mgmt.ManagementClient;
+import cn.authing.core.types.JwtTokenStatus;
 import cn.authing.core.types.RefreshToken;
 import cn.authing.core.types.User;
 import com.qianlei.zhifou.common.ZhiFouException;
@@ -24,7 +25,6 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   public User getUserInfo(String token) {
-    log.info("getUserInfo");
     var client = new AuthenticationClient(authingProperties.getId());
     client.setAccessToken(token);
     var request = client.getCurrentUser();
@@ -42,7 +42,6 @@ public class UserServiceImpl implements IUserService {
   public RefreshToken refreshToken(String oldToken) {
     var client = new AuthenticationClient(authingProperties.getId());
     client.setAccessToken(oldToken);
-    log.info("refreshToken");
     var request = client.refreshToken();
     try {
       return request.execute();
@@ -59,6 +58,20 @@ public class UserServiceImpl implements IUserService {
     try {
       var user = managementClient.users().detail(userId).execute();
       return new UserVo(user.getId(), user.getUsername());
+    } catch (IOException e) {
+      log.error("请求 authing 服务器错误", e);
+      throw new RuntimeException(e);
+    } catch (GraphQLException e) {
+      throw mapGraphException(e);
+    }
+  }
+
+  @Override
+  public JwtTokenStatus getJwtStatus(String token) {
+    var client = new AuthenticationClient(authingProperties.getId());
+    client.setAccessToken(token);
+    try {
+      return client.checkLoginStatus().execute();
     } catch (IOException e) {
       log.error("请求 authing 服务器错误", e);
       throw new RuntimeException(e);

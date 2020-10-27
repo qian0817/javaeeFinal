@@ -1,5 +1,6 @@
 package com.qianlei.zhifou.filter;
 
+import com.nimbusds.jwt.SignedJWT;
 import com.qianlei.zhifou.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 
 /** @author qianlei */
 @Order
@@ -30,18 +32,36 @@ public class TokenFilter implements Filter {
     if (cookies != null) {
       for (Cookie cookie : cookies) {
         if ("token".equals(cookie.getName())) {
-          var newToken = userService.refreshToken(cookie.getValue());
-          // 设置刷新后的 cookie
-          Cookie newCookie = new Cookie("token", newToken.getToken());
-          newCookie.setSecure(true);
-          newCookie.setHttpOnly(true);
-          newCookie.setMaxAge(3600 * 24 * 7);
-          newCookie.setPath("/");
-          httpResponse.addCookie(newCookie);
+          var token = cookie.getValue();
+          if (needRefreshToken(token)) {
+            refreshToken(httpResponse, cookie);
+          }
           break;
         }
       }
     }
     chain.doFilter(request, response);
+  }
+
+  private void refreshToken(HttpServletResponse httpResponse, Cookie cookie) {
+    var newToken = userService.refreshToken(cookie.getValue());
+    // 设置刷新后的 cookie
+    Cookie newCookie = new Cookie("token", newToken.getToken());
+    newCookie.setSecure(true);
+    newCookie.setHttpOnly(true);
+    newCookie.setMaxAge(3600 * 24 * 7);
+    newCookie.setPath("/");
+    httpResponse.addCookie(newCookie);
+  }
+
+  private boolean needRefreshToken(String token) {
+    try {
+      SignedJWT jwt = SignedJWT.parse(token);
+      // 如果过期时间小于一分钟则刷新 jwt
+      return System.currentTimeMillis() - jwt.getJWTClaimsSet().getExpirationTime().getTime()
+          < 60 * 1000;
+    } catch (ParseException e) {
+      return false;
+    }
   }
 }

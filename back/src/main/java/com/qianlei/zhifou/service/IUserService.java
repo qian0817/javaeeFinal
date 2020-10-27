@@ -1,5 +1,6 @@
 package com.qianlei.zhifou.service;
 
+import cn.authing.core.types.JwtTokenStatus;
 import cn.authing.core.types.RefreshToken;
 import cn.authing.core.types.User;
 import com.qianlei.zhifou.vo.UserVo;
@@ -30,4 +31,11 @@ public interface IUserService {
    * @return 用户信息
    */
   UserVo getUserInfoByUserId(String userId);
+
+  /**
+   * 获取 jwt 的状态信息
+   * @param token jwt 的 token
+   * @return 状态信息
+   */
+  JwtTokenStatus getJwtStatus(String token);
 }
