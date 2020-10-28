@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
 import {AnswerVo} from "../../entity/AnswerVo";
-import {Divider, Skeleton} from "antd";
+import {Button, Divider, Skeleton} from "antd";
 import {Wrapper} from "./style";
 import AnswerFooter from "./answerFooter";
 import instance from "../../axiosInstance";
-import QuestionView from "../../component/questionView";
 
 const AnswerDetail = () => {
     const {questionId, answerId} = useParams();
@@ -38,9 +37,16 @@ const AnswerDetail = () => {
     const setAgreeStatus = (number: number, status: boolean) => {
         setAnswer({...answer, agreeNumber: number, canAgree: status});
     }
+    // history.push(`/question/${answer.question.id}`
     return (
         <Wrapper>
-            <QuestionView question={answer.question} onBack={() => history.push(`/question/${answer.question.id}`)}/>
+            <Button
+                type="link"
+                style={{fontSize: 30, fontWeight: "bold"}}
+                block
+                onClick={() => history.push(`/question/${answer.question.id}`)}>
+                {answer.question.title}
+            </Button>
             <Divider/>
             <h2>{answer.user.username}</h2>
             <div dangerouslySetInnerHTML={{__html: answer.content}}/>

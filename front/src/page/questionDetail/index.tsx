@@ -5,10 +5,10 @@ import {QuestionDetailVo} from "../../entity/QuestionDetailVo";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import {Button, message, Skeleton} from "antd";
 import AnswerView from "./AnswerView";
-import {Wrapper} from "./style";
+import {TotalAnswerWrapper, Wrapper} from "./style";
 import WriteAnswerForm from "./WriteAnswerForm";
 import instance from "../../axiosInstance";
-import QuestionView from "../../component/questionView";
+import QuestionView from "./QuestionView";
 
 const QuestionDetail = () => {
     const {id} = useParams();
@@ -40,9 +40,11 @@ const QuestionDetail = () => {
     return (
         <Wrapper>
             <QuestionView question={questionDetail.question}/>
+            <TotalAnswerWrapper>
+                共{questionDetail.answers.totalElements}个回答
+            </TotalAnswerWrapper>
             <Button style={{marginBottom: 20}} type="primary"
                     onClick={() => setFormHidden(false)}>写回答</Button>
-            <div>共{questionDetail.answers.totalElements}个回答</div>
             <WriteAnswerForm
                 hidden={formHidden}
                 setHidden={setFormHidden}

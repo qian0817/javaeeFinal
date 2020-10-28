@@ -63,7 +63,7 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
         <Fragment>
             <TopWrapper>
                 <LogoWrapper>
-                    <Link to="/">WEMALL</Link>
+                    <Link to="/">知否</Link>
                 </LogoWrapper>
                 {loginStatus ? (
                     <TopContentWrapper>
