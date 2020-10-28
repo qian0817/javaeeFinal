@@ -13,13 +13,20 @@ public class MyExceptionHandler {
   @ExceptionHandler(ZhiFouException.class)
   @ResponseStatus(code = HttpStatus.BAD_REQUEST)
   public ErrorResponse handleZhiFouException(ZhiFouException e) {
-    return new ErrorResponse(-1, e.getMessage());
+    return new ErrorResponse(400, e.getMessage());
   }
+
+  @ExceptionHandler(AuthorizationException.class)
+  @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+  public ErrorResponse handleAuthorizationException(AuthorizationException e) {
+    return new ErrorResponse(401, e.getMessage());
+  }
+
 
   @ExceptionHandler(RuntimeException.class)
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse handleZhiFouException(RuntimeException e) {
+  public ErrorResponse handleRunTimeException(RuntimeException e) {
     log.error("未知错误", e);
-    return new ErrorResponse(1, "未知错误");
+    return new ErrorResponse(500, "未知错误");
   }
 }

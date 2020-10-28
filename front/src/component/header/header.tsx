@@ -1,43 +1,35 @@
-import React, {Fragment, useEffect} from "react";
+import React, {Fragment, useCallback, useEffect} from "react";
 import {LogoWrapper, TopContentWrapper, TopWrapper} from "./style";
 import {Button} from "antd";
 import {Link, useHistory} from "react-router-dom";
-import {UserDetailVo} from "../../entity/UserDetailVo";
 import instance from "../../axiosInstance";
 import {useCookies} from "react-cookie";
+import {useDispatch, useSelector} from "react-redux";
+import {setUser} from "../../reducers/login/actionCreate";
+import {UserVo} from "../../entity/UserVo";
+import {RootState} from "../../store";
 
-interface Interface {
-    loginStatus: boolean,
-    setLoginStatus: (status: boolean) => void
-}
 
-const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
+const Header = () => {
     const history = useHistory();
-    const [cookies, setCookie, removeCookie] = useCookies(['token']);
+    const dispatch = useDispatch()
+    const loginStatus = useSelector((state: RootState) => state.login)
+    const [, setCookie, removeCookie] = useCookies(['token']);
 
-    const checkLoginStatus = async () => {
+    const checkLoginStatus = useCallback(async () => {
         try {
-            await instance.get<UserDetailVo>("/api/token/")
-            setLoginStatus(true)
+            const response = await instance.get<UserVo>("/api/token/")
+            const token = localStorage.getItem("_authing_token");
+            setCookie("token", token, {path: '/', sameSite: "strict"})
+            dispatch(setUser(response.data))
         } catch (e) {
-            setLoginStatus(false)
+            dispatch(setUser(null))
         }
-    }
+    }, [dispatch, setCookie])
 
     useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                await instance.get<UserDetailVo>("/api/token/")
-                // 设置 cookie
-                const token = localStorage.getItem("_authing_token");
-                setCookie("token", token, {path: '/', sameSite: "strict"})
-                setLoginStatus(true)
-            } catch (e) {
-                setLoginStatus(false)
-            }
-        }
         checkLoginStatus()
-    }, [setLoginStatus])
+    }, [checkLoginStatus, dispatch, setCookie])
 
     //打开登录界面窗口
     const showLoginWindow = () => {
@@ -54,7 +46,7 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
     }
 
     const logout = () => {
-        setLoginStatus(false)
+        dispatch(setUser(null))
         //清除 cookie
         removeCookie("token")
     }

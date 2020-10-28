@@ -6,11 +6,13 @@ import cn.authing.core.mgmt.ManagementClient;
 import cn.authing.core.types.JwtTokenStatus;
 import cn.authing.core.types.RefreshToken;
 import cn.authing.core.types.User;
+import com.qianlei.zhifou.common.AuthorizationException;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.config.AuthingProperties;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +28,9 @@ public class UserServiceImpl implements IUserService {
   @Override
   public User getUserInfo(String token) {
     var client = new AuthenticationClient(authingProperties.getId());
-    client.setAccessToken(token);
-    var request = client.getCurrentUser();
     try {
-      return request.execute();
+      client.setAccessToken(token);
+      return client.getCurrentUser().execute();
     } catch (IOException e) {
       log.error("请求 authing 服务器错误", e);
       throw new RuntimeException(e);
@@ -41,15 +42,14 @@ public class UserServiceImpl implements IUserService {
   @Override
   public RefreshToken refreshToken(String oldToken) {
     var client = new AuthenticationClient(authingProperties.getId());
-    client.setAccessToken(oldToken);
-    var request = client.refreshToken();
     try {
-      return request.execute();
+      client.setAccessToken(oldToken);
+      return client.refreshToken().execute();
     } catch (IOException e) {
       log.error("请求 authing 服务器错误", e);
       throw new RuntimeException(e);
     } catch (GraphQLException e) {
-      throw mapGraphException(e);
+      throw mapAuthorizationException(e);
     }
   }
 
@@ -69,8 +69,8 @@ public class UserServiceImpl implements IUserService {
   @Override
   public JwtTokenStatus getJwtStatus(String token) {
     var client = new AuthenticationClient(authingProperties.getId());
-    client.setAccessToken(token);
     try {
+      client.setAccessToken(token);
       return client.checkLoginStatus().execute();
     } catch (IOException e) {
       log.error("请求 authing 服务器错误", e);
@@ -81,8 +81,21 @@ public class UserServiceImpl implements IUserService {
   }
 
   private ZhiFouException mapGraphException(GraphQLException e) {
-    // 截取 GraphQLException 中的 message 字段
-    var message = e.getMessage().substring(52, e.getMessage().length() - 4);
-    return new ZhiFouException(message);
+    return new ZhiFouException(getMessageFromGraphException(e));
+  }
+
+  /**
+   * 截取 GraphQLException 中的 message 字段
+   *
+   * @param e GraphQLException
+   * @return GraphQLException 中的message信息
+   */
+  @NotNull
+  private String getMessageFromGraphException(GraphQLException e) {
+    return e.getMessage().substring(52, e.getMessage().length() - 4);
+  }
+
+  private AuthorizationException mapAuthorizationException(GraphQLException e) {
+    return new AuthorizationException(getMessageFromGraphException(e));
   }
 }
