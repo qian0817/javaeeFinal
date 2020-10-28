@@ -3,8 +3,9 @@ import {useHistory, useParams} from "react-router";
 import {AnswerVo} from "../../entity/AnswerVo";
 import {Button, Divider, Skeleton} from "antd";
 import {Wrapper} from "./style";
-import AnswerFooter from "./answerFooter";
 import instance from "../../axiosInstance";
+import CommentView from "./CommentView";
+import AgreeButton from "../../component/AgreeButton";
 
 const AnswerDetail = () => {
     const {questionId, answerId} = useParams();
@@ -32,12 +33,11 @@ const AnswerDetail = () => {
             </Wrapper>
         )
     }
-    console.log(answer)
 
     const setAgreeStatus = (number: number, status: boolean) => {
         setAnswer({...answer, agreeNumber: number, canAgree: status});
     }
-    // history.push(`/question/${answer.question.id}`
+
     return (
         <Wrapper>
             <Button
@@ -50,11 +50,12 @@ const AnswerDetail = () => {
             <Divider/>
             <h2>{answer.user.username}</h2>
             <div dangerouslySetInnerHTML={{__html: answer.content}}/>
-            {/*评论部分*/}
-            <AnswerFooter answerId={answerId}
-                          agreeNumber={answer.agreeNumber}
-                          canAgree={answer.canAgree}
-                          setAgreeStatus={setAgreeStatus}/>
+            <AgreeButton canAgree={answer.canAgree}
+                         agreeNumber={answer.agreeNumber}
+                         answerId={answerId}
+                         setAgreeStatus={setAgreeStatus}/>
+            <Divider/>
+            <CommentView answerId={answerId}/>
         </Wrapper>
     )
 }

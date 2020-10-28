@@ -29,10 +29,11 @@ CREATE TABLE IF NOT EXISTS zhifou_agree
 
 CREATE TABLE IF NOT EXISTS zhifou_comment
 (
-    id        INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    answer_id INT          NOT NULL,
-    content   VARCHAR(100) NOT NULL,
-    user_id CHAR(24) NOT NULL COMMENT '回答者用户id'
+    id          INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    answer_id   INT          NOT NULL,
+    content     VARCHAR(100) NOT NULL,
+    user_id     CHAR(24)     NOT NULL COMMENT '回答者用户id',
+    create_time TIMESTAMP    NOT NULL DEFAULT NOW() COMMENT '创建时间'
 ) COMMENT '评论信息表';
 
 

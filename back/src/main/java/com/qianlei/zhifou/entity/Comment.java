@@ -3,8 +3,10 @@ package com.qianlei.zhifou.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /** @author qianlei */
 @Table(name = "zhifou_comment")
@@ -26,4 +28,8 @@ public class Comment {
 
   @Column(name = "user_id")
   private String userId;
+
+  @Column(name = "create_time")
+  @CreationTimestamp
+  private LocalDateTime createTime;
 }
