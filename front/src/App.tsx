@@ -3,7 +3,7 @@ import Header from "./component/header/header";
 import {Route, Switch} from "react-router";
 import CreateQuestion from "./page/createQuestion";
 import QuestionDetail from "./page/questionDetail";
-import AnswerDetail from "./page/answerDetail/AnswerDetail";
+import AnswerDetail from "./page/answerDetail";
 import Home from "./page/home/Home";
 
 function App() {

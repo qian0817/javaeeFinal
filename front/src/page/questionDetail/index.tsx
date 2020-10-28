@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router";
-import axios, {AxiosError} from 'axios';
+import {AxiosError} from 'axios';
 import {QuestionDetailVo} from "../../entity/QuestionDetailVo";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import {Button, message, Skeleton} from "antd";
-import QuestionView from "./QuestionView";
 import AnswerView from "./AnswerView";
 import {Wrapper} from "./style";
 import WriteAnswerForm from "./WriteAnswerForm";
+import instance from "../../axiosInstance";
+import QuestionView from "../../component/questionView";
 
 const QuestionDetail = () => {
     const {id} = useParams();
     const [formHidden, setFormHidden] = useState(true)
     const [questionDetail, setQuestionDetail] = useState<QuestionDetailVo>()
-    console.log(id)
     useEffect(() => {
         const loadQuesion = async () => {
             try {
-                const response = await axios.get<QuestionDetailVo>(`/api/question/id/${id}`)
+                const response = await instance.get<QuestionDetailVo>(`/api/question/id/${id}`)
                 setQuestionDetail(response.data)
             } catch (e) {
                 const ex: AxiosError<ErrorResponse> = e

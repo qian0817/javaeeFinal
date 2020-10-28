@@ -2,8 +2,9 @@ import React, {Fragment, useEffect} from "react";
 import {LogoWrapper, TopContentWrapper, TopWrapper} from "./style";
 import {Button} from "antd";
 import {Link, useHistory} from "react-router-dom";
-import axios from 'axios'
 import {UserDetailVo} from "../../entity/UserDetailVo";
+import instance from "../../axiosInstance";
+import {useCookies} from "react-cookie";
 
 interface Interface {
     loginStatus: boolean,
@@ -12,10 +13,11 @@ interface Interface {
 
 const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
     const history = useHistory();
+    const [cookies, setCookie, removeCookie] = useCookies(['token']);
 
     const checkLoginStatus = async () => {
         try {
-            await axios.get<UserDetailVo>("/api/token/")
+            await instance.get<UserDetailVo>("/api/token/")
             setLoginStatus(true)
         } catch (e) {
             setLoginStatus(false)
@@ -25,7 +27,10 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                await axios.get<UserDetailVo>("/api/token/")
+                await instance.get<UserDetailVo>("/api/token/")
+                // 设置 cookie
+                const token = localStorage.getItem("_authing_token");
+                setCookie("token", token, {path: '/', sameSite: "strict"})
                 setLoginStatus(true)
             } catch (e) {
                 setLoginStatus(false)
@@ -48,6 +53,12 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
         }, 100);
     }
 
+    const logout = () => {
+        setLoginStatus(false)
+        //清除 cookie
+        removeCookie("token")
+    }
+
     return (
         <Fragment>
             <TopWrapper>
@@ -56,7 +67,7 @@ const Header: React.FC<Interface> = ({loginStatus, setLoginStatus}) => {
                 </LogoWrapper>
                 {loginStatus ? (
                     <TopContentWrapper>
-                        {/*<Button type="link" onClick={() => dispatchlogout())}>登出</Button>*/}
+                        <Button type="link" onClick={logout}>登出</Button>
                         <Button type="primary" onClick={() => history.push("/question/action/create")}>提问</Button>
                     </TopContentWrapper>
                 ) : (

@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.entity.Question;
 import com.qianlei.zhifou.vo.QuestionDetailVo;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -26,7 +27,12 @@ public interface IQuestionService {
    * @return 问题信息
    */
   QuestionDetailVo getQuestionById(
-      Integer id, String sortBy, String sortDirection, int pageNum, int pageSize);
+      Integer id,
+      String sortBy,
+      String sortDirection,
+      int pageNum,
+      int pageSize,
+      @Nullable String token);
 
   /**
    * 获取指定数量的数量的随机问题

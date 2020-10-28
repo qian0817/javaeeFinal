@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
-import axios from 'axios';
 import {AnswerVo} from "../../entity/AnswerVo";
-import {Button, Skeleton} from "antd";
+import {Divider, Skeleton} from "antd";
 import {Wrapper} from "./style";
 import AnswerFooter from "./answerFooter";
+import instance from "../../axiosInstance";
+import QuestionView from "../../component/questionView";
 
 const AnswerDetail = () => {
     const {questionId, answerId} = useParams();
@@ -13,7 +14,7 @@ const AnswerDetail = () => {
 
     useEffect(() => {
         const loadAnswer = async () => {
-            const response = await axios.get<AnswerVo>(`/api/answer/id/${answerId}`)
+            const response = await instance.get<AnswerVo>(`/api/answer/id/${answerId}`)
             if (response.data.questionId !== Number(questionId)) {
                 history.push(`/question/${questionId}`)
             } else {
@@ -32,12 +33,22 @@ const AnswerDetail = () => {
             </Wrapper>
         )
     }
+    console.log(answer)
+
+    const setAgreeStatus = (number: number, status: boolean) => {
+        setAnswer({...answer, agreeNumber: number, canAgree: status});
+    }
     return (
         <Wrapper>
-            <Button type="link" onClick={() => history.push(`/question/${questionId}`)}>查看其他回答</Button>
+            <QuestionView question={answer.question} onBack={() => history.push(`/question/${answer.question.id}`)}/>
+            <Divider/>
             <h2>{answer.user.username}</h2>
             <div dangerouslySetInnerHTML={{__html: answer.content}}/>
-            <AnswerFooter/>
+            {/*评论部分*/}
+            <AnswerFooter answerId={answerId}
+                          agreeNumber={answer.agreeNumber}
+                          canAgree={answer.canAgree}
+                          setAgreeStatus={setAgreeStatus}/>
         </Wrapper>
     )
 }

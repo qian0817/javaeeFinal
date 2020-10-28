@@ -1,4 +1,5 @@
 import {UserVo} from "./UserVo";
+import {Question} from "./Question";
 
 export interface AnswerVo {
     id: number;
@@ -7,4 +8,7 @@ export interface AnswerVo {
     content: string;
     createTime: string;
     updateTime: string;
+    canAgree: boolean;
+    agreeNumber: number;
+    question: Question;
 }

@@ -19,15 +19,20 @@ public class AnswerVo {
   private String content;
   private LocalDateTime createTime;
   private LocalDateTime updateTime;
+  private Boolean canAgree;
+  private Long agreeNumber;
   private Question question;
 
-  public AnswerVo(Answer answer, UserVo user,Question question) {
+  public AnswerVo(
+      Answer answer, UserVo user, Question question, Boolean canAgree, Long agreeNumber) {
     setId(answer.getId());
     setQuestionId(answer.getQuestionId());
     setContent(answer.getContent());
     setCreateTime(answer.getCreateTime());
     setUpdateTime(answer.getUpdateTime());
     setQuestion(question);
-    this.user = user;
+    setUser(user);
+    setCanAgree(canAgree);
+    setAgreeNumber(agreeNumber);
   }
 }

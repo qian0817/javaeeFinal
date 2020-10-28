@@ -24,8 +24,6 @@
     guard.on("authenticated", userInfo => {
         // 用户登录成功后，你可以直接在这里获取他的用户信息
         console.log(userInfo);
-        //设置 cookie
-        docCookies.setItem("token", userInfo.token, null, "", null, true)
         window.close()
     });
 </script>

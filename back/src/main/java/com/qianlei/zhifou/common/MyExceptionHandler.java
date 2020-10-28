@@ -16,9 +16,9 @@ public class MyExceptionHandler {
     return new ErrorResponse(-1, e.getMessage());
   }
 
-  @ExceptionHandler(Exception.class)
+  @ExceptionHandler(RuntimeException.class)
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse handleZhiFouException(Exception e) {
+  public ErrorResponse handleZhiFouException(RuntimeException e) {
     log.error("未知错误", e);
     return new ErrorResponse(1, "未知错误");
   }

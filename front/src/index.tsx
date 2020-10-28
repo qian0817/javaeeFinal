@@ -5,13 +5,16 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter, Route} from "react-router-dom";
 import {QueryParamProvider} from "use-query-params";
+import {CookiesProvider} from "react-cookie";
 
 ReactDOM.render(
-    <BrowserRouter>
-        <QueryParamProvider ReactRouterRoute={Route}>
-            <App/>
-        </QueryParamProvider>
-    </BrowserRouter>,
+    <CookiesProvider>
+        <BrowserRouter>
+            <QueryParamProvider ReactRouterRoute={Route}>
+                <App/>
+            </QueryParamProvider>
+        </BrowserRouter>
+    </CookiesProvider>,
     document.getElementById('root')
 );
 

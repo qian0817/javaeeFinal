@@ -1,12 +1,27 @@
 import React from "react";
-import {CommentButton, FooterWrapper} from "./style";
-import {Button} from "antd";
+import {FooterWrapper} from "./style";
+import AgreeButton from "../../component/AgreeButton";
 
-const AnswerFooter = () => {
+
+interface AnswerFooterProps {
+    canAgree: boolean,
+    agreeNumber: number,
+    answerId: number,
+    setAgreeStatus: (agree: number,canAgree: boolean) => void,
+}
+
+const AnswerFooter: React.FC<AnswerFooterProps> = ({
+                                                       canAgree,
+                                                       setAgreeStatus,
+                                                       agreeNumber,
+                                                       answerId
+                                                   }) => {
     return (
         <FooterWrapper>
-            <Button type="primary">赞同</Button>
-            <CommentButton type="link">评论</CommentButton>
+            <AgreeButton canAgree={canAgree}
+                         agreeNumber={agreeNumber}
+                         answerId={answerId}
+                         setAgreeStatus={setAgreeStatus}/>
         </FooterWrapper>
     )
 }

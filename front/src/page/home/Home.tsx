@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {Wrapper} from "./style";
-import axios from 'axios';
 import {Question} from "../../entity/Question";
 import {useHistory} from "react-router";
 import {Button} from "antd";
+import instance from "../../axiosInstance";
 
 const Home = () => {
     const history = useHistory();
     const [questions, setQuesions] = useState<Array<Question>>([])
     useEffect(() => {
         const loadQuestion = async () => {
-            const response = await axios.get<Array<Question>>('/api/question/random')
+            const response = await instance.get<Array<Question>>('/api/question/random')
             setQuesions(response.data)
         }
         loadQuestion()

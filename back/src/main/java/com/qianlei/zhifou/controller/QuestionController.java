@@ -3,6 +3,7 @@ package com.qianlei.zhifou.controller;
 import com.qianlei.zhifou.entity.Question;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.QuestionDetailVo;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,9 @@ public class QuestionController {
       @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDirection,
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
-      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-    return questionService.getQuestionById(id, sortBy,sortDirection, pageNum, pageSize);
+      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+      @CookieValue(required = false) @Nullable String token) {
+    return questionService.getQuestionById(id, sortBy, sortDirection, pageNum, pageSize, token);
   }
 
   @GetMapping("/random")

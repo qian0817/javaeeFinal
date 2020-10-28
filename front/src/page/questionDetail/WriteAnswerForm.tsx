@@ -1,10 +1,11 @@
 import React from "react";
 import {Button, Form, message} from "antd";
 import BraftEditor from "braft-editor";
-import axios, {AxiosError} from 'axios';
+import {AxiosError} from 'axios';
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import {Answer} from "../../entity/Answer";
 import {useHistory} from "react-router";
+import instance from "../../axiosInstance";
 
 interface WriteAnswerFormProps {
     hidden: boolean,
@@ -17,7 +18,7 @@ const WriteAnswerForm: React.FC<WriteAnswerFormProps> = ({hidden, setHidden, que
     const submitAnswer = async (values: any) => {
         const content = values.content.toHTML();
         try {
-            const response = await axios.post<Answer>('/api/answer/', {content,questionId})
+            const response = await instance.post<Answer>('/api/answer/', {content,questionId})
             const answerId = response.data.id
             history.push(`/question/${questionId}/answer/${answerId}`)
         } catch (e) {
