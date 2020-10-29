@@ -9,6 +9,7 @@ import {ErrorResponse} from "../../entity/ErrorResponse";
 import instance from "../../axiosInstance";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
+import {Helmet} from "react-helmet";
 
 const CreateQuestion = () => {
     const [form] = Form.useForm();
@@ -34,6 +35,7 @@ const CreateQuestion = () => {
 
     return (
         <div style={{marginTop: 10}}>
+            <Helmet title={`创建问题`}/>
             <Form form={form}
                   labelCol={{span: 2}}
                   wrapperCol={{span: 16}}
@@ -46,9 +48,8 @@ const CreateQuestion = () => {
                 </Form.Item>
                 <Form.Item
                     name="tags"
-                    label="问题标签"
-                    rules={[{message: '请填写回答内容'}]}>
-                    <Input/>
+                    label="问题标签">
+                    <Input placeholder="标签按逗号分隔"/>
                 </Form.Item>
                 <Form.Item
                     name="content"

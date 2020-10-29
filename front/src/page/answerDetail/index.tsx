@@ -6,6 +6,7 @@ import {TitleWrapper, Wrapper} from "./style";
 import instance from "../../axiosInstance";
 import CommentView from "./CommentView";
 import AgreeButton from "../../component/AgreeButton";
+import {Helmet} from "react-helmet";
 
 const AnswerDetail = () => {
     const {questionId, answerId} = useParams();
@@ -35,6 +36,7 @@ const AnswerDetail = () => {
         <Wrapper>
             {
                 answer ? <>
+                    <Helmet title={`${answer.question.title}-${answer.user.username}的回答`}/>
                     <TitleWrapper onClick={() => history.push(`/question/${answer.question.id}`)}>
                         {answer.question.title}
                     </TitleWrapper>

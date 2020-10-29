@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from "react";
 import {LogoWrapper, TopContentWrapper, TopWrapper} from "./style";
-import {Affix, Button} from "antd";
+import {Affix, Button, Input} from "antd";
 import {Link, useHistory} from "react-router-dom";
 import instance from "../../axiosInstance";
 import {useCookies} from "react-cookie";
@@ -51,6 +51,13 @@ const Header = () => {
         removeCookie("token")
     }
 
+    const onSearch = (value: string) => {
+        if (value.length===0){
+            return
+        }
+        history.push(`/search/${value}`)
+    }
+
     return (
         <Affix offsetTop={0}>
             <TopWrapper>
@@ -58,6 +65,12 @@ const Header = () => {
                     <Link to="/">知否</Link>
                 </LogoWrapper>
                 <TopContentWrapper>
+                    <Input.Search
+                        enterButton
+                        style={{width: 300,marginRight:200}}
+                        placeholder="搜索"
+                        onSearch={onSearch}
+                    />
                     {loginUser ? (
                         <>
                             <Button type="primary" onClick={() => history.push("/question/action/create")}>提问</Button>

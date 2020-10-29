@@ -13,6 +13,7 @@ import {AnswerVo} from "../../entity/AnswerVo";
 import {Question} from "../../entity/Question";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
+import {Helmet} from "react-helmet";
 
 const QuestionDetail = () => {
     const {id} = useParams();
@@ -54,6 +55,7 @@ const QuestionDetail = () => {
         <Wrapper>
             {questionDetail ? (
                 <>
+                    <Helmet title={questionDetail.title}/>
                     <QuestionView question={questionDetail}/>
                     <Button style={{marginBottom: 20}}
                             type="primary"

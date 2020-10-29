@@ -4,6 +4,7 @@ import {Question} from "../../entity/Question";
 import {useHistory} from "react-router";
 import instance from "../../axiosInstance";
 import {Divider} from "antd";
+import {Helmet} from "react-helmet";
 
 const Home = () => {
     const history = useHistory();
@@ -20,6 +21,7 @@ const Home = () => {
 
     return (
         <Wrapper>
+            <Helmet title="首页"/>
             {
                 questions.map((item,index) => {
                     return (<div key={index}>
