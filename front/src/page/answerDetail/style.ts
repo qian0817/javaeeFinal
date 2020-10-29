@@ -7,6 +7,13 @@ export const Wrapper = styled.div`
   padding-right: 30%;
 `
 
+export const TitleWrapper = styled.h1`
+  color:#1890ff;
+  :hover{
+    color: #40a9ff;
+  }
+`
+
 export const FooterWrapper = styled.div`
   position: fixed;
   left: 0;

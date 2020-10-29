@@ -15,6 +15,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
     const [comments, setComments] = useState<CommentVo[]>([])
     const [pageNum, setPageNum] = useState(1)
     const [total, setTotal] = useState(1)
+    const [form] = Form.useForm();
 
     const loadComment = async (answerId: number, pageNum: number) => {
         try {
@@ -47,6 +48,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
             } else {
                 setPageNum(1)
             }
+            form.resetFields()
 
         } catch (e) {
             const ex: AxiosError<ErrorResponse> = e
@@ -61,7 +63,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
         <Fragment>
             <Comment
                 content={
-                    <Form onFinish={onSubmit}>
+                    <Form onFinish={onSubmit} form={form} >
                         <Form.Item name="content" rules={[{required: true}]}>
                             <Input.TextArea rows={4} placeholder="评论内容"/>
                         </Form.Item>

@@ -1,6 +1,6 @@
-import React, {Fragment} from "react";
+import React from "react";
 import {AnswerVo} from "../../entity/AnswerVo";
-import {Card, Divider} from "antd";
+import {Button, Card} from "antd";
 import {useHistory} from "react-router";
 import dayjs from "dayjs";
 
@@ -47,16 +47,15 @@ const AnswerView: React.FC<AnswerViewProps> = ({answer}) => {
 
     const [content, hasMore] = getContent(answer.content);
     return (
-        <Fragment>
+        <div style={{marginBottom:30}}>
             <Card hoverable
                   title={<h2>{answer.user.username}</h2>}
                   extra={<div>{time}</div>}
                   onClick={() => history.push(`/question/${answer.questionId}/answer/${answer.id}`)}>
                 <div dangerouslySetInnerHTML={{__html: content}}/>
-                {hasMore ? <span>...</span> : null}
+                <Button size="large" type="link" hidden={!hasMore}>查看更多</Button>
             </Card>
-            <Divider/>
-        </Fragment>
+        </div>
     )
 }
 

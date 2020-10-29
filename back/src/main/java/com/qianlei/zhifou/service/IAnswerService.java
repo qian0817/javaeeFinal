@@ -3,6 +3,7 @@ package com.qianlei.zhifou.service;
 import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
 
 /** @author qianlei */
 public interface IAnswerService {
@@ -13,7 +14,7 @@ public interface IAnswerService {
    * @param token 希望获取回答的用户 id
    * @return 回答信息
    */
-  AnswerVo getAnswerById(int id, @Nullable String token);
+  AnswerVo getAnswerByQuestionId(int id, @Nullable String token);
 
   /**
    * 创建回答
@@ -39,4 +40,7 @@ public interface IAnswerService {
    * @param token 取消赞同者 token
    */
   void deleteAgree(Integer answerId, String token);
+
+  Page<AnswerVo> getAnswerByQustionId(Integer questionId, String sortDirection, String sortBy, int pageNum, int pageSize, String token);
+
 }

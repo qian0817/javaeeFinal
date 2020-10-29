@@ -1,10 +1,12 @@
 package com.qianlei.zhifou.controller;
 
 import com.qianlei.zhifou.entity.Question;
+import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
-import com.qianlei.zhifou.vo.QuestionDetailVo;
+import com.qianlei.zhifou.vo.AnswerVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/question")
 public class QuestionController {
   @Autowired private IQuestionService questionService;
+  @Autowired private IAnswerService answerService;
 
   @PostMapping("/")
   public Question createQuestion(@RequestBody Question question) {
@@ -21,14 +24,20 @@ public class QuestionController {
   }
 
   @GetMapping("/id/{id}")
-  public QuestionDetailVo getQuestionById(
-      @PathVariable Integer id,
+  public Question getQuestionById(@PathVariable Integer id) {
+    return questionService.getQuestionById(id);
+  }
+
+  @GetMapping("/id/{id}/answers/")
+  public Page<AnswerVo> getAnswerByQuestionId(
+      @PathVariable("id") Integer questionId,
       @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDirection,
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
       @CookieValue(required = false) @Nullable String token) {
-    return questionService.getQuestionById(id, sortBy, sortDirection, pageNum, pageSize, token);
+    return answerService.getAnswerByQustionId(
+        questionId, sortDirection, sortBy, pageNum, pageSize, token);
   }
 
   @GetMapping("/random")

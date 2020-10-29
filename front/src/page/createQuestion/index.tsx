@@ -25,18 +25,30 @@ const CreateQuestion = () => {
     }
 
     return (
-        <div>
-            <Form form={form} labelCol={{span: 2}} name="control-ref" onFinish={onFinish}>
-                <Form.Item name="title" label="问题标题" rules={[{required: true}]}>
+        <div style={{marginTop:10}}>
+            <Form form={form}
+                  labelCol={{span: 2}}
+                  wrapperCol={{span: 16}}
+                  onFinish={onFinish}>
+                <Form.Item
+                    name="title"
+                    label="问题标题"
+                    rules={[{required: true, message: '请填写回答标题'}]}>
                     <Input/>
                 </Form.Item>
-                <Form.Item name="content" label="问题内容" rules={[{required: true}]}>
+                <Form.Item
+                    name="tags"
+                    label="问题标签"
+                    rules={[{message: '请填写回答内容'}]}>
+                    <Input/>
+                </Form.Item>
+                <Form.Item
+                    name="content"
+                    label="问题内容"
+                    rules={[{required: true, message: '请填写问题内容'}]}>
                     <BraftEditor/>
                 </Form.Item>
-                <Form.Item name="tags" label="问题标签" rules={[{required: true}]}>
-                    <Input/>
-                </Form.Item>
-                <Form.Item>
+                <Form.Item wrapperCol={{offset: 2, span: 16}}>
                     <Button type="primary" htmlType="submit">提交</Button>
                 </Form.Item>
             </Form>

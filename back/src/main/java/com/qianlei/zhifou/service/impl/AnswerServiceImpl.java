@@ -11,8 +11,13 @@ import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /** @author qianlei */
 @Service
@@ -23,6 +28,10 @@ public class AnswerServiceImpl implements IAnswerService {
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;
 
+  private static final List<String> SUPPORTED_SORT_BY_PROPERTIES =
+          List.of("createTime", "updateTime");
+  private static final List<String> SUPPORT_SORT_DIRECTION = List.of("asc", "desc");
+
   @Override
   public Answer createAnswer(Answer answer, String token) {
     var user = userService.getUserInfo(token);
@@ -32,7 +41,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public AnswerVo getAnswerById(int answerId, @Nullable String token) {
+  public AnswerVo getAnswerByQuestionId(int answerId, @Nullable String token) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("不存在的问题id"));
     // 回答者用户信息
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
@@ -57,5 +66,36 @@ public class AnswerServiceImpl implements IAnswerService {
   public void deleteAgree(Integer answerId, String token) {
     var user = userService.getUserInfo(token);
     agreeDao.deleteByAnswerIdAndUserId(answerId, user.getId());
+  }
+
+  @Override
+  public Page<AnswerVo> getAnswerByQustionId(
+      Integer questionId,
+      String sortDirection,
+      String sortBy,
+      int pageNum,
+      int pageSize,
+      String token) {
+    if (!SUPPORTED_SORT_BY_PROPERTIES.contains(sortBy)) {
+      throw new ZhiFouException("不支持的排序类型" + sortBy);
+    }
+    if (!SUPPORT_SORT_DIRECTION.contains(sortDirection)) {
+      throw new ZhiFouException("不支持的排序方向" + sortDirection);
+    }
+    return answerDao
+        .findAllByQuestionId(
+            questionId, PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.asc(sortBy))))
+        .map(
+            answer -> {
+              var answerUser = userService.getUserInfoByUserId(answer.getUserId());
+              var agreeNumber = agreeDao.countByAnswerId(answer.getId());
+              if (token != null) {
+                var user = userService.getUserInfo(token);
+                var canAgree = !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
+                return new AnswerVo(answer, answerUser, null, canAgree, agreeNumber);
+              } else {
+                return new AnswerVo(answer, answerUser, null, true, agreeNumber);
+              }
+            });
   }
 }

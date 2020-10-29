@@ -1,8 +1,6 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.entity.Question;
-import com.qianlei.zhifou.vo.QuestionDetailVo;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -20,19 +18,9 @@ public interface IQuestionService {
    * 根据id获取问题信息
    *
    * @param id 问题id
-   * @param sortBy 根据那种属性进行排序
-   * @param sortDirection 排序方向 asc 或者 desc
-   * @param pageNum 第几页
-   * @param pageSize 每页数量
    * @return 问题信息
    */
-  QuestionDetailVo getQuestionById(
-      Integer id,
-      String sortBy,
-      String sortDirection,
-      int pageNum,
-      int pageSize,
-      @Nullable String token);
+  Question getQuestionById(Integer id);
 
   /**
    * 获取指定数量的数量的随机问题

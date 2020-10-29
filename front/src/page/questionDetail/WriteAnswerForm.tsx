@@ -18,7 +18,7 @@ const WriteAnswerForm: React.FC<WriteAnswerFormProps> = ({hidden, setHidden, que
     const submitAnswer = async (values: any) => {
         const content = values.content.toHTML();
         try {
-            const response = await instance.post<Answer>('/api/answer/', {content,questionId})
+            const response = await instance.post<Answer>('/api/answer/', {content, questionId})
             const answerId = response.data.id
             history.push(`/question/${questionId}/answer/${answerId}`)
         } catch (e) {
@@ -28,7 +28,8 @@ const WriteAnswerForm: React.FC<WriteAnswerFormProps> = ({hidden, setHidden, que
     }
     return (
         <Form hidden={hidden} onFinish={submitAnswer}>
-            <Form.Item name="content" rules={[{required: true}]}>
+            <Form.Item name="content"
+                       rules={[{required: true,message: '请填写回答内容'}]}>
                 <BraftEditor/>
             </Form.Item>
             <Form.Item>

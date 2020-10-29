@@ -15,7 +15,7 @@ public class AnswerController {
 
   @GetMapping("/id/{id}")
   public AnswerVo getAnswerById(@PathVariable int id, @CookieValue(required = false) String token) {
-    return answerService.getAnswerById(id, token);
+    return answerService.getAnswerByQuestionId(id, token);
   }
 
   @PostMapping("/")

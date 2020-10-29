@@ -1,6 +1,6 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Question} from "../../entity/Question";
-import {PageHeader, Tag} from "antd";
+import {Tag} from "antd";
 import {ContentWrapper} from "./style";
 
 interface QuestionProps {
@@ -8,11 +8,15 @@ interface QuestionProps {
 }
 
 const QuestionView: React.FC<QuestionProps> = ({question}) => {
+    const tags = question.tags.split(',')
     return (
-        <PageHeader title={question.title}>
-            <Tag color="blue">{question.tags}</Tag>
+        <Fragment>
+            {tags.map(item => <Tag color="blue" key={item}>{item}</Tag>)}
+            <h1 style={{marginTop:20}}>{question.title}</h1>
             <ContentWrapper dangerouslySetInnerHTML={{__html: question.content}}/>
-        </PageHeader>
+            {/*<PageHeader title=>*/}
+            {/*</PageHeader>*/}
+        </Fragment>
     )
 }
 

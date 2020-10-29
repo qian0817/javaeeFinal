@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
 import {AnswerVo} from "../../entity/AnswerVo";
-import {Button, Divider, Skeleton} from "antd";
+import {Affix, Button, Divider, Skeleton} from "antd";
 import {Wrapper} from "./style";
 import instance from "../../axiosInstance";
 import CommentView from "./CommentView";
@@ -40,6 +40,9 @@ const AnswerDetail = () => {
 
     return (
         <Wrapper>
+            {/*<TitleWrapper onClick={() => history.push(`/question/${answer.question.id}`)}>*/}
+            {/*    {answer.question.title}*/}
+            {/*</TitleWrapper>*/}
             <Button
                 type="link"
                 style={{fontSize: 30, fontWeight: "bold"}}
@@ -50,10 +53,14 @@ const AnswerDetail = () => {
             <Divider/>
             <h2>{answer.user.username}</h2>
             <div dangerouslySetInnerHTML={{__html: answer.content}}/>
-            <AgreeButton canAgree={answer.canAgree}
-                         agreeNumber={answer.agreeNumber}
-                         answerId={answerId}
-                         setAgreeStatus={setAgreeStatus}/>
+            <Affix offsetBottom={0}>
+                <div style={{backgroundColor: "white", padding: 10}}>
+                    <AgreeButton canAgree={answer.canAgree}
+                                 agreeNumber={answer.agreeNumber}
+                                 answerId={answerId}
+                                 setAgreeStatus={setAgreeStatus}/>
+                </div>
+            </Affix>
             <Divider/>
             <CommentView answerId={answerId}/>
         </Wrapper>
