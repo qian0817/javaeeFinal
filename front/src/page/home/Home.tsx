@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {LoadMoreButton, Wrapper} from "./style";
+import {LoadMoreButton, TitleWrapper, Wrapper} from "./style";
 import {Question} from "../../entity/Question";
 import {useHistory} from "react-router";
 import instance from "../../axiosInstance";
-import {Button, Divider} from "antd";
+import {Divider} from "antd";
 
 const Home = () => {
     const history = useHistory();
@@ -23,11 +23,9 @@ const Home = () => {
             {
                 questions.map((item,index) => {
                     return (<div key={index}>
-                        <Button type="link"
-                                style={{fontSize: 20,marginBottom:30}}
-                                onClick={() => history.push(`/question/${item.id}`)}>
+                        <TitleWrapper onClick={() => history.push(`/question/${item.id}`)}>
                             {item.title}
-                        </Button>
+                        </TitleWrapper>
                         <div dangerouslySetInnerHTML={{__html: item.content}}/>
                         <Divider/>
                     </div>)

@@ -3,6 +3,8 @@ import {Button, message} from "antd";
 import {AxiosError} from "axios";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import instance from "../../axiosInstance";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
 
 interface AgreeButtonProps {
     canAgree: boolean,
@@ -13,8 +15,13 @@ interface AgreeButtonProps {
 
 const AgreeButton: React.FC<AgreeButtonProps> = ({canAgree, setAgreeStatus, agreeNumber, answerId}) => {
     const [loading, setLoading] = useState(false)
+    const loginUser = useSelector((state: RootState) => state.login)
 
     const agree = async () => {
+        if (loginUser == null) {
+            message.warn("请先登录")
+            return
+        }
         setLoading(true)
         try {
             await instance.post(`/api/answer/id/${answerId}/agree/`)

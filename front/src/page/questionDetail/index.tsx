@@ -11,19 +11,22 @@ import QuestionView from "./QuestionView";
 import {Page} from "../../entity/Page";
 import {AnswerVo} from "../../entity/AnswerVo";
 import {Question} from "../../entity/Question";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
 
 const QuestionDetail = () => {
     const {id} = useParams();
     const [formHidden, setFormHidden] = useState(true)
     const [questionDetail, setQuestionDetail] = useState<Question>()
     const [answers, setAnswers] = useState<Page<AnswerVo>>()
+    const loginUser = useSelector((state: RootState) => state.login)
 
     const loadQuestion = async (id: number) => {
         try {
             const questionResponse = await instance.get<Question>(`/api/question/id/${id}`)
             setQuestionDetail(questionResponse.data)
             const response = await instance.get<Page<AnswerVo>>(`/api/question/id/${id}/answers/`, {
-                params:{
+                params: {
                     pageNum: 0,
                     pageSize: 10
                 }
@@ -39,13 +42,22 @@ const QuestionDetail = () => {
         loadQuestion(id)
     }, [id]);
 
+    function showWriteAnswerForm() {
+        if (loginUser == null) {
+            message.warn("请先登录")
+            return
+        }
+        setFormHidden(false);
+    }
+
     return (
         <Wrapper>
             {questionDetail ? (
                 <>
                     <QuestionView question={questionDetail}/>
-                    <Button style={{marginBottom: 20}} type="primary"
-                            onClick={() => setFormHidden(false)}>写回答</Button>
+                    <Button style={{marginBottom: 20}}
+                            type="primary"
+                            onClick={showWriteAnswerForm}>写回答</Button>
                     {answers ? <TotalAnswerWrapper>
                         共{answers.totalElements}个回答
                     </TotalAnswerWrapper> : null}

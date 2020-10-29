@@ -7,10 +7,18 @@ import {AxiosError} from 'axios';
 import {Question} from "../../entity/Question";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import instance from "../../axiosInstance";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
 
 const CreateQuestion = () => {
     const [form] = Form.useForm();
-    const history = useHistory()
+    const history = useHistory();
+    const loginUser = useSelector((state: RootState) => state.login)
+
+    if (loginUser == null) {
+        history.push('/')
+    }
+
     const onFinish = async (value: Store) => {
         const title = value.title
         const content = value.content.toHTML()
@@ -25,7 +33,7 @@ const CreateQuestion = () => {
     }
 
     return (
-        <div style={{marginTop:10}}>
+        <div style={{marginTop: 10}}>
             <Form form={form}
                   labelCol={{span: 2}}
                   wrapperCol={{span: 16}}

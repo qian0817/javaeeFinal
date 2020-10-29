@@ -5,6 +5,8 @@ import {CommentVo} from "../../entity/CommentVo";
 import {AxiosError} from "axios";
 import {ErrorResponse} from "../../entity/ErrorResponse";
 import {Page} from "../../entity/Page";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
 
 interface CommentViewProps {
     answerId: number
@@ -15,6 +17,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
     const [comments, setComments] = useState<CommentVo[]>([])
     const [pageNum, setPageNum] = useState(1)
     const [total, setTotal] = useState(1)
+    const loginUser = useSelector((state: RootState) => state.login)
     const [form] = Form.useForm();
 
     const loadComment = async (answerId: number, pageNum: number) => {
@@ -36,6 +39,10 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
     }, [answerId, pageNum])
 
     const onSubmit = async (values: any) => {
+        if (loginUser == null) {
+            message.warn("请先登录")
+            return
+        }
         setSubmitting(true)
         try {
             await instance.post<CommentVo>(`/api/comment/answer/${answerId}`, {
@@ -63,7 +70,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
         <Fragment>
             <Comment
                 content={
-                    <Form onFinish={onSubmit} form={form} >
+                    <Form onFinish={onSubmit} form={form}>
                         <Form.Item name="content" rules={[{required: true}]}>
                             <Input.TextArea rows={4} placeholder="评论内容"/>
                         </Form.Item>

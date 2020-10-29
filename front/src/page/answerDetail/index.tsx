@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
 import {AnswerVo} from "../../entity/AnswerVo";
-import {Affix, Button, Divider, Skeleton} from "antd";
-import {Wrapper} from "./style";
+import {Affix, Divider, Skeleton} from "antd";
+import {TitleWrapper, Wrapper} from "./style";
 import instance from "../../axiosInstance";
 import CommentView from "./CommentView";
 import AgreeButton from "../../component/AgreeButton";
@@ -23,46 +23,42 @@ const AnswerDetail = () => {
         }
         loadAnswer();
     }, [questionId, answerId, history])
-    if (answer == null) {
-        return (
-            <Wrapper>
-                <Skeleton active/>
-                <Skeleton active/>
-                <Skeleton active/>
-                <Skeleton active/>
-            </Wrapper>
-        )
-    }
 
     const setAgreeStatus = (number: number, status: boolean) => {
+        if (answer == null) {
+            return
+        }
         setAnswer({...answer, agreeNumber: number, canAgree: status});
     }
 
     return (
         <Wrapper>
-            {/*<TitleWrapper onClick={() => history.push(`/question/${answer.question.id}`)}>*/}
-            {/*    {answer.question.title}*/}
-            {/*</TitleWrapper>*/}
-            <Button
-                type="link"
-                style={{fontSize: 30, fontWeight: "bold"}}
-                block
-                onClick={() => history.push(`/question/${answer.question.id}`)}>
-                {answer.question.title}
-            </Button>
-            <Divider/>
-            <h2>{answer.user.username}</h2>
-            <div dangerouslySetInnerHTML={{__html: answer.content}}/>
-            <Affix offsetBottom={0}>
-                <div style={{backgroundColor: "white", padding: 10}}>
-                    <AgreeButton canAgree={answer.canAgree}
-                                 agreeNumber={answer.agreeNumber}
-                                 answerId={answerId}
-                                 setAgreeStatus={setAgreeStatus}/>
-                </div>
-            </Affix>
-            <Divider/>
-            <CommentView answerId={answerId}/>
+            {
+                answer ? <>
+                    <TitleWrapper onClick={() => history.push(`/question/${answer.question.id}`)}>
+                        {answer.question.title}
+                    </TitleWrapper>
+                    <Divider/>
+                    <h2>{answer.user.username}</h2>
+                    <div dangerouslySetInnerHTML={{__html: answer.content}}/>
+                    <Affix offsetBottom={0}>
+                        <div style={{backgroundColor: "white", padding: 10}}>
+                            <AgreeButton canAgree={answer.canAgree}
+                                         agreeNumber={answer.agreeNumber}
+                                         answerId={answerId}
+                                         setAgreeStatus={setAgreeStatus}/>
+                        </div>
+                    </Affix>
+                    <Divider/>
+                    <CommentView answerId={answerId}/>
+                </> : <>
+                    <Skeleton active/>
+                    <Skeleton active/>
+                    <Skeleton active/>
+                    <Skeleton active/>
+                </>
+            }
+
         </Wrapper>
     )
 }
