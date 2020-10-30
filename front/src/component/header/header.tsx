@@ -14,7 +14,7 @@ const Header = () => {
     const history = useHistory();
     const dispatch = useDispatch()
     const loginUser = useSelector((state: RootState) => state.login)
-    const [, setCookie, removeCookie] = useCookies(['token']);
+    const [, , removeCookie] = useCookies([]);
 
     const checkLoginStatus = useCallback(async () => {
         try {
@@ -27,23 +27,7 @@ const Header = () => {
 
     useEffect(() => {
         checkLoginStatus()
-    }, [checkLoginStatus, dispatch, setCookie])
-
-    //打开登录界面窗口
-    const showLoginWindow = () => {
-        const loginWindow = window.open('/login.html'
-            , '登录'
-            , 'height=600, width=400, top=50%, left=50%, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no"')
-        let timer = setInterval(function () {
-            // 检查登录窗口是否已经关闭
-            if (loginWindow == null || loginWindow.closed) {
-                clearInterval(timer);
-                const token = localStorage.getItem("_authing_token");
-                setCookie("token", token, {path: '/', sameSite: "strict"})
-                checkLoginStatus();
-            }
-        }, 100);
-    }
+    }, [checkLoginStatus, dispatch])
 
     const logout = () => {
         dispatch(setUser(null))
@@ -52,7 +36,7 @@ const Header = () => {
     }
 
     const onSearch = (value: string) => {
-        if (value.length===0){
+        if (value.length === 0) {
             return
         }
         history.push(`/search/${value}`)
@@ -67,7 +51,7 @@ const Header = () => {
                 <TopContentWrapper>
                     <Input.Search
                         enterButton
-                        style={{width: 300,marginRight:200}}
+                        style={{width: 300, marginRight: 200}}
                         placeholder="搜索"
                         onSearch={onSearch}
                     />
@@ -77,7 +61,8 @@ const Header = () => {
                             <Button type="link" onClick={logout}>登出</Button>
                         </>
                     ) : (
-                        <Button type="link" onClick={showLoginWindow}>登录</Button>
+                        <Button type="link" onClick={() => history.push('/login')}>登录</Button>
+                        // <Button type="link" onClick={showLoginWindow}>登录</Button>
                     )}
                 </TopContentWrapper>
             </TopWrapper>
