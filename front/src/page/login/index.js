@@ -1,6 +1,6 @@
 import Guard from '@authing/guard'
 import React, {useEffect} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from "react-router";
 import instance from "../../axiosInstance";
 import {setUser} from "../../reducers/login/actionCreate";
@@ -9,6 +9,7 @@ import {useCookies} from "react-cookie";
 const Login = () => {
     const dispatch = useDispatch();
     const history = useHistory();
+    const loginUser = useSelector(state => state.login)
     const [, setCookie,] = useCookies([]);
 
     const userPoolId = "5f8eb6f27371b7d5ab760831";
@@ -23,6 +24,11 @@ const Login = () => {
     useEffect(() => {
         return () => guard.hide();
     }, [guard])
+    
+    // 判断用户是否已经登陆，如果已经登陆则跳转到首页
+    if (loginUser != null) {
+        history.push('/')
+    }
 
     const handleLoginSuccess = async (userInfo) => {
         console.log(userInfo)

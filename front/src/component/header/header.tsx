@@ -39,7 +39,7 @@ const Header = () => {
         if (value.length === 0) {
             return
         }
-        history.push(`/search/${value}`)
+        history.push(`/question/search/${value}`)
     }
 
     return (
@@ -61,8 +61,7 @@ const Header = () => {
                             <Button type="link" onClick={logout}>登出</Button>
                         </>
                     ) : (
-                        <Button type="link" onClick={() => history.push('/login')}>登录</Button>
-                        // <Button type="link" onClick={showLoginWindow}>登录</Button>
+                        <Button type="link" onClick={() => window.location.href='/login'}>登录</Button>
                     )}
                 </TopContentWrapper>
             </TopWrapper>

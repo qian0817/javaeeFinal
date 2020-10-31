@@ -6,6 +6,7 @@ import QuestionDetail from "./page/questionDetail";
 import AnswerDetail from "./page/answerDetail";
 import Home from "./page/home/Home";
 import Login from "./page/login";
+import Search from "./page/search";
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
             <Switch>
                 <Route path="/" exact component={Home}/>
                 <Route path="/login" exact component={Login}/>
+                <Route path="/question/search/:keyword" exact component={Search}/>
                 <Route path="/question/action/create" exact component={CreateQuestion}/>
                 <Route path="/question/:id" exact component={QuestionDetail}/>
                 <Route path="/question/:questionId/answer/:answerId" exact component={AnswerDetail}/>

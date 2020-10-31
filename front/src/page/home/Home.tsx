@@ -1,17 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {LoadMoreButton, TitleWrapper, Wrapper} from "./style";
+import {LoadMoreButton, Wrapper} from "./style";
 import {Question} from "../../entity/Question";
-import {useHistory} from "react-router";
 import instance from "../../axiosInstance";
-import {Divider} from "antd";
 import {Helmet} from "react-helmet";
+import QuestionCard from "../../component/questionCard";
 
 const Home = () => {
-    const history = useHistory();
     const [questions, setQuesions] = useState<Array<Question>>([])
 
     const loadQuestion = async () => {
-        const response = await instance.get<Array<Question>>('/api/question/random',{params:{num:20}})
+        const response = await instance.get<Array<Question>>('/api/question/random', {params: {num: 20}})
         setQuesions(questions.concat(response.data))
     }
 
@@ -23,15 +21,7 @@ const Home = () => {
         <Wrapper>
             <Helmet title="首页"/>
             {
-                questions.map((item,index) => {
-                    return (<div key={index}>
-                        <TitleWrapper onClick={() => history.push(`/question/${item.id}`)}>
-                            {item.title}
-                        </TitleWrapper>
-                        <div dangerouslySetInnerHTML={{__html: item.content}}/>
-                        <Divider/>
-                    </div>)
-                })
+                questions.map((item, index) => <QuestionCard item={item} key={index}/>)
             }
             <LoadMoreButton type="link" block onClick={loadQuestion}>点击加载更多</LoadMoreButton>
         </Wrapper>
