@@ -36,7 +36,7 @@ public class QuestionController {
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
       @CookieValue(required = false) @Nullable String token) {
-    return answerService.getAnswerByQustionId(
+    return answerService.getAllAnswerByQuestionId(
         questionId, sortDirection, sortBy, pageNum, pageSize, token);
   }
 

@@ -9,6 +9,7 @@ import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.AnswerVo;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,13 +30,22 @@ public class AnswerServiceImpl implements IAnswerService {
   @Autowired private AgreeDao agreeDao;
 
   private static final List<String> SUPPORTED_SORT_BY_PROPERTIES =
-          List.of("createTime", "updateTime");
+      List.of("createTime", "updateTime");
   private static final List<String> SUPPORT_SORT_DIRECTION = List.of("asc", "desc");
 
   @Override
   public Answer createAnswer(Answer answer, String token) {
+    if (StringUtils.isBlank(answer.getContent())) {
+      throw new ZhiFouException("回答不能为空");
+    }
+    if (!questionDao.existsById(answer.getQuestionId())) {
+      throw new ZhiFouException("问题不存在");
+    }
     var user = userService.getUserInfo(token);
+    answer.setId(null);
     answer.setUserId(user.getId());
+    answer.setUpdateTime(null);
+    answer.setCreateTime(null);
     answerDao.save(answer);
     return answer;
   }
@@ -58,7 +68,13 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @Override
   public void agree(Integer answerId, String token) {
+    if (!answerDao.existsById(answerId)) {
+      throw new ZhiFouException("回答不存在");
+    }
     var user = userService.getUserInfo(token);
+    if (agreeDao.existsByAnswerIdAndUserId(answerId, user.getId())) {
+      throw new ZhiFouException("不能重复点赞");
+    }
     agreeDao.save(new Agree(null, user.getId(), answerId));
   }
 
@@ -69,7 +85,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public Page<AnswerVo> getAnswerByQustionId(
+  public Page<AnswerVo> getAllAnswerByQuestionId(
       Integer questionId,
       String sortDirection,
       String sortBy,

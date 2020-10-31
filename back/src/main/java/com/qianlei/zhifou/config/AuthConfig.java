@@ -5,10 +5,12 @@ import cn.authing.core.mgmt.ManagementClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
 
 /** @author qianlei */
+@Profile("!test")
 @Configuration
 public class AuthConfig {
   @Autowired private AuthingProperties properties;

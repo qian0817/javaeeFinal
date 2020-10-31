@@ -41,6 +41,22 @@ public interface IAnswerService {
    */
   void deleteAgree(Integer answerId, String token);
 
-  Page<AnswerVo> getAnswerByQustionId(Integer questionId, String sortDirection, String sortBy, int pageNum, int pageSize, String token);
-
+  /**
+   * 获取每页的回答信息
+   *
+   * @param questionId 问题id
+   * @param sortDirection 排序方向
+   * @param sortBy 排序根据
+   * @param pageNum 页数
+   * @param pageSize 每页数量
+   * @param token 用户token
+   * @return 回答信息
+   */
+  Page<AnswerVo> getAllAnswerByQuestionId(
+      Integer questionId,
+      String sortDirection,
+      String sortBy,
+      int pageNum,
+      int pageSize,
+      String token);
 }

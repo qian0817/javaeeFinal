@@ -4,6 +4,7 @@ import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.QuestionDao;
 import com.qianlei.zhifou.entity.Question;
 import com.qianlei.zhifou.service.IQuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,13 @@ public class QuestionServiceImpl implements IQuestionService {
 
   @Override
   public Question createQuestion(Question question) {
+    question.setId(null);
+    if (StringUtils.isBlank(question.getContent())) {
+      throw new ZhiFouException("问题内容不能为空");
+    }
+    if (StringUtils.isBlank(question.getTitle())) {
+      throw new ZhiFouException("标题不能为空");
+    }
     question.setId(null);
     return questionDao.save(question);
   }

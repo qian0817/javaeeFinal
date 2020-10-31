@@ -4,6 +4,7 @@ import com.qianlei.zhifou.entity.Comment;
 import com.qianlei.zhifou.vo.CommentVo;
 import org.springframework.data.domain.Page;
 
+/** @author qianlei */
 public interface ICommentService {
   /**
    * 获取指定回答下的评论信息
