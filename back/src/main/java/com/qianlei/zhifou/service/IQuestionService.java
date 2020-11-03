@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.entity.Question;
 import com.qianlei.zhifou.vo.QuestionHotVo;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -45,4 +46,6 @@ public interface IQuestionService {
    * @return 热榜问题
    */
   List<QuestionHotVo> getHottestQuestion();
+
+  Page<Question> searchQuestion(String keyword, int pageNum, int pageSize);
 }

@@ -7,6 +7,8 @@ import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,11 @@ public class QuestionServiceImpl implements IQuestionService {
     redisTemplate
         .boundZSetOps("question_" + currentHour)
         .incrementScore(String.valueOf(questionId), number);
+  }
+
+  @Override
+  public Page<Question> searchQuestion(String keyword, int pageNum, int pageSize) {
+    return questionDao.findAllByTitleContaining(keyword, PageRequest.of(pageNum, pageSize));
   }
 
   @Override

@@ -52,4 +52,12 @@ public class QuestionController {
   public List<QuestionHotVo> getHottestQuestion() {
     return questionService.getHottestQuestion();
   }
+
+  @GetMapping("/keyword/{keyword}")
+  public Page<Question> searchQuestion(
+      @PathVariable String keyword,
+      @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
+      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    return questionService.searchQuestion(keyword,pageNum,pageSize);
+  }
 }
