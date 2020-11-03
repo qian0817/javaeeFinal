@@ -1,4 +1,4 @@
-import {TitleWrapper} from "../../page/home/style";
+import {QuestionCardWrapper, TitleWrapper} from "./style";
 import {Divider} from "antd";
 import React from "react";
 import {useHistory} from "react-router";
@@ -11,13 +11,13 @@ interface QuestionCardProps {
 const QuestionCard: React.FC<QuestionCardProps> = ({item}) => {
     const history = useHistory();
     return (
-        <div>
+        <QuestionCardWrapper>
             <TitleWrapper onClick={() => history.push(`/question/${item.id}`)}>
                 {item.title}
             </TitleWrapper>
             <div dangerouslySetInnerHTML={{__html: item.content}}/>
             <Divider/>
-        </div>
+        </QuestionCardWrapper>
     )
 }
 

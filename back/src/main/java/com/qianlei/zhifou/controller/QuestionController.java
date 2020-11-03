@@ -4,6 +4,7 @@ import com.qianlei.zhifou.entity.Question;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.AnswerVo;
+import com.qianlei.zhifou.vo.QuestionHotVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,9 @@ public class QuestionController {
 
   @GetMapping("/id/{id}")
   public Question getQuestionById(@PathVariable Integer id) {
-    return questionService.getQuestionById(id);
+    var question = questionService.getQuestionById(id);
+    questionService.improveQuestionHeatLevel(id, 1);
+    return question;
   }
 
   @GetMapping("/id/{id}/answers/")
@@ -43,5 +46,10 @@ public class QuestionController {
   @GetMapping("/random")
   public List<Question> getRandomQuestion(@RequestParam(defaultValue = "10") int num) {
     return questionService.getRandomQuestion(num);
+  }
+
+  @GetMapping("/hot/")
+  public List<QuestionHotVo> getHottestQuestion() {
+    return questionService.getHottestQuestion();
   }
 }

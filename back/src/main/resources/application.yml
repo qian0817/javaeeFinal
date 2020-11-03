@@ -1,3 +1,7 @@
 spring:
   jpa:
     open-in-view: true
+  data:
+    redis:
+      repositories:
+        enabled: false

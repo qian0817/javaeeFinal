@@ -7,6 +7,7 @@ import com.qianlei.zhifou.dao.QuestionDao;
 import com.qianlei.zhifou.entity.Agree;
 import com.qianlei.zhifou.entity.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
+import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import java.util.List;
 public class AnswerServiceImpl implements IAnswerService {
   @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
+  @Autowired private IQuestionService questionService;
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;
 
@@ -47,6 +49,7 @@ public class AnswerServiceImpl implements IAnswerService {
     answer.setUpdateTime(null);
     answer.setCreateTime(null);
     answerDao.save(answer);
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 100);
     return answer;
   }
 
@@ -57,6 +60,7 @@ public class AnswerServiceImpl implements IAnswerService {
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
     var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
     long agreeNumber = agreeDao.countByAnswerId(answer.getId());
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1);
     if (token == null) {
       return new AnswerVo(answer, answerUser, question, true, agreeNumber);
     } else {

@@ -5,6 +5,7 @@ import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.CommentDao;
 import com.qianlei.zhifou.entity.Comment;
 import com.qianlei.zhifou.service.ICommentService;
+import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.CommentVo;
 import com.qianlei.zhifou.vo.UserVo;
@@ -19,8 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class CommentServiceImpl implements ICommentService {
-  @Autowired private CommentDao commentDao;
   @Autowired private IUserService userService;
+  @Autowired private IQuestionService questionService;
+  @Autowired private CommentDao commentDao;
   @Autowired private AnswerDao answerDao;
 
   @Override
@@ -46,6 +48,9 @@ public class CommentServiceImpl implements ICommentService {
     comment.setId(null);
     comment.setCreateTime(null);
     commentDao.save(comment);
+    var answer = answerDao.findById(comment.getAnswerId()).orElseThrow();
+    // 每条新的评论为问题增加 30 个热度
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 30);
     return new CommentVo(new UserVo(user), comment);
   }
 }

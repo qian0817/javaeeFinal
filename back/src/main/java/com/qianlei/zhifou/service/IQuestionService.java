@@ -1,6 +1,7 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.entity.Question;
+import com.qianlei.zhifou.vo.QuestionHotVo;
 
 import java.util.List;
 
@@ -29,4 +30,19 @@ public interface IQuestionService {
    * @return 随机的问题
    */
   List<Question> getRandomQuestion(int num);
+
+  /**
+   * 为问题增加指定的热度
+   *
+   * @param questionId 问题 id
+   * @param number 热度
+   */
+  void improveQuestionHeatLevel(int questionId, int number);
+
+  /**
+   * 获取热榜问题，取前30位
+   *
+   * @return 热榜问题
+   */
+  List<QuestionHotVo> getHottestQuestion();
 }

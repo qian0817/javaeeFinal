@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/answer")
 public class AnswerController {
-  @Autowired public IAnswerService answerService;
+  @Autowired private IAnswerService answerService;
 
   @GetMapping("/id/{id}")
   public AnswerVo getAnswerById(@PathVariable int id, @CookieValue(required = false) String token) {
