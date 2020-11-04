@@ -55,7 +55,7 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @Override
   public AnswerVo getAnswerByQuestionId(int answerId, @Nullable String token) {
-    var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("不存在的问题id"));
+    var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
     var question = questionDao.findById(answer.getQuestionId()).orElseThrow();

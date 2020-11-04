@@ -47,8 +47,7 @@ public class TokenFilter implements Filter {
     var newToken = userService.refreshToken(cookie.getValue());
     // 设置刷新后的 cookie
     Cookie newCookie = new Cookie("token", newToken.getToken());
-    newCookie.setSecure(true);
-    newCookie.setHttpOnly(true);
+    newCookie.setHttpOnly(false);
     newCookie.setMaxAge(3600 * 24 * 7);
     newCookie.setPath("/");
     httpResponse.addCookie(newCookie);
@@ -58,7 +57,7 @@ public class TokenFilter implements Filter {
     try {
       SignedJWT jwt = SignedJWT.parse(token);
       // 如果过期时间小于一分钟则刷新 jwt
-      return System.currentTimeMillis() - jwt.getJWTClaimsSet().getExpirationTime().getTime()
+      return jwt.getJWTClaimsSet().getExpirationTime().getTime() - System.currentTimeMillis()
           < 60 * 1000;
     } catch (ParseException e) {
       return false;

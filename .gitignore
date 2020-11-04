@@ -5,4 +5,7 @@
 *.iml
 /.idea
 /back/src/main/resources/application-prod.yml
+/back/src/main/resources/application-dev.yml
 /front/public/login.html
+/docker/nginx/html/*
+/front/build/
