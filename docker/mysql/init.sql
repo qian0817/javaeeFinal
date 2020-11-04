@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS zhifou_question
     id      INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title   VARCHAR(50) NOT NULL COMMENT '标题',
     tags    VARCHAR(50) NOT NULL DEFAULT '' COMMENT '标签',
-    content TEXT        NOT NULL DEFAULT '' COMMENT '内容'
+    content TEXT        NOT NULL COMMENT '内容'
 ) COMMENT '问题表';
 
 CREATE TABLE IF NOT EXISTS zhifou_answer

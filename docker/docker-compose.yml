@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+  mysql-server:
+    image: mysql:8.0.21
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: zhifou
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: qianlei
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+  redis-server:
+    image: redis:6.0.8
+    container_name: redis
+    ports:
+      - "6379:6379"
+  nginx-server:
+    image: nginx:1.19.2
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf.nginx:/etc/nginx/nginx.conf
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/html/:/usr/share/nginx/html
+  zhifou-server:
+    image: qianlei/zhifou
+    container_name: zhifou
+    ports:
+    - "8080:8080"
