@@ -1,4 +1,4 @@
-package com.qianlei.zhifou.entity;
+package com.qianlei.zhifou.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class Answer {
   private Integer id;
 
   @Column(name = "user_id")
-  private String userId;
+  private Integer userId;
 
   @Column(name = "question_id")
   private Integer questionId;

@@ -1,7 +1,7 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.common.ZhiFouException;
-import com.qianlei.zhifou.entity.Question;
+import com.qianlei.zhifou.pojo.Question;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

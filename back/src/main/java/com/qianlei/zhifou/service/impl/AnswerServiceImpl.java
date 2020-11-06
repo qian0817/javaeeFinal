@@ -4,8 +4,9 @@ import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.QuestionDao;
-import com.qianlei.zhifou.entity.Agree;
-import com.qianlei.zhifou.entity.Answer;
+import com.qianlei.zhifou.pojo.Agree;
+import com.qianlei.zhifou.pojo.Answer;
+import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
@@ -36,14 +37,13 @@ public class AnswerServiceImpl implements IAnswerService {
   private static final List<String> SUPPORT_SORT_DIRECTION = List.of("asc", "desc");
 
   @Override
-  public Answer createAnswer(Answer answer, String token) {
+  public Answer createAnswer(Answer answer, User user) {
     if (StringUtils.isBlank(answer.getContent())) {
       throw new ZhiFouException("回答不能为空");
     }
     if (!questionDao.existsById(answer.getQuestionId())) {
       throw new ZhiFouException("问题不存在");
     }
-    var user = userService.getUserInfo(token);
     answer.setId(null);
     answer.setUserId(user.getId());
     answer.setUpdateTime(null);
@@ -54,28 +54,26 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public AnswerVo getAnswerByQuestionId(int answerId, @Nullable String token) {
+  public AnswerVo getAnswerByQuestionId(int answerId, @Nullable User user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
     var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
     long agreeNumber = agreeDao.countByAnswerId(answer.getId());
     questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1);
-    if (token == null) {
+    if (user == null) {
       return new AnswerVo(answer, answerUser, question, true, agreeNumber);
     } else {
-      var user = userService.getUserInfo(token);
       boolean canAgree = !agreeDao.existsByAnswerIdAndUserId(answerId, user.getId());
       return new AnswerVo(answer, answerUser, question, canAgree, agreeNumber);
     }
   }
 
   @Override
-  public void agree(Integer answerId, String token) {
+  public void agree(Integer answerId, User user) {
     if (!answerDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
-    var user = userService.getUserInfo(token);
     if (agreeDao.existsByAnswerIdAndUserId(answerId, user.getId())) {
       throw new ZhiFouException("不能重复点赞");
     }
@@ -83,8 +81,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public void deleteAgree(Integer answerId, String token) {
-    var user = userService.getUserInfo(token);
+  public void deleteAgree(Integer answerId, User user) {
     agreeDao.deleteByAnswerIdAndUserId(answerId, user.getId());
   }
 
@@ -95,7 +92,7 @@ public class AnswerServiceImpl implements IAnswerService {
       String sortBy,
       int pageNum,
       int pageSize,
-      String token) {
+      User user) {
     if (!SUPPORTED_SORT_BY_PROPERTIES.contains(sortBy)) {
       throw new ZhiFouException("不支持的排序类型" + sortBy);
     }
@@ -109,8 +106,7 @@ public class AnswerServiceImpl implements IAnswerService {
             answer -> {
               var answerUser = userService.getUserInfoByUserId(answer.getUserId());
               var agreeNumber = agreeDao.countByAnswerId(answer.getId());
-              if (token != null) {
-                var user = userService.getUserInfo(token);
+              if (user != null) {
                 var canAgree = !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
                 return new AnswerVo(answer, answerUser, null, canAgree, agreeNumber);
               } else {

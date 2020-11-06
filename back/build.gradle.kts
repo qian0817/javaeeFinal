@@ -30,8 +30,6 @@ dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     implementation("org.apache.commons:commons-lang3")
     implementation("com.nimbusds:nimbus-jose-jwt")
-    implementation("cn.authing:java-core:3.0.1")
-    implementation("com.squareup.okhttp3:okhttp:4.8.0")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testRuntimeOnly("com.h2database:h2")

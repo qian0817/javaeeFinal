@@ -1,7 +1,8 @@
 package com.qianlei.zhifou.controller;
 
 import com.qianlei.zhifou.common.AuthorizationException;
-import com.qianlei.zhifou.entity.Comment;
+import com.qianlei.zhifou.pojo.Comment;
+import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.service.ICommentService;
 import com.qianlei.zhifou.vo.CommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,11 @@ public class CommentController {
   public CommentVo createComment(
       @PathVariable("answerId") Integer answerId,
       @RequestBody Comment comment,
-      @CookieValue(required = false) String token) {
-    if (token == null) {
+      @SessionAttribute(value = "user", required = false) User user) {
+    if (user == null) {
       throw new AuthorizationException("用户未登录");
     }
     comment.setAnswerId(answerId);
-    return commentService.createNewComment(comment, token);
+    return commentService.createNewComment(comment, user);
   }
 }

@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.dao;
 
-import com.qianlei.zhifou.entity.Answer;
+import com.qianlei.zhifou.pojo.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

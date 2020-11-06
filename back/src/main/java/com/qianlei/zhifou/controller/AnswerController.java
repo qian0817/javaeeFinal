@@ -1,11 +1,14 @@
 package com.qianlei.zhifou.controller;
 
 import com.qianlei.zhifou.common.AuthorizationException;
-import com.qianlei.zhifou.entity.Answer;
+import com.qianlei.zhifou.pojo.Answer;
+import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
 
 /** @author qianlei */
 @RestController
@@ -14,34 +17,35 @@ public class AnswerController {
   @Autowired private IAnswerService answerService;
 
   @GetMapping("/id/{id}")
-  public AnswerVo getAnswerById(@PathVariable int id, @CookieValue(required = false) String token) {
-    return answerService.getAnswerByQuestionId(id, token);
+  public AnswerVo getAnswerById(@PathVariable int id, HttpSession session) {
+    var user = (User) session.getAttribute("user");
+    return answerService.getAnswerByQuestionId(id, user);
   }
 
   @PostMapping("/")
-  public Answer createAnswer(
-      @RequestBody Answer answer, @CookieValue(required = false) String token) {
-    if (token == null) {
+  public Answer createAnswer(@RequestBody Answer answer, HttpSession session) {
+    var user = (User) session.getAttribute("user");
+    if (user == null) {
       throw new AuthorizationException("用户未登录");
     }
-    return answerService.createAnswer(answer, token);
+    return answerService.createAnswer(answer, user);
   }
 
   @PostMapping("/id/{answerId}/agree/")
-  public void agree(
-      @PathVariable("answerId") Integer answerId, @CookieValue(required = false) String token) {
-    if (token == null) {
+  public void agree(@PathVariable("answerId") Integer answerId, HttpSession session) {
+    var user = (User) session.getAttribute("user");
+    if (user == null) {
       throw new AuthorizationException("用户未登录");
     }
-    answerService.agree(answerId, token);
+    answerService.agree(answerId, user);
   }
 
   @DeleteMapping("/id/{answerId}/agree/")
-  public void removeAgree(
-      @PathVariable("answerId") Integer answerId, @CookieValue(required = false) String token) {
-    if (token == null) {
+  public void removeAgree(@PathVariable("answerId") Integer answerId, HttpSession session) {
+    var user = (User) session.getAttribute("user");
+    if (user == null) {
       throw new AuthorizationException("用户未登录");
     }
-    answerService.deleteAgree(answerId, token);
+    answerService.deleteAgree(answerId, user);
   }
 }

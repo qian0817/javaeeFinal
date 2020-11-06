@@ -2,10 +2,12 @@ import {applyMiddleware, combineReducers, createStore} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
 import loginReducer from './reducers/login/loginReducer'
 import thunk from 'redux-thunk'
+import visibleReducer from "./reducers/loginFormVisible/loginFormVisibleReducer";
 
 
 const reducer = combineReducers({
-    login: loginReducer
+    login: loginReducer,
+    loginFormVisible: visibleReducer
 })
 
 export type RootState = ReturnType<typeof reducer>

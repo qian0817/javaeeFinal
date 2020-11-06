@@ -1,15 +1,16 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.entity.Question;
+import com.qianlei.zhifou.pojo.Question;
+import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.QuestionHotVo;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /** @author qianlei */
@@ -38,9 +39,10 @@ public class QuestionController {
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-      @CookieValue(required = false) @Nullable String token) {
+      HttpSession session) {
+    var user = (User) session.getAttribute("user");
     return answerService.getAllAnswerByQuestionId(
-        questionId, sortDirection, sortBy, pageNum, pageSize, token);
+        questionId, sortDirection, sortBy, pageNum, pageSize, user);
   }
 
   @GetMapping("/random")
@@ -58,6 +60,6 @@ public class QuestionController {
       @PathVariable String keyword,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-    return questionService.searchQuestion(keyword,pageNum,pageSize);
+    return questionService.searchQuestion(keyword, pageNum, pageSize);
   }
 }

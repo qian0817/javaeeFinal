@@ -1,7 +1,3 @@
-authing:
-  userpool:
-    id:
-    secret:
 spring:
   datasource:
     url:

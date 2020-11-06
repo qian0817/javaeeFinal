@@ -3,7 +3,8 @@ package com.qianlei.zhifou.service.impl;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.CommentDao;
-import com.qianlei.zhifou.entity.Comment;
+import com.qianlei.zhifou.pojo.Comment;
+import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.service.ICommentService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
@@ -36,8 +37,7 @@ public class CommentServiceImpl implements ICommentService {
   }
 
   @Override
-  public CommentVo createNewComment(Comment comment, String token) {
-    var user = userService.getUserInfo(token);
+  public CommentVo createNewComment(Comment comment, User user) {
     if (StringUtils.isBlank(comment.getContent())) {
       throw new ZhiFouException("请输入评论内容");
     }

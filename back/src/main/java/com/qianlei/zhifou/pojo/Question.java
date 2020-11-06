@@ -1,4 +1,4 @@
-package com.qianlei.zhifou.entity;
+package com.qianlei.zhifou.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

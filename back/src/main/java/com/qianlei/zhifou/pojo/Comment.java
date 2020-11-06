@@ -1,4 +1,4 @@
-package com.qianlei.zhifou.entity;
+package com.qianlei.zhifou.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class Comment {
   private String content;
 
   @Column(name = "user_id")
-  private String userId;
+  private Integer userId;
 
   @Column(name = "create_time")
   @CreationTimestamp

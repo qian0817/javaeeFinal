@@ -3,18 +3,17 @@ import {LogoWrapper, TopContentWrapper, TopWrapper} from "./style";
 import {Affix, Button, Input} from "antd";
 import {Link, useHistory} from "react-router-dom";
 import instance from "../../axiosInstance";
-import {useCookies} from "react-cookie";
 import {useDispatch, useSelector} from "react-redux";
 import {setUser} from "../../reducers/login/actionCreate";
 import {UserVo} from "../../entity/UserVo";
 import {RootState} from "../../store";
+import {setVisible} from "../../reducers/loginFormVisible/actionCreate";
 
 
 const Header = () => {
     const history = useHistory();
     const dispatch = useDispatch()
     const loginUser = useSelector((state: RootState) => state.login)
-    const [, , removeCookie] = useCookies([]);
 
     const checkLoginStatus = useCallback(async () => {
         try {
@@ -29,10 +28,9 @@ const Header = () => {
         checkLoginStatus()
     }, [checkLoginStatus, dispatch])
 
-    const logout = () => {
+    const logout = async () => {
+        await instance.delete("/api/token/")
         dispatch(setUser(null))
-        //清除 cookie
-        removeCookie("token")
     }
 
     const onSearch = (value: string) => {
@@ -61,7 +59,7 @@ const Header = () => {
                             <Button type="link" onClick={logout}>登出</Button>
                         </>
                     ) : (
-                        <Button type="link" onClick={() => window.location.href='/login'}>登录</Button>
+                        <Button type="link" onClick={() => dispatch(setVisible(true))}>登录</Button>
                     )}
                 </TopContentWrapper>
             </TopWrapper>

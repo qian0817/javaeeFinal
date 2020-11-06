@@ -2,7 +2,7 @@ package com.qianlei.zhifou.service.impl;
 
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.QuestionDao;
-import com.qianlei.zhifou.entity.Question;
+import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import org.apache.commons.lang3.StringUtils;

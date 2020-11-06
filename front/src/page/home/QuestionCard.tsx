@@ -15,7 +15,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({item}) => {
             <TitleWrapper onClick={() => history.push(`/question/${item.id}`)}>
                 {item.title}
             </TitleWrapper>
-            <div dangerouslySetInnerHTML={{__html: item.content}}/>
+            <div dangerouslySetInnerHTML={{__html: item.content.substr(0,100)}}/>
             <Divider/>
         </QuestionCardWrapper>
     )

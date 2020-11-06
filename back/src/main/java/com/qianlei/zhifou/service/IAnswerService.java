@@ -1,6 +1,7 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.entity.Answer;
+import com.qianlei.zhifou.pojo.Answer;
+import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
@@ -11,35 +12,35 @@ public interface IAnswerService {
    * 根据 id 获取回答信息
    *
    * @param id 回答id
-   * @param token 希望获取回答的用户 id
+   * @param user 希望获取回答的用户
    * @return 回答信息
    */
-  AnswerVo getAnswerByQuestionId(int id, @Nullable String token);
+  AnswerVo getAnswerByQuestionId(int id, @Nullable User user);
 
   /**
    * 创建回答
    *
    * @param answer 回答内容
-   * @param token 创建者 token
+   * @param user 创建者
    * @return 创建的回答信息
    */
-  Answer createAnswer(Answer answer, String token);
+  Answer createAnswer(Answer answer, User user);
 
   /**
    * 赞同回答
    *
    * @param answerId 回答 id
-   * @param token 赞同者 token
+   * @param user 赞同者
    */
-  void agree(Integer answerId, String token);
+  void agree(Integer answerId, User user);
 
   /**
    * 取消赞同回答
    *
    * @param answerId 回答 id
-   * @param token 取消赞同者 token
+   * @param user 取消赞同者
    */
-  void deleteAgree(Integer answerId, String token);
+  void deleteAgree(Integer answerId, User user);
 
   /**
    * 获取每页的回答信息
@@ -49,7 +50,7 @@ public interface IAnswerService {
    * @param sortBy 排序根据
    * @param pageNum 页数
    * @param pageSize 每页数量
-   * @param token 用户token
+   * @param user 用户
    * @return 回答信息
    */
   Page<AnswerVo> getAllAnswerByQuestionId(
@@ -58,5 +59,5 @@ public interface IAnswerService {
       String sortBy,
       int pageNum,
       int pageSize,
-      String token);
+      User user);
 }
