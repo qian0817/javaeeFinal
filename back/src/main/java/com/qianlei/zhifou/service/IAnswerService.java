@@ -1,7 +1,7 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.pojo.User;
+import com.qianlei.zhifou.pojo.es.Answer;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;

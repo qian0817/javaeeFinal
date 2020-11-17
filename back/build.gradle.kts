@@ -20,11 +20,13 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-actuator")
+    implementation("org.springframework.boot", "spring-boot-starter-data-elasticsearch")
     implementation("org.springframework.boot", "spring-boot-starter-data-jpa")
     implementation("org.springframework.boot", "spring-boot-starter-data-redis")
     implementation("org.springframework.boot", "spring-boot-starter-web")
     implementation("org.apache.commons", "commons-lang3")
     implementation("com.nimbusds", "nimbus-jose-jwt")
+    implementation("org.jetbrains", "annotations", "20.1.0")
     compileOnly("org.projectlombok", "lombok")
     developmentOnly("org.springframework.boot", "spring-boot-devtools")
     testRuntimeOnly("com.h2database", "h2")

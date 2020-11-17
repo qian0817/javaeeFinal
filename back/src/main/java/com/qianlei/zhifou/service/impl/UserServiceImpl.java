@@ -47,6 +47,6 @@ public class UserServiceImpl implements IUserService {
     if (!existedUser.get().getPassword().equals(user.getPassword())) {
       throw new ZhiFouException("用户名或密码错误");
     }
-    return user;
+    return existedUser.get();
   }
 }

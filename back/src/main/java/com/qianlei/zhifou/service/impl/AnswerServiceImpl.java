@@ -2,32 +2,37 @@ package com.qianlei.zhifou.service.impl;
 
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
-import com.qianlei.zhifou.dao.AnswerDao;
-import com.qianlei.zhifou.dao.QuestionDao;
+import com.qianlei.zhifou.dao.es.AnswerDao;
+import com.qianlei.zhifou.dao.es.QuestionDao;
 import com.qianlei.zhifou.pojo.Agree;
-import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.pojo.User;
+import com.qianlei.zhifou.pojo.es.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.AnswerVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /** @author qianlei */
 @Service
+@Slf4j
 @Transactional(rollbackFor = RuntimeException.class)
 public class AnswerServiceImpl implements IAnswerService {
   @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
+  @Autowired private StringRedisTemplate redisTemplate;
   @Autowired private IQuestionService questionService;
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;
@@ -44,10 +49,12 @@ public class AnswerServiceImpl implements IAnswerService {
     if (!questionDao.existsById(answer.getQuestionId())) {
       throw new ZhiFouException("问题不存在");
     }
-    answer.setId(null);
+    log.info("user{}", user);
+    Long id = redisTemplate.boundValueOps("answerId").increment();
+    answer.setId(id.intValue());
     answer.setUserId(user.getId());
-    answer.setUpdateTime(null);
-    answer.setCreateTime(null);
+    answer.setUpdateTime(LocalDateTime.now());
+    answer.setCreateTime(LocalDateTime.now());
     answerDao.save(answer);
     questionService.improveQuestionHeatLevel(answer.getQuestionId(), 100);
     return answer;

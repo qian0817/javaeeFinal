@@ -1,8 +1,8 @@
 package com.qianlei.zhifou.service.impl;
 
 import com.qianlei.zhifou.common.ZhiFouException;
-import com.qianlei.zhifou.dao.QuestionDao;
-import com.qianlei.zhifou.pojo.Question;
+import com.qianlei.zhifou.dao.es.QuestionDao;
+import com.qianlei.zhifou.pojo.es.Question;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,8 @@ public class QuestionServiceImpl implements IQuestionService {
     if (StringUtils.isBlank(question.getTitle())) {
       throw new ZhiFouException("标题不能为空");
     }
-    question.setId(null);
+    Long id = redisTemplate.boundValueOps("zhofou_questionId").increment();
+    question.setId(id.intValue());
     return questionDao.save(question);
   }
 
@@ -89,6 +90,6 @@ public class QuestionServiceImpl implements IQuestionService {
     if (num < 1) {
       num = 1;
     }
-    return questionDao.findRandomQuestion(num);
+    return questionDao.findRandomQuestion(PageRequest.of(0, num));
   }
 }

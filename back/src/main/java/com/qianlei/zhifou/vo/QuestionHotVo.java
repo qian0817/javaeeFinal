@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.vo;
 
-import com.qianlei.zhifou.pojo.Question;
+import com.qianlei.zhifou.pojo.es.Question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

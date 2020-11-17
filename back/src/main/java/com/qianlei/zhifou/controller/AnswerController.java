@@ -1,8 +1,8 @@
 package com.qianlei.zhifou.controller;
 
 import com.qianlei.zhifou.common.AuthorizationException;
-import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.pojo.User;
+import com.qianlei.zhifou.pojo.es.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import org.springframework.beans.factory.annotation.Autowired;

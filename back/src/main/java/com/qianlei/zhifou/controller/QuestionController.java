@@ -1,7 +1,7 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.pojo.User;
+import com.qianlei.zhifou.pojo.es.Question;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.AnswerVo;
