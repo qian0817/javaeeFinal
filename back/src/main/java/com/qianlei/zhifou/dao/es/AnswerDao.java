@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /** @author qianlei */
-public interface AnswerDao extends ElasticsearchRepository<Answer, Integer> {
-  Page<Answer> findAllByQuestionId(Integer questionId, Pageable page);
+public interface AnswerDao extends ElasticsearchRepository<Answer, String> {
+  Page<Answer> findAllByQuestionId(String questionId, Pageable page);
 }

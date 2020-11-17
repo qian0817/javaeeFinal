@@ -27,7 +27,7 @@ public class CommentServiceImpl implements ICommentService {
   @Autowired private AnswerDao answerDao;
 
   @Override
-  public Page<CommentVo> getComment(Integer answerId, Integer pageNum, Integer pageSize) {
+  public Page<CommentVo> getComment(String answerId, Integer pageNum, Integer pageSize) {
     var pageable = PageRequest.of(pageNum, pageSize);
     return commentDao
         .findAllByAnswerIdOrderByCreateTime(answerId, pageable)

@@ -17,7 +17,7 @@ public class CommentController {
 
   @GetMapping("/answer/{answerId}")
   public Page<CommentVo> getCommentVo(
-      @PathVariable Integer answerId,
+      @PathVariable String answerId,
       @RequestParam(value = "pageNum", defaultValue = "0") Integer pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
     return commentService.getComment(answerId, pageNum, pageSize);
@@ -25,7 +25,7 @@ public class CommentController {
 
   @PostMapping("/answer/{answerId}")
   public CommentVo createComment(
-      @PathVariable("answerId") Integer answerId,
+      @PathVariable("answerId") String answerId,
       @RequestBody Comment comment,
       @SessionAttribute(value = "user", required = false) User user) {
     if (user == null) {

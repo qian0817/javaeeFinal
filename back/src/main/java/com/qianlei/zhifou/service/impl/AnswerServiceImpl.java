@@ -50,8 +50,7 @@ public class AnswerServiceImpl implements IAnswerService {
       throw new ZhiFouException("问题不存在");
     }
     log.info("user{}", user);
-    Long id = redisTemplate.boundValueOps("answerId").increment();
-    answer.setId(id.intValue());
+    answer.setId(null);
     answer.setUserId(user.getId());
     answer.setUpdateTime(LocalDateTime.now());
     answer.setCreateTime(LocalDateTime.now());
@@ -61,7 +60,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public AnswerVo getAnswerByQuestionId(int answerId, @Nullable User user) {
+  public AnswerVo getAnswerByQuestionId(String answerId, @Nullable User user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
@@ -77,7 +76,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public void agree(Integer answerId, User user) {
+  public void agree(String answerId, User user) {
     if (!answerDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
@@ -88,13 +87,13 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public void deleteAgree(Integer answerId, User user) {
+  public void deleteAgree(String answerId, User user) {
     agreeDao.deleteByAnswerIdAndUserId(answerId, user.getId());
   }
 
   @Override
   public Page<AnswerVo> getAllAnswerByQuestionId(
-      Integer questionId,
+      String questionId,
       String sortDirection,
       String sortBy,
       int pageNum,

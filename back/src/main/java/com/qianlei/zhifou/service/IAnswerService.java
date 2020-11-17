@@ -15,7 +15,7 @@ public interface IAnswerService {
    * @param user 希望获取回答的用户
    * @return 回答信息
    */
-  AnswerVo getAnswerByQuestionId(int id, @Nullable User user);
+  AnswerVo getAnswerByQuestionId(String id, @Nullable User user);
 
   /**
    * 创建回答
@@ -32,7 +32,7 @@ public interface IAnswerService {
    * @param answerId 回答 id
    * @param user 赞同者
    */
-  void agree(Integer answerId, User user);
+  void agree(String answerId, User user);
 
   /**
    * 取消赞同回答
@@ -40,7 +40,7 @@ public interface IAnswerService {
    * @param answerId 回答 id
    * @param user 取消赞同者
    */
-  void deleteAgree(Integer answerId, User user);
+  void deleteAgree(String answerId, User user);
 
   /**
    * 获取每页的回答信息
@@ -54,10 +54,5 @@ public interface IAnswerService {
    * @return 回答信息
    */
   Page<AnswerVo> getAllAnswerByQuestionId(
-      Integer questionId,
-      String sortDirection,
-      String sortBy,
-      int pageNum,
-      int pageSize,
-      User user);
+      String questionId, String sortDirection, String sortBy, int pageNum, int pageSize, User user);
 }

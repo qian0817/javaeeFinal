@@ -35,9 +35,8 @@ class CommentServiceTest {
         "请输入评论内容");
 
     comment.setContent("test");
-    comment.setAnswerId(10000);
+    comment.setAnswerId("10000");
     assertThrows(
         ZhiFouException.class, () -> commentService.createNewComment(comment, new User()), "回答不存在");
-    comment.setAnswerId(1);
   }
 }

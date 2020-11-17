@@ -2,9 +2,9 @@ import {UserVo} from "./UserVo";
 import {Question} from "./Question";
 
 export interface AnswerVo {
-    id: number;
+    id: string;
     user: UserVo;
-    questionId: number;
+    questionId: string;
     content: string;
     createTime: string;
     updateTime: string;

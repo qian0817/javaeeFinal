@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class Answer {
-  @Id private Integer id;
+  @Id private String id;
 
   @Field(name = "user_id")
   private Integer userId;
 
   @Field(name = "question_id")
-  private Integer questionId;
+  private String questionId;
 
   @Field(
       name = "content",

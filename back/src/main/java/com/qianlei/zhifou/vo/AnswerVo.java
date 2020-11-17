@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnswerVo {
-  private Integer id;
+  private String id;
   private UserVo user;
-  private Integer questionId;
+  private String questionId;
   private String content;
   private LocalDateTime createTime;
   private LocalDateTime updateTime;

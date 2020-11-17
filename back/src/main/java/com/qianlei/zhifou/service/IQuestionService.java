@@ -22,7 +22,7 @@ public interface IQuestionService {
    * @param id 问题id
    * @return 问题信息
    */
-  Question getQuestionById(Integer id);
+  Question getQuestionById(String id);
 
   /**
    * 获取指定数量的数量的随机问题
@@ -38,7 +38,7 @@ public interface IQuestionService {
    * @param questionId 问题 id
    * @param number 热度
    */
-  void improveQuestionHeatLevel(int questionId, int number);
+  void improveQuestionHeatLevel(String questionId, int number);
 
   /**
    * 获取热榜问题，取前30位

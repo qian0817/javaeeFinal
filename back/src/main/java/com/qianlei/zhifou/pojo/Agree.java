@@ -22,5 +22,5 @@ public class Agree {
   private Integer userId;
 
   @Column(name = "answer_id")
-  private Integer answerId;
+  private String answerId;
 }

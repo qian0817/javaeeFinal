@@ -16,7 +16,7 @@ const AnswerDetail = () => {
     useEffect(() => {
         const loadAnswer = async () => {
             const response = await instance.get<AnswerVo>(`/api/answer/id/${answerId}`)
-            if (response.data.questionId !== Number(questionId)) {
+            if (response.data.questionId !== questionId) {
                 history.push(`/question/${questionId}`)
             } else {
                 setAnswer(response.data)

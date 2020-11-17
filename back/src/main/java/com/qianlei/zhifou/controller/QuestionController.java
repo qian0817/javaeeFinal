@@ -26,7 +26,7 @@ public class QuestionController {
   }
 
   @GetMapping("/id/{id}")
-  public Question getQuestionById(@PathVariable Integer id) {
+  public Question getQuestionById(@PathVariable String id) {
     var question = questionService.getQuestionById(id);
     questionService.improveQuestionHeatLevel(id, 1);
     return question;
@@ -34,7 +34,7 @@ public class QuestionController {
 
   @GetMapping("/id/{id}/answers/")
   public Page<AnswerVo> getAnswerByQuestionId(
-      @PathVariable("id") Integer questionId,
+      @PathVariable("id") String questionId,
       @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDirection,
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,

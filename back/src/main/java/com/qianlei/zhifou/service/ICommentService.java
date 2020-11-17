@@ -15,7 +15,7 @@ public interface ICommentService {
    * @param pageSize 每页大小
    * @return 评论信息
    */
-  Page<CommentVo> getComment(Integer answerId, Integer pageNum, Integer pageSize);
+  Page<CommentVo> getComment(String answerId, Integer pageNum, Integer pageSize);
 
   /**
    * 创建新的评论

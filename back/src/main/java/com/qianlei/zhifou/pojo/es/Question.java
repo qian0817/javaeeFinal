@@ -14,7 +14,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Question {
-  @Id private Integer id;
+  @Id private String id;
 
   @Field(
       value = "title",

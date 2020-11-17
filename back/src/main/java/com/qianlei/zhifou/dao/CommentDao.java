@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 /** @author qianlei */
 public interface CommentDao extends JpaRepository<Comment, Integer> {
-  Page<Comment> findAllByAnswerIdOrderByCreateTime(Integer answerId, Pageable pageable);
+  Page<Comment> findAllByAnswerIdOrderByCreateTime(String answerId, Pageable pageable);
 }

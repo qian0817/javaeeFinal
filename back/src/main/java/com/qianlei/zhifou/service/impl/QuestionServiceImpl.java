@@ -36,24 +36,21 @@ public class QuestionServiceImpl implements IQuestionService {
     if (StringUtils.isBlank(question.getTitle())) {
       throw new ZhiFouException("标题不能为空");
     }
-    Long id = redisTemplate.boundValueOps("zhofou_questionId").increment();
-    question.setId(id.intValue());
+    question.setId(null);
     return questionDao.save(question);
   }
 
   @Override
-  public Question getQuestionById(Integer questionId) {
+  public Question getQuestionById(String questionId) {
     return questionDao.findById(questionId).orElseThrow(() -> new ZhiFouException("问题id不存在"));
   }
 
   @Override
-  public void improveQuestionHeatLevel(int questionId, int number) {
+  public void improveQuestionHeatLevel(String questionId, int number) {
     // 设置每小时的热榜
     var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd:HH"));
     // 将热榜的信息保存到 redis 之中。
-    redisTemplate
-        .boundZSetOps("question_" + currentHour)
-        .incrementScore(String.valueOf(questionId), number);
+    redisTemplate.boundZSetOps("question_" + currentHour).incrementScore(questionId, number);
   }
 
   @Override
@@ -76,7 +73,7 @@ public class QuestionServiceImpl implements IQuestionService {
               if (tuple.getScore() == null || tuple.getValue() == null) {
                 return null;
               }
-              var questionId = Integer.valueOf(tuple.getValue());
+              var questionId = tuple.getValue();
               var score = tuple.getScore().longValue();
               var question = questionDao.findById(questionId).orElseThrow();
               return new QuestionHotVo(question, score);

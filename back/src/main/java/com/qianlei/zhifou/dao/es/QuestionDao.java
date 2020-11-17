@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import java.util.List;
 
 /** @author qianlei */
-public interface QuestionDao extends ElasticsearchRepository<Question, Integer> {
+public interface QuestionDao extends ElasticsearchRepository<Question, String> {
 
   @Query("{\"function_score\": {\"functions\": [{\"random_score\": {}}]}}")
   List<Question> findRandomQuestion(Pageable pageable);

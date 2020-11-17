@@ -17,7 +17,7 @@ public class AnswerController {
   @Autowired private IAnswerService answerService;
 
   @GetMapping("/id/{id}")
-  public AnswerVo getAnswerById(@PathVariable int id, HttpSession session) {
+  public AnswerVo getAnswerById(@PathVariable String id, HttpSession session) {
     var user = (User) session.getAttribute("user");
     return answerService.getAnswerByQuestionId(id, user);
   }
@@ -32,7 +32,7 @@ public class AnswerController {
   }
 
   @PostMapping("/id/{answerId}/agree/")
-  public void agree(@PathVariable("answerId") Integer answerId, HttpSession session) {
+  public void agree(@PathVariable("answerId") String answerId, HttpSession session) {
     var user = (User) session.getAttribute("user");
     if (user == null) {
       throw new AuthorizationException("用户未登录");
@@ -41,7 +41,7 @@ public class AnswerController {
   }
 
   @DeleteMapping("/id/{answerId}/agree/")
-  public void removeAgree(@PathVariable("answerId") Integer answerId, HttpSession session) {
+  public void removeAgree(@PathVariable("answerId") String answerId, HttpSession session) {
     var user = (User) session.getAttribute("user");
     if (user == null) {
       throw new AuthorizationException("用户未登录");

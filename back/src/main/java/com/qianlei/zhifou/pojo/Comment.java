@@ -21,7 +21,7 @@ public class Comment {
   private Integer id;
 
   @Column(name = "answer_id")
-  private Integer answerId;
+  private String answerId;
 
   @Column(name = "content")
   private String content;

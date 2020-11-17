@@ -29,7 +29,7 @@ class AnswerServiceTest {
         ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new User()), "回答不能为空");
 
     newAnswer.setContent("test");
-    newAnswer.setQuestionId(1);
+    newAnswer.setQuestionId("1");
 
     assertThrows(
         ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new User()), "问题不存在");
@@ -37,12 +37,12 @@ class AnswerServiceTest {
 
   @Test
   public void agreeTest() {
-    assertThrows(ZhiFouException.class, () -> answerService.agree(1, new User()), "回答不存在");
+    assertThrows(ZhiFouException.class, () -> answerService.agree("1", new User()), "回答不存在");
   }
 
   @Test
   public void getAnswerByIdTest() {
     assertThrows(
-        ZhiFouException.class, () -> answerService.getAnswerByQuestionId(1, new User()), "问题不存在");
+        ZhiFouException.class, () -> answerService.getAnswerByQuestionId("1", new User()), "问题不存在");
   }
 }
