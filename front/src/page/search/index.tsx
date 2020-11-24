@@ -4,14 +4,13 @@ import instance from "../../axiosInstance";
 import {Page} from "../../entity/Page";
 import {Question} from "../../entity/Question";
 import {message} from "antd";
-// @ts-ignore
 import Highlighter from "react-highlight-words";
 import {SearchWrapper, TitleWrapper} from "./style";
 
 
 const Search = () => {
     const history = useHistory();
-    const {keyword} = useParams();
+    const {keyword} = useParams<{ keyword: string }>();
     const [questions, setQuestions] = useState<Page<Question>>()
     const loadQuestion = async (keyword: string) => {
         try {

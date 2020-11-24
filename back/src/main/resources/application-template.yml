@@ -1,3 +1,8 @@
+jwt:
+  rsa:
+    alias:
+    password:
+    key-filename:
 spring:
   datasource:
     url:

@@ -1,8 +1,8 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.pojo.Comment;
-import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.vo.CommentVo;
+import com.qianlei.zhifou.vo.UserVo;
 import org.springframework.data.domain.Page;
 
 /** @author qianlei */
@@ -24,5 +24,5 @@ public interface ICommentService {
    * @param user 创建者
    * @return 评论信息
    */
-  CommentVo createNewComment(Comment comment, User user);
+  CommentVo createNewComment(Comment comment, UserVo user);
 }

@@ -1,8 +1,8 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.common.ZhiFouException;
-import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.pojo.es.Answer;
+import com.qianlei.zhifou.vo.UserVo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,27 +22,27 @@ class AnswerServiceTest {
   public void createAnswerTest() {
     Answer newAnswer = new Answer();
     assertThrows(
-        ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new User()), "回答不能为空");
+        ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new UserVo()), "回答不能为空");
 
     newAnswer.setContent("  \t \n");
     assertThrows(
-        ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new User()), "回答不能为空");
+        ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new UserVo()), "回答不能为空");
 
     newAnswer.setContent("test");
     newAnswer.setQuestionId("1");
 
     assertThrows(
-        ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new User()), "问题不存在");
+        ZhiFouException.class, () -> answerService.createAnswer(newAnswer, new UserVo()), "问题不存在");
   }
 
   @Test
   public void agreeTest() {
-    assertThrows(ZhiFouException.class, () -> answerService.agree("1", new User()), "回答不存在");
+    assertThrows(ZhiFouException.class, () -> answerService.agree("1", new UserVo()), "回答不存在");
   }
 
   @Test
   public void getAnswerByIdTest() {
     assertThrows(
-        ZhiFouException.class, () -> answerService.getAnswerByQuestionId("1", new User()), "问题不存在");
+        ZhiFouException.class, () -> answerService.getAnswerByQuestionId("1", new UserVo()), "问题不存在");
   }
 }

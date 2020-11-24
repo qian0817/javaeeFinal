@@ -1,16 +1,15 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.pojo.es.Question;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.QuestionHotVo;
+import com.qianlei.zhifou.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /** @author qianlei */
@@ -39,8 +38,7 @@ public class QuestionController {
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-      HttpSession session) {
-    var user = (User) session.getAttribute("user");
+      @RequestAttribute(value = "user", required = false) UserVo user) {
     return answerService.getAllAnswerByQuestionId(
         questionId, sortDirection, sortBy, pageNum, pageSize, user);
   }

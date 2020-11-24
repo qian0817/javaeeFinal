@@ -5,12 +5,12 @@ import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.es.AnswerDao;
 import com.qianlei.zhifou.dao.es.QuestionDao;
 import com.qianlei.zhifou.pojo.Agree;
-import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.pojo.es.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.AnswerVo;
+import com.qianlei.zhifou.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +40,13 @@ public class AnswerServiceImpl implements IAnswerService {
   private static final List<String> SUPPORT_SORT_DIRECTION = List.of("asc", "desc");
 
   @Override
-  public Answer createAnswer(Answer answer, User user) {
+  public Answer createAnswer(Answer answer, UserVo user) {
     if (StringUtils.isBlank(answer.getContent())) {
       throw new ZhiFouException("回答不能为空");
     }
     if (!questionDao.existsById(answer.getQuestionId())) {
       throw new ZhiFouException("问题不存在");
     }
-    log.info("user{}", user);
     answer.setId(null);
     answer.setUserId(user.getId());
     answer.setUpdateTime(LocalDateTime.now());
@@ -58,7 +57,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public AnswerVo getAnswerByQuestionId(String answerId, @Nullable User user) {
+  public AnswerVo getAnswerByQuestionId(String answerId, @Nullable UserVo user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
@@ -74,7 +73,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public void agree(String answerId, User user) {
+  public void agree(String answerId, UserVo user) {
     if (!answerDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
@@ -85,7 +84,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public void deleteAgree(String answerId, User user) {
+  public void deleteAgree(String answerId, UserVo user) {
     agreeDao.deleteByAnswerIdAndUserId(answerId, user.getId());
   }
 
@@ -96,7 +95,7 @@ public class AnswerServiceImpl implements IAnswerService {
       String sortBy,
       int pageNum,
       int pageSize,
-      User user) {
+      UserVo user) {
     if (!SUPPORTED_SORT_BY_PROPERTIES.contains(sortBy)) {
       throw new ZhiFouException("不支持的排序类型" + sortBy);
     }

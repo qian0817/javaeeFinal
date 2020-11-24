@@ -29,7 +29,7 @@ const Header = () => {
     }, [checkLoginStatus, dispatch])
 
     const logout = async () => {
-        await instance.delete("/api/token/")
+        localStorage.removeItem("jwt_token")
         dispatch(setUser(null))
     }
 

@@ -1,8 +1,8 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.pojo.es.Answer;
 import com.qianlei.zhifou.vo.AnswerVo;
+import com.qianlei.zhifou.vo.UserVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
 
@@ -15,7 +15,7 @@ public interface IAnswerService {
    * @param user 希望获取回答的用户
    * @return 回答信息
    */
-  AnswerVo getAnswerByQuestionId(String id, @Nullable User user);
+  AnswerVo getAnswerByQuestionId(String id, @Nullable UserVo user);
 
   /**
    * 创建回答
@@ -24,7 +24,7 @@ public interface IAnswerService {
    * @param user 创建者
    * @return 创建的回答信息
    */
-  Answer createAnswer(Answer answer, User user);
+  Answer createAnswer(Answer answer, UserVo user);
 
   /**
    * 赞同回答
@@ -32,7 +32,7 @@ public interface IAnswerService {
    * @param answerId 回答 id
    * @param user 赞同者
    */
-  void agree(String answerId, User user);
+  void agree(String answerId, UserVo user);
 
   /**
    * 取消赞同回答
@@ -40,7 +40,7 @@ public interface IAnswerService {
    * @param answerId 回答 id
    * @param user 取消赞同者
    */
-  void deleteAgree(String answerId, User user);
+  void deleteAgree(String answerId, UserVo user);
 
   /**
    * 获取每页的回答信息
@@ -54,5 +54,10 @@ public interface IAnswerService {
    * @return 回答信息
    */
   Page<AnswerVo> getAllAnswerByQuestionId(
-      String questionId, String sortDirection, String sortBy, int pageNum, int pageSize, User user);
+      String questionId,
+      String sortDirection,
+      String sortBy,
+      int pageNum,
+      int pageSize,
+      UserVo user);
 }

@@ -16,13 +16,13 @@ import {RootState} from "../../store";
 import {Helmet} from "react-helmet";
 
 const QuestionDetail = () => {
-    const {id} = useParams();
+    const {id} = useParams<{ id: string }>();
     const [formHidden, setFormHidden] = useState(true)
     const [questionDetail, setQuestionDetail] = useState<Question>()
     const [answers, setAnswers] = useState<Page<AnswerVo>>()
     const loginUser = useSelector((state: RootState) => state.login)
 
-    const loadQuestion = async (id: number) => {
+    const loadQuestion = async (id: string) => {
         try {
             const questionResponse = await instance.get<Question>(`/api/question/id/${id}`)
             setQuestionDetail(questionResponse.data)

@@ -16,13 +16,6 @@ public class MyExceptionHandler {
     return new ErrorResponse(400, e.getMessage());
   }
 
-  @ExceptionHandler(AuthorizationException.class)
-  @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-  public ErrorResponse handleAuthorizationException(AuthorizationException e) {
-    return new ErrorResponse(401, e.getMessage());
-  }
-
-
   @ExceptionHandler(RuntimeException.class)
   @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleRunTimeException(RuntimeException e) {

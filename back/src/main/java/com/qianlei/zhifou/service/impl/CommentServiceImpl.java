@@ -4,7 +4,6 @@ import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.CommentDao;
 import com.qianlei.zhifou.dao.es.AnswerDao;
 import com.qianlei.zhifou.pojo.Comment;
-import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.service.ICommentService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
@@ -37,7 +36,7 @@ public class CommentServiceImpl implements ICommentService {
   }
 
   @Override
-  public CommentVo createNewComment(Comment comment, User user) {
+  public CommentVo createNewComment(Comment comment, UserVo user) {
     if (StringUtils.isBlank(comment.getContent())) {
       throw new ZhiFouException("请输入评论内容");
     }
@@ -51,6 +50,6 @@ public class CommentServiceImpl implements ICommentService {
     var answer = answerDao.findById(comment.getAnswerId()).orElseThrow();
     // 每条新的评论为问题增加 30 个热度
     questionService.improveQuestionHeatLevel(answer.getQuestionId(), 30);
-    return new CommentVo(new UserVo(user), comment);
+    return new CommentVo(user, comment);
   }
 }

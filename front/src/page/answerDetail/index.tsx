@@ -9,7 +9,7 @@ import AgreeButton from "../../component/AgreeButton";
 import {Helmet} from "react-helmet";
 
 const AnswerDetail = () => {
-    const {questionId, answerId} = useParams();
+    const {questionId, answerId} = useParams<{ questionId: string, answerId: string }>();
     const history = useHistory();
     const [answer, setAnswer] = useState<AnswerVo>()
 

@@ -10,7 +10,7 @@ interface AgreeButtonProps {
     canAgree: boolean,
     setAgreeStatus: (agree: number, canAgree: boolean) => void,
     agreeNumber: number,
-    answerId: number
+    answerId: string
 }
 
 const AgreeButton: React.FC<AgreeButtonProps> = ({canAgree, setAgreeStatus, agreeNumber, answerId}) => {

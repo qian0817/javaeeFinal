@@ -10,7 +10,7 @@ import instance from "../../axiosInstance";
 interface WriteAnswerFormProps {
     hidden: boolean,
     setHidden: (value: boolean) => void,
-    questionId: number
+    questionId: string
 }
 
 const WriteAnswerForm: React.FC<WriteAnswerFormProps> = ({hidden, setHidden, questionId}) => {

@@ -9,7 +9,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "../../store";
 
 interface CommentViewProps {
-    answerId: number
+    answerId: string
 }
 
 const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
@@ -20,7 +20,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
     const loginUser = useSelector((state: RootState) => state.login)
     const [form] = Form.useForm();
 
-    const loadComment = async (answerId: number, pageNum: number) => {
+    const loadComment = async (answerId: string, pageNum: number) => {
         try {
             const response = await instance
                 .get<Page<CommentVo>>(`/api/comment/answer/${answerId}`, {
@@ -51,7 +51,7 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
             })
             message.success("评论成功")
             if (pageNum === 1) {
-                loadComment(answerId, pageNum)
+                await loadComment(answerId, pageNum)
             } else {
                 setPageNum(1)
             }
@@ -71,7 +71,8 @@ const CommentView: React.FC<CommentViewProps> = ({answerId}) => {
             <Comment
                 content={
                     <Form onFinish={onSubmit} form={form}>
-                        <Form.Item name="content" rules={[{required: true}]}>
+                        <Form.Item name="content"
+                                   rules={[{required: true}]}>
                             <Input.TextArea rows={4} placeholder="评论内容"/>
                         </Form.Item>
                         <Form.Item>

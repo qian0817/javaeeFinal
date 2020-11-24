@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-data-jpa")
     implementation("org.springframework.boot", "spring-boot-starter-data-redis")
     implementation("org.springframework.boot", "spring-boot-starter-web")
+    implementation("org.springframework.security", "spring-security-rsa", "1.0.9.RELEASE")
     implementation("org.springframework.session", "spring-session-data-redis")
     implementation("org.apache.commons", "commons-lang3")
     implementation("com.nimbusds", "nimbus-jose-jwt")
