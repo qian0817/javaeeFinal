@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +31,6 @@ import java.util.List;
 public class AnswerServiceImpl implements IAnswerService {
   @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
-  @Autowired private StringRedisTemplate redisTemplate;
   @Autowired private IQuestionService questionService;
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;

@@ -48,9 +48,9 @@ public class QuestionServiceImpl implements IQuestionService {
   @Override
   public void improveQuestionHeatLevel(String questionId, int number) {
     // 设置每小时的热榜
-    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd:HH"));
+    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd HH"));
     // 将热榜的信息保存到 redis 之中。
-    redisTemplate.boundZSetOps("question_" + currentHour).incrementScore(questionId, number);
+    redisTemplate.boundZSetOps("zhifou:question:hot:" + currentHour).incrementScore(questionId, number);
   }
 
   @Override
@@ -60,10 +60,10 @@ public class QuestionServiceImpl implements IQuestionService {
 
   @Override
   public List<QuestionHotVo> getHottestQuestion() {
-    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd:HH"));
+    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd HH"));
     // 从 redis 之中获取热榜的数据
     var questionIdList =
-        redisTemplate.boundZSetOps("question_" + currentHour).reverseRangeWithScores(0, 29);
+        redisTemplate.boundZSetOps("zhifou:question:hot:" + currentHour).reverseRangeWithScores(0, 29);
     if (questionIdList == null) {
       return new ArrayList<>();
     }

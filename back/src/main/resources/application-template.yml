@@ -3,3 +3,9 @@ spring:
     url:
     username:
     password:
+  redis:
+    host:
+    port:
+  elasticsearch:
+    rest:
+      uris:
