@@ -5,8 +5,3 @@ spring:
     redis:
       repositories:
         enabled: false
-  session:
-    redis:
-      namespace: zhifou:session
-    store-type: redis
-    timeout: 604800

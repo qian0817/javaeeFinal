@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 public class UserVo {
   private Integer id;
   private String username;
+  private String email;
 
   public UserVo(User user) {
     setId(user.getId());
     setUsername(user.getUsername());
+    setEmail(user.getEmail());
   }
 }
