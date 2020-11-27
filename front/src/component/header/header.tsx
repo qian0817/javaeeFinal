@@ -56,6 +56,7 @@ const Header = () => {
                     {loginUser ? (
                         <>
                             <Button type="primary" onClick={() => history.push("/question/action/create")}>提问</Button>
+                            <Button type="link" onClick={() => history.push(`/user/${loginUser?.id}`)}>我的主页</Button>
                             <Button type="link" onClick={logout}>登出</Button>
                         </>
                     ) : (

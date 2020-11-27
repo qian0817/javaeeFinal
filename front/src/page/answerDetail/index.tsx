@@ -7,6 +7,7 @@ import instance from "../../axiosInstance";
 import CommentView from "./CommentView";
 import AgreeButton from "../../component/AgreeButton";
 import {Helmet} from "react-helmet";
+import {Link} from "react-router-dom";
 
 const AnswerDetail = () => {
     const {questionId, answerId} = useParams<{ questionId: string, answerId: string }>();
@@ -41,7 +42,7 @@ const AnswerDetail = () => {
                         {answer.question.title}
                     </TitleWrapper>
                     <Divider/>
-                    <h2>{answer.user.username}</h2>
+                    <h2><Link to={`/user/${answer.user.id}`}>{answer.user.username}</Link></h2>
                     <div dangerouslySetInnerHTML={{__html: answer.content}}/>
                     <Affix offsetBottom={0}>
                         <div style={{backgroundColor: "white", padding: 10}}>

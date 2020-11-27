@@ -13,6 +13,8 @@ import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +43,8 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @Override
   public Answer createAnswer(Answer answer, UserVo user) {
+    // XSS 过滤
+    answer.setContent(Jsoup.clean(answer.getContent(), Whitelist.relaxed()));
     if (StringUtils.isBlank(answer.getContent())) {
       throw new ZhiFouException("回答不能为空");
     }

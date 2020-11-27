@@ -23,6 +23,11 @@ CREATE TABLE IF NOT EXISTS zhifou_user
     username VARCHAR(20) NOT NULL,
     password CHAR(64)    NOT NULL,
     email    VARCHAR(30) NOT NULL
-)
+) COMMENT '用户表';
 
-
+CREATE TABLE IF NOT EXISTS zhifou_follow
+(
+    id                BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    follower_user_id  INT    NOT NULL COMMENT '被关注者用户 id',
+    following_user_id INT    NOT NULL COMMENT '关注者用户 id'
+);

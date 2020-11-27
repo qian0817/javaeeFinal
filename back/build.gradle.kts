@@ -32,6 +32,7 @@ dependencies {
     implementation("com.nimbusds", "nimbus-jose-jwt")
     implementation("cn.hutool", "hutool-all", "5.5.1")
     implementation("org.jetbrains", "annotations", "20.1.0")
+    implementation("org.jsoup", "jsoup", "1.13.1")
     compileOnly("org.projectlombok", "lombok")
     developmentOnly("org.springframework.boot", "spring-boot-devtools")
     testRuntimeOnly("com.h2database", "h2")

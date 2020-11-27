@@ -3,7 +3,7 @@ import {useHistory, useParams} from "react-router";
 import instance from "../../axiosInstance";
 import {Page} from "../../entity/Page";
 import {Question} from "../../entity/Question";
-import {message} from "antd";
+import {message, Skeleton} from "antd";
 import Highlighter from "react-highlight-words";
 import {SearchWrapper, TitleWrapper} from "./style";
 
@@ -26,7 +26,11 @@ const Search = () => {
     }, [keyword])
 
     if (questions == null) {
-        return <div>加载中</div>
+        return <>
+            <Skeleton active/>
+            <Skeleton active/>
+            <Skeleton active/>
+        </>
     }
     return (
         <SearchWrapper>

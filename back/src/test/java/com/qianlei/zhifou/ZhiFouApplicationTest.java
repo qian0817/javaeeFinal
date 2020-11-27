@@ -10,6 +10,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 public class ZhiFouApplicationTest {
 
-    @Test
-    public void contextLoadTest() {}
+  @Test
+  public void contextLoadTest() {}
 }

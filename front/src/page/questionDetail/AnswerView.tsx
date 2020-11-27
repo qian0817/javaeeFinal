@@ -4,7 +4,7 @@ import {Button, Card} from "antd";
 import {useHistory} from "react-router";
 import dayjs from "dayjs";
 
-export interface AnswerViewProps {
+interface AnswerViewProps {
     answer: AnswerVo
 }
 

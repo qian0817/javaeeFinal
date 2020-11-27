@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Button, Modal} from "antd";
-import {useHistory} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store";
 import LoginForm from "./LoginForm";
@@ -11,13 +10,7 @@ const LoginModal = () => {
 
     const dispatch = useDispatch()
     const [loginClick, setLoginClick] = useState(true)
-    const history = useHistory();
-    const loginUser = useSelector((state: RootState) => state.login)
     const visible = useSelector((state: RootState) => state.loginFormVisible)
-
-    if (loginUser != null) {
-        history.push("/")
-    }
 
     return (
         <div>

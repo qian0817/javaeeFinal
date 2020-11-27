@@ -2,14 +2,20 @@ package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.core.lang.Validator;
 import com.qianlei.zhifou.common.ZhiFouException;
+import com.qianlei.zhifou.dao.AgreeDao;
+import com.qianlei.zhifou.dao.FollowDao;
 import com.qianlei.zhifou.dao.UserDao;
+import com.qianlei.zhifou.dao.es.AnswerDao;
+import com.qianlei.zhifou.pojo.Follow;
 import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.requestparam.RegisterParam;
 import com.qianlei.zhifou.service.IUserService;
+import com.qianlei.zhifou.vo.UserInfo;
 import com.qianlei.zhifou.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -20,6 +26,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +40,10 @@ import static com.qianlei.zhifou.common.Constant.RedisConstant.REGISTER_MAIL_SEN
 @Transactional(rollbackOn = RuntimeException.class)
 public class UserServiceImpl implements IUserService {
 
+  @Autowired private FollowDao followDao;
   @Autowired private UserDao userDao;
+  @Autowired private AgreeDao agreeDao;
+  @Autowired private AnswerDao answerDao;
   @Autowired private StringRedisTemplate redisTemplate;
 
   @Value("${spring.mail.username}")
@@ -49,8 +59,28 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   public UserVo getUserInfoByUserId(Integer userId) {
-    var user = userDao.findById(userId).orElseThrow();
+    var user = userDao.findById(userId).orElseThrow(() -> new ZhiFouException("该用户不存在"));
     return new UserVo(user);
+  }
+
+  @Override
+  public UserInfo getUserInfoByUserId(Integer userId, @Nullable UserVo user) {
+    var findUser = userDao.findById(userId).orElseThrow(() -> new ZhiFouException("该用户不存在"));
+    var totalAgree = agreeDao.countByUserId(findUser.getId());
+    var totalAnswer = answerDao.countByUserId(findUser.getId());
+    var totalFollower = followDao.countByFollowerUserId(userId);
+    var totalFollowing = followDao.countByFollowingUserId(userId);
+    var canFollow =
+        user == null || followDao.existsByFollowerUserIdAndFollowingUserId(userId, user.getId());
+
+    return new UserInfo(
+        findUser.getId(),
+        findUser.getUsername(),
+        canFollow,
+        totalAnswer,
+        totalAgree,
+        totalFollowing,
+        totalFollower);
   }
 
   @Override
@@ -133,5 +163,21 @@ public class UserServiceImpl implements IUserService {
       throw new ZhiFouException("用户名或密码错误");
     }
     return existedUser.get();
+  }
+
+  @Override
+  public void follow(Integer followerUserId, Integer followingUserId) {
+    if (Objects.equals(followerUserId, followingUserId)) {
+      throw new ZhiFouException("不能关注自己");
+    }
+    if (followDao.existsByFollowerUserIdAndFollowingUserId(followerUserId, followingUserId)) {
+      throw new ZhiFouException("已关注该用户");
+    }
+    followDao.save(new Follow(null, followerUserId, followingUserId));
+  }
+
+  @Override
+  public void unfollow(Integer unfollowerUserId, Integer unfollowingUserId) {
+    followDao.deleteAllByFollowerUserIdAndFollowingUserId(unfollowerUserId, unfollowingUserId);
   }
 }

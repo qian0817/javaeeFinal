@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AgreeDao extends JpaRepository<Agree, Integer> {
   long countByAnswerId(String answerId);
 
+  long countByUserId(Integer userId);
+
   boolean existsByAnswerIdAndUserId(String answerId, Integer userId);
 
   void deleteByAnswerIdAndUserId(String answerId, Integer userId);

@@ -8,6 +8,7 @@ import Home from "./page/home/Home";
 import Search from "./page/search";
 import NotFound from "./page/NotFound";
 import LoginModal from "./component/LoginModal";
+import UserPage from "./page/user";
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
                 <Route path="/question/action/create" exact component={CreateQuestion}/>
                 <Route path="/question/:id" exact component={QuestionDetail}/>
                 <Route path="/question/:questionId/answer/:answerId" exact component={AnswerDetail}/>
+                <Route path="/user/:userId" exact component={UserPage}/>
                 <Route path="/" component={NotFound}/>
             </Switch>
         </div>
