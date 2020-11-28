@@ -1,6 +1,7 @@
 package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.core.lang.Validator;
+import cn.hutool.crypto.digest.BCrypt;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.FollowDao;
@@ -109,7 +110,8 @@ public class UserServiceImpl implements IUserService {
     if (!code.equalsIgnoreCase(param.getCode())) {
       throw new ZhiFouException("邮箱验证码错误");
     }
-    var user = new User(null, param.getUsername(), param.getPassword(), param.getEmail());
+    var encryptPassword = BCrypt.hashpw(param.getPassword());
+    var user = new User(null, param.getUsername(), encryptPassword, param.getEmail());
     userDao.save(user);
     return user;
   }
@@ -161,7 +163,7 @@ public class UserServiceImpl implements IUserService {
     if (existedUser.isEmpty()) {
       throw new ZhiFouException("用户名或密码错误");
     }
-    if (!existedUser.get().getPassword().equals(user.getPassword())) {
+    if (!BCrypt.checkpw(user.getPassword(), existedUser.get().getPassword())) {
       throw new ZhiFouException("用户名或密码错误");
     }
     return existedUser.get();
