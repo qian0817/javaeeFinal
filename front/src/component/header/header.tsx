@@ -16,11 +16,14 @@ const Header = () => {
     const loginUser = useSelector((state: RootState) => state.login)
 
     const checkLoginStatus = useCallback(async () => {
-        try {
-            const response = await instance.get<UserVo>("/api/token/")
-            dispatch(setUser(response.data))
-        } catch (e) {
+        if (localStorage.getItem("jwt_token") == null) {
+            return
+        }
+        const response = await instance.get<UserVo | string>("/api/token/")
+        if (typeof response.data == "string") {
             dispatch(setUser(null))
+        } else {
+            dispatch(setUser(response.data))
         }
     }, [dispatch])
 

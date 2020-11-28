@@ -1,11 +1,9 @@
 import React from "react";
-import {Button, Form, Input, message} from "antd";
+import {Button, Form, Input} from "antd";
 import {useHistory} from "react-router";
 import {Store} from "rc-field-form/lib/interface";
 import BraftEditor from "braft-editor";
-import {AxiosError} from 'axios';
 import {Question} from "../../entity/Question";
-import {ErrorResponse} from "../../entity/ErrorResponse";
 import instance from "../../axiosInstance";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
@@ -24,21 +22,16 @@ const CreateQuestion = () => {
         const title = value.title
         const content = value.content.toHTML()
         const tags = value.tags
-        try {
-            const response = await instance.post<Question>('/api/question/', {title, content, tags})
-            history.push(`/question/${response.data.id}`)
-        } catch (e) {
-            const ex: AxiosError<ErrorResponse> = e
-            message.warn(ex.response?.data.message)
-        }
+        const response = await instance.post<Question>('/api/question/', {title, content, tags})
+        history.push(`/question/${response.data.id}`)
     }
 
     return (
-        <div style={{marginTop: 10}}>
+        <>
             <Helmet title={`创建问题`}/>
             <Form form={form}
                   labelCol={{span: 2}}
-                  wrapperCol={{span: 16}}
+                  wrapperCol={{span: 20}}
                   onFinish={onFinish}>
                 <Form.Item
                     name="title"
@@ -61,7 +54,7 @@ const CreateQuestion = () => {
                     <Button type="primary" htmlType="submit">提交</Button>
                 </Form.Item>
             </Form>
-        </div>
+        </>
     )
 }
 

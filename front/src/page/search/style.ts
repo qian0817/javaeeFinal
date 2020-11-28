@@ -7,9 +7,3 @@ export const TitleWrapper = styled.h1`
     color: #40a9ff;
   }
 `
-
-export const SearchWrapper = styled.div`
-  margin-left: 30%;
-  margin-right: 30%;
-
-`

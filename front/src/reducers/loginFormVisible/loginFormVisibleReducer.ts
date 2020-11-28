@@ -6,7 +6,6 @@ interface VisibleAction extends Action {
 }
 
 const visibleReducer = (state: boolean = false, action: VisibleAction) => {
-    console.log(action)
     switch (action.type) {
         case SetVisible:
             state = action.visible

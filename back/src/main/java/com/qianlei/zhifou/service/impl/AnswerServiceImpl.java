@@ -1,5 +1,6 @@
 package com.qianlei.zhifou.service.impl;
 
+import cn.hutool.http.HtmlUtil;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.es.AnswerDao;
@@ -45,11 +46,14 @@ public class AnswerServiceImpl implements IAnswerService {
   public Answer createAnswer(Answer answer, UserVo user) {
     // XSS 过滤
     answer.setContent(Jsoup.clean(answer.getContent(), Whitelist.relaxed()));
-    if (StringUtils.isBlank(answer.getContent())) {
+    if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(answer.getContent()))) {
       throw new ZhiFouException("回答不能为空");
     }
     if (!questionDao.existsById(answer.getQuestionId())) {
       throw new ZhiFouException("问题不存在");
+    }
+    if (answerDao.findByUserIdAndQuestionId(user.getId(), answer.getQuestionId()) != null) {
+      throw new ZhiFouException("已回答该问题");
     }
     answer.setId(null);
     answer.setUserId(user.getId());
@@ -100,6 +104,7 @@ public class AnswerServiceImpl implements IAnswerService {
       int pageNum,
       int pageSize,
       UserVo user) {
+
     if (!SUPPORTED_SORT_BY_PROPERTIES.contains(sortBy)) {
       throw new ZhiFouException("不支持的排序类型" + sortBy);
     }

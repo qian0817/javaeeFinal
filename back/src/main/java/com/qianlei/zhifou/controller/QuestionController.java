@@ -5,6 +5,7 @@ import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.QuestionHotVo;
+import com.qianlei.zhifou.vo.QuestionVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,16 +26,15 @@ public class QuestionController {
   }
 
   @GetMapping("/id/{id}")
-  public Question getQuestionById(@PathVariable String id) {
-    var question = questionService.getQuestionById(id);
-    questionService.improveQuestionHeatLevel(id, 1);
-    return question;
+  public QuestionVo getQuestionById(
+      @PathVariable String id, @RequestAttribute(value = "user", required = false) UserVo user) {
+    return questionService.getQuestionVoById(id, user);
   }
 
   @GetMapping("/id/{id}/answers/")
   public Page<AnswerVo> getAnswerByQuestionId(
       @PathVariable("id") String questionId,
-      @RequestParam(value = "sort_direction", defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "sort_direction", defaultValue = "desc") String sortDirection,
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,

@@ -1,10 +1,9 @@
 import React, {useState} from "react";
-import {Button, message} from "antd";
-import {AxiosError} from "axios";
-import {ErrorResponse} from "../../entity/ErrorResponse";
+import {Button} from "antd";
 import instance from "../../axiosInstance";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store";
+import {setVisible} from "../../reducers/loginFormVisible/actionCreate";
 
 interface AgreeButtonProps {
     canAgree: boolean,
@@ -15,20 +14,18 @@ interface AgreeButtonProps {
 
 const AgreeButton: React.FC<AgreeButtonProps> = ({canAgree, setAgreeStatus, agreeNumber, answerId}) => {
     const [loading, setLoading] = useState(false)
+    const dispatch = useDispatch()
     const loginUser = useSelector((state: RootState) => state.login)
 
     const agree = async () => {
         if (loginUser == null) {
-            message.warn("请先登录")
+            dispatch(setVisible(true))
             return
         }
         setLoading(true)
         try {
             await instance.post(`/api/answer/id/${answerId}/agree/`)
             setAgreeStatus(agreeNumber + 1, false)
-        } catch (e) {
-            const ex: AxiosError<ErrorResponse> = e
-            message.warn(ex.response?.data.message)
         } finally {
             setLoading(false)
         }
@@ -39,9 +36,6 @@ const AgreeButton: React.FC<AgreeButtonProps> = ({canAgree, setAgreeStatus, agre
         try {
             await instance.delete(`/api/answer/id/${answerId}/agree/`)
             setAgreeStatus(agreeNumber - 1, true)
-        } catch (e) {
-            const ex: AxiosError<ErrorResponse> = e
-            message.warn(ex.response?.data.message)
         } finally {
             setLoading(false)
         }

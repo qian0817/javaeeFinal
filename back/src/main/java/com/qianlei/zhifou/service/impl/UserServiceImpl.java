@@ -72,11 +72,12 @@ public class UserServiceImpl implements IUserService {
     var totalFollowing = followDao.countByFollowingUserId(userId);
     var canFollow =
         user == null || followDao.existsByFollowerUserIdAndFollowingUserId(userId, user.getId());
-
+    var isMe = user != null && user.getId().equals(userId);
     return new UserInfo(
         findUser.getId(),
         findUser.getUsername(),
         canFollow,
+        isMe,
         totalAnswer,
         totalAgree,
         totalFollowing,
@@ -142,7 +143,8 @@ public class UserServiceImpl implements IUserService {
     message.setSubject("知否注册验证");
     Random random = new Random();
     int code = 0;
-    for (int i = 0; i < 6; i++) {
+    int codeLength = 6;
+    for (int i = 0; i < codeLength; i++) {
       code = code * 10 + random.nextInt(10);
     }
     message.setText("您的验证码是" + String.format("%4d", code) + "\n有效时间为 5 分钟");

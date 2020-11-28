@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {LoadMoreButton, SwitchHotWrapper, Wrapper} from "./style";
+import {LoadMoreButton, SwitchHotWrapper} from "./style";
 import {Question} from "../../entity/Question";
 import instance from "../../axiosInstance";
 import {Helmet} from "react-helmet";
 import QuestionCard from "./QuestionCard";
-import {Button, message, Skeleton} from "antd";
+import {Button, Skeleton} from "antd";
 import {QuestionHotVo} from "../../entity/QuestionHotVo";
 import HotQuestionCard from "./HotQuestionCard";
-import {AxiosError} from "axios";
-import {ErrorResponse} from "../../entity/ErrorResponse";
 
 const Home = () => {
     const [questions, setQuestions] = useState<Array<Question>>([])
@@ -22,9 +20,6 @@ const Home = () => {
             const response = await instance.get<Array<Question>>('/api/question/random',
                 {params: {num: 20}})
             setQuestions(questions => [...questions, ...response.data])
-        } catch (e) {
-            const ex: AxiosError<ErrorResponse> = e;
-            message.warn(ex.response?.data.message)
         } finally {
             setLoading(false)
         }
@@ -35,9 +30,6 @@ const Home = () => {
         try {
             const response = await instance.get<Array<QuestionHotVo>>('/api/question/hot/')
             setHotQuestions(response.data)
-        } catch (e) {
-            const ex: AxiosError<ErrorResponse> = e;
-            message.warn(ex.response?.data.message)
         } finally {
             setLoading(false)
         }
@@ -54,7 +46,7 @@ const Home = () => {
     }, [isHotClick])
 
     return (
-        <Wrapper>
+        <>
             <Helmet title="首页"/>
             <SwitchHotWrapper>
                 <Button type={isHotClick ? "link" : "text"}
@@ -97,7 +89,7 @@ const Home = () => {
                 </>}
             </>
             }
-        </Wrapper>
+        </>
     )
 }
 

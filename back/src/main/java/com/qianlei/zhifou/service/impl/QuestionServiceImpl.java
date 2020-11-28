@@ -1,11 +1,17 @@
 package com.qianlei.zhifou.service.impl;
 
+import cn.hutool.http.HtmlUtil;
 import com.qianlei.zhifou.common.ZhiFouException;
+import com.qianlei.zhifou.dao.es.AnswerDao;
 import com.qianlei.zhifou.dao.es.QuestionDao;
 import com.qianlei.zhifou.pojo.es.Question;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.QuestionHotVo;
+import com.qianlei.zhifou.vo.QuestionVo;
+import com.qianlei.zhifou.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,13 +30,15 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class QuestionServiceImpl implements IQuestionService {
+  @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
   @Autowired private StringRedisTemplate redisTemplate;
 
   @Override
   public Question createQuestion(Question question) {
-    question.setId(null);
-    if (StringUtils.isBlank(question.getContent())) {
+    // XSS 过滤
+    question.setContent(Jsoup.clean(question.getContent(), Whitelist.relaxed()));
+    if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(question.getContent()))) {
       throw new ZhiFouException("问题内容不能为空");
     }
     if (StringUtils.isBlank(question.getTitle())) {
@@ -50,7 +58,9 @@ public class QuestionServiceImpl implements IQuestionService {
     // 设置每小时的热榜
     var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd HH"));
     // 将热榜的信息保存到 redis 之中。
-    redisTemplate.boundZSetOps("zhifou:question:hot:" + currentHour).incrementScore(questionId, number);
+    redisTemplate
+        .boundZSetOps("zhifou:question:hot:" + currentHour)
+        .incrementScore(questionId, number);
   }
 
   @Override
@@ -59,11 +69,28 @@ public class QuestionServiceImpl implements IQuestionService {
   }
 
   @Override
+  public QuestionVo getQuestionVoById(String id, UserVo user) {
+    var question = getQuestionById(id);
+    improveQuestionHeatLevel(id, 1);
+    if (user == null) {
+      return new QuestionVo(question, true, null);
+    }
+    var myAnswer = answerDao.findByUserIdAndQuestionId(user.getId(), id);
+    if (myAnswer == null) {
+      return new QuestionVo(question, true, null);
+    } else {
+      return new QuestionVo(question, false, myAnswer.getId());
+    }
+  }
+
+  @Override
   public List<QuestionHotVo> getHottestQuestion() {
     var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd HH"));
     // 从 redis 之中获取热榜的数据
     var questionIdList =
-        redisTemplate.boundZSetOps("zhifou:question:hot:" + currentHour).reverseRangeWithScores(0, 29);
+        redisTemplate
+            .boundZSetOps("zhifou:question:hot:" + currentHour)
+            .reverseRangeWithScores(0, 29);
     if (questionIdList == null) {
       return new ArrayList<>();
     }

@@ -3,27 +3,36 @@ import {useHistory, useParams} from "react-router";
 import instance from "../../axiosInstance";
 import {Page} from "../../entity/Page";
 import {Question} from "../../entity/Question";
-import {message, Skeleton} from "antd";
+import {Button, Divider, Skeleton} from "antd";
 import Highlighter from "react-highlight-words";
-import {SearchWrapper, TitleWrapper} from "./style";
+import {TitleWrapper} from "./style";
 
 
 const Search = () => {
     const history = useHistory();
     const {keyword} = useParams<{ keyword: string }>();
-    const [questions, setQuestions] = useState<Page<Question>>()
-    const loadQuestion = async (keyword: string) => {
-        try {
-            const response = await instance.get<Page<Question>>(`/api/question/keyword/${keyword}`)
-            setQuestions(response.data)
-        } catch (e) {
-            message.warn(e);
-        }
+    const [questions, setQuestions] = useState<Question[]>([])
+    const [isLast, setIsLast] = useState(false);
+    const [current, setCurrent] = useState(0)
+
+
+    const loadQuestion = async (keyword: string, current: number) => {
+        const response = await instance.get<Page<Question>>(`/api/question/keyword/${keyword}`, {
+            params: {
+                pageNum: current,
+            }
+        })
+        setIsLast(response.data.last)
+        setQuestions(questions => questions.concat(response.data.content))
     }
 
     useEffect(() => {
-        loadQuestion(keyword)
-    }, [keyword])
+        loadQuestion(keyword, current)
+    }, [keyword, current])
+
+    const loadMore = async () => {
+        setCurrent(current => current + 1)
+    }
 
     if (questions == null) {
         return <>
@@ -32,10 +41,11 @@ const Search = () => {
             <Skeleton active/>
         </>
     }
+
     return (
-        <SearchWrapper>
-            {questions.content.map(item =>
-                <TitleWrapper onClick={() => history.push(`/question/${item.id}`)}>
+        <>
+            {questions.map(item =>
+                <TitleWrapper onClick={() => history.push(`/question/${item.id}`)} key={item.id}>
                     <Highlighter
                         highlightStyle={{
                             margin: 0,
@@ -47,9 +57,11 @@ const Search = () => {
                         autoEscape={true}
                         textToHighlight={item.title}
                     />
+                    <Divider type="horizontal"/>
                 </TitleWrapper>
             )}
-        </SearchWrapper>
+            {!isLast && <Button block style={{marginBottom: 30}} onClick={loadMore} type={"link"}>加载更多</Button>}
+        </>
     )
 }
 

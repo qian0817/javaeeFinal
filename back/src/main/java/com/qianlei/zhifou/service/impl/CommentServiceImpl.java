@@ -29,7 +29,7 @@ public class CommentServiceImpl implements ICommentService {
   public Page<CommentVo> getComment(String answerId, Integer pageNum, Integer pageSize) {
     var pageable = PageRequest.of(pageNum, pageSize);
     return commentDao
-        .findAllByAnswerIdOrderByCreateTime(answerId, pageable)
+        .findAllByAnswerIdOrderByCreateTimeDesc(answerId, pageable)
         .map(
             comment ->
                 new CommentVo(userService.getUserInfoByUserId(comment.getUserId()), comment));

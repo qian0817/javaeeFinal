@@ -10,4 +10,6 @@ public interface AnswerDao extends ElasticsearchRepository<Answer, String> {
   Page<Answer> findAllByQuestionId(String questionId, Pageable page);
 
   long countByUserId(Integer userId);
+
+  Answer findByUserIdAndQuestionId(Integer userId, String questionId);
 }

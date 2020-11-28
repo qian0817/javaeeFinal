@@ -22,7 +22,7 @@ public class TokenController {
   }
 
   @GetMapping("/")
-  public UserVo getUserInfo(@RequestAttribute("user") UserVo user) {
+  public UserVo getUserInfo(@RequestAttribute(value = "user", required = false) UserVo user) {
     return user;
   }
 }

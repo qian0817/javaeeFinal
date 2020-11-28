@@ -18,10 +18,6 @@ export const TitleWrapper = styled.h1`
   }
 `
 
-export const QuestionCardWrapper = styled.div`
-  margin-left:30px
-`
-
 export const HotIndexWrapper = styled.div`
   float:left;
   padding-top:10px;

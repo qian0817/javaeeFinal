@@ -13,25 +13,25 @@ const LoginModal = () => {
     const visible = useSelector((state: RootState) => state.loginFormVisible)
 
     return (
-        <div>
-            <Modal visible={visible} footer={null} onCancel={() => dispatch(setVisible(false))}>
-                <div>
-                    <Button type={loginClick ? "text" : "link"}
-                            style={{marginLeft: "20%"}}
-                            onClick={() => setLoginClick(true)}>
-                        登录
-                    </Button>
-                    <Button type={loginClick ? "link" : "text"}
-                            style={{marginRight: "20%", float: "right"}}
-                            onClick={() => setLoginClick(false)}>
-                        注册
-                    </Button>
-                </div>
+        <Modal visible={visible} footer={null} onCancel={() => dispatch(setVisible(false))}>
+            <div style={{paddingBottom: 20}}>
+                <Button type={loginClick ? "text" : "link"}
+                        style={{marginLeft: "20%"}}
+                        size={"large"}
+                        onClick={() => setLoginClick(true)}>
+                    登录
+                </Button>
+                <Button type={loginClick ? "link" : "text"}
+                        size={"large"}
+                        style={{marginRight: "20%", float: "right"}}
+                        onClick={() => setLoginClick(false)}>
+                    注册
+                </Button>
+            </div>
 
-                {loginClick && <LoginForm/>}
-                {!loginClick && <RegisterForm/>}
-            </Modal>
-        </div>
+            {loginClick && <LoginForm/>}
+            {!loginClick && <RegisterForm/>}
+        </Modal>
     )
 }
 

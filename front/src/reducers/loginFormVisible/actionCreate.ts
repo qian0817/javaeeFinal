@@ -6,12 +6,9 @@ export const SetVisible = "setVisible";
 
 export const setVisible = (visible: boolean): ThunkAction<void, RootState, unknown, Action> => {
     return (dispatch: Dispatch) => {
-        try {
-            dispatch({
-                type: SetVisible,
-                visible: visible
-            })
-        } catch (e) {
-        }
+        dispatch({
+            type: SetVisible,
+            visible: visible
+        })
     }
 }

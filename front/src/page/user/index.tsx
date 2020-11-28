@@ -3,7 +3,6 @@ import {useParams} from "react-router";
 import {UserInfo} from "../../entity/UserInfo";
 import instance from "../../axiosInstance";
 import {Button, Descriptions, PageHeader, Skeleton} from "antd";
-import {Wrapper} from "./style";
 
 
 const UserPage = () => {
@@ -32,25 +31,28 @@ const UserPage = () => {
     }
 
     if (user == null) {
-        return (<Wrapper>
+        return (<>
             <Skeleton active/>
             <Skeleton active/>
             <Skeleton active/>
-        </Wrapper>);
+        </>);
     }
 
     return (
 
-        <Wrapper>
+        <>
             <PageHeader
                 ghost={false}
                 title={user.username}
                 extra={[
                     <>{
-                        user.following ?
-                            <Button type="primary" danger onClick={unfollow}>取消关注</Button> :
-                            <Button type="primary" onClick={follow}>关注</Button>
-                    }</>
+                        !user.isMe && user.following &&
+                        <Button type="primary" danger onClick={unfollow}>取消关注</Button>
+                    }{
+                        !user.isMe && !user.following &&
+                        <Button type="primary" onClick={follow}>关注</Button>
+                    }
+                    </>
                 ]}>
                 <Descriptions size="small" column={2}>
                     <Descriptions.Item>共回答{user.totalAnswer}个问题</Descriptions.Item>
@@ -59,7 +61,7 @@ const UserPage = () => {
                     <Descriptions.Item>关注者{user.totalFollower}</Descriptions.Item>
                 </Descriptions>
             </PageHeader>
-        </Wrapper>
+        </>
     )
 }
 

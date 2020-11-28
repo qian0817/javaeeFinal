@@ -4,7 +4,7 @@ import {UserVo} from "../../entity/UserVo";
 export const SetLoginStatus = "set_login_status"
 
 interface LoginAction extends Action {
-    data: UserVo
+    data: UserVo | null
 }
 
 const loginReducer = (state: UserVo | null = null, action: LoginAction) => {

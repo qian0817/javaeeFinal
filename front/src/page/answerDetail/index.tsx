@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
 import {AnswerVo} from "../../entity/AnswerVo";
 import {Affix, Divider, Skeleton} from "antd";
-import {TitleWrapper, Wrapper} from "./style";
+import {TitleWrapper} from "./style";
 import instance from "../../axiosInstance";
 import CommentView from "./CommentView";
 import AgreeButton from "../../component/AgreeButton";
@@ -34,35 +34,32 @@ const AnswerDetail = () => {
     }
 
     return (
-        <Wrapper>
-            {
-                answer ? <>
-                    <Helmet title={`${answer.question.title}-${answer.user.username}的回答`}/>
-                    <TitleWrapper onClick={() => history.push(`/question/${answer.question.id}`)}>
-                        {answer.question.title}
-                    </TitleWrapper>
-                    <Divider/>
-                    <h2><Link to={`/user/${answer.user.id}`}>{answer.user.username}</Link></h2>
-                    <div dangerouslySetInnerHTML={{__html: answer.content}}/>
-                    <Affix offsetBottom={0}>
-                        <div style={{backgroundColor: "white", padding: 10}}>
-                            <AgreeButton canAgree={answer.canAgree}
-                                         agreeNumber={answer.agreeNumber}
-                                         answerId={answerId}
-                                         setAgreeStatus={setAgreeStatus}/>
-                        </div>
-                    </Affix>
-                    <Divider/>
-                    <CommentView answerId={answerId}/>
-                </> : <>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                </>
-            }
-
-        </Wrapper>
+        <>{
+            answer ? <>
+                <Helmet title={`${answer.question.title}-${answer.user.username}的回答`}/>
+                <TitleWrapper onClick={() => history.push(`/question/${answer.question.id}`)}>
+                    {answer.question.title}
+                </TitleWrapper>
+                <Divider/>
+                <h2><Link to={`/user/${answer.user.id}`}>{answer.user.username}</Link></h2>
+                <div dangerouslySetInnerHTML={{__html: answer.content}}/>
+                <Affix offsetBottom={0}>
+                    <div style={{backgroundColor: "white", padding: 10}}>
+                        <AgreeButton canAgree={answer.canAgree}
+                                     agreeNumber={answer.agreeNumber}
+                                     answerId={answerId}
+                                     setAgreeStatus={setAgreeStatus}/>
+                    </div>
+                </Affix>
+                <Divider/>
+                <CommentView answerId={answerId}/>
+            </> : <>
+                <Skeleton active/>
+                <Skeleton active/>
+                <Skeleton active/>
+                <Skeleton active/>
+            </>
+        }</>
     )
 }
 
