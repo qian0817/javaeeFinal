@@ -2,7 +2,7 @@ import React from "react";
 import {AnswerVo} from "../../entity/AnswerVo";
 import {Button, Card} from "antd";
 import {useHistory} from "react-router";
-import dayjs from "dayjs";
+import {getTimeRange} from "../../utils/DateUtils";
 
 interface AnswerViewProps {
     answer: AnswerVo
@@ -12,26 +12,11 @@ const AnswerView: React.FC<AnswerViewProps> = ({answer}) => {
     const history = useHistory();
 
     const formatUpdateTime = (updateTime: string, createTime: string): string => {
-        const formatTime = (time: string): string => {
-            const t = dayjs(time, "yyyy-MM-ddTHH:mm:ss")
-            const now = dayjs()
-            if (now.diff(t, "minute") < 1) {
-                return `${now.diff(t, "second")}秒前`
-            } else if (now.diff(t, "hour") < 1) {
-                return `${now.diff(t, "minute")}分钟前`
-            } else if (now.diff(t, "day") < 1) {
-                return `${now.diff(t, "hour")}小时前`
-            } else if (t.year() !== now.year()) {
-                return `${t.year()}年${t.month()}月${t.day()}日`
-            } else {
-                return `${t.month()}月${t.day()}日`
-            }
-        }
         // 判断是否更新过
         if (updateTime === createTime) {
-            return "发布于" + formatTime(createTime);
+            return "发布于" + getTimeRange(createTime);
         } else {
-            return "编辑于" + formatTime(updateTime)
+            return "编辑于" + getTimeRange(updateTime)
         }
     }
 

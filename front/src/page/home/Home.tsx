@@ -1,18 +1,26 @@
 import React, {useEffect, useState} from "react";
-import {LoadMoreButton, SwitchHotWrapper} from "./style";
 import {Question} from "../../entity/Question";
 import instance from "../../axiosInstance";
 import {Helmet} from "react-helmet";
-import QuestionCard from "./QuestionCard";
-import {Button, Skeleton} from "antd";
 import {QuestionHotVo} from "../../entity/QuestionHotVo";
-import HotQuestionCard from "./HotQuestionCard";
+import HotQuestionList from "./HotQuestionList";
+import RecommendQuestionList from "./RecommendQuestionList";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
+import {DynamicWithUserVo} from "../../entity/DynamicWithUserVo";
+import {Page} from "../../entity/Page";
+import DynamicList from "./DynamicList";
+import TagSwitch from "./TagSwitch";
 
 const Home = () => {
     const [questions, setQuestions] = useState<Array<Question>>([])
     const [hotQuestions, setHotQuestions] = useState<Array<QuestionHotVo>>([])
-    const [isHotClick, setHotClick] = useState(false);
+    const [tagClicked, setTagClicked] = useState<'推荐' | '热榜' | '关注'>('推荐');
     const [loading, setLoading] = useState(false);
+    const [dynamics, setDynamics] = useState<DynamicWithUserVo[]>([])
+    const [dynamicPageNum, setDynamicPageNum] = useState(0)
+    const [isDynamicEnd, setDynamicEnd] = useState(true)
+    const loginUser = useSelector((root: RootState) => root.login)
 
     const loadQuestion = async () => {
         setLoading(true)
@@ -35,60 +43,58 @@ const Home = () => {
         }
     }
 
-    useEffect(() => {
-        loadQuestion()
-    }, [])
+    const loadDynamics = async (pageNum: number) => {
+        setLoading(true);
+        setDynamicPageNum(num => num + 1)
+        try {
+            const response = await instance.get<Page<DynamicWithUserVo>>('/api/dynamic/',
+                {params: {pageNum: pageNum}})
+            setDynamics(dynamics => [...dynamics, ...response.data.content])
+            setDynamicEnd(response.data.last)
+        } finally {
+            setLoading(false)
+        }
+    }
+
 
     useEffect(() => {
-        if (isHotClick) {
-            loadHotQuestion()
+        switch (tagClicked) {
+            case "关注":
+                setDynamics([])
+                setDynamicPageNum(-1)
+                loadDynamics(dynamicPageNum)
+                break;
+            case "推荐":
+                setQuestions([])
+                loadQuestion()
+                break;
+            case "热榜":
+                loadHotQuestion();
+                break;
         }
-    }, [isHotClick])
+        // eslint-disable-next-line
+    }, [tagClicked])
+
+
+    const content = () => {
+        switch (tagClicked) {
+            case "热榜":
+                return <HotQuestionList hotQuestions={hotQuestions} loading={loading}/>;
+            case "推荐":
+                return <RecommendQuestionList questions={questions} loading={loading} loadMore={loadQuestion}/>
+            case "关注":
+                return <DynamicList dynamics={dynamics}
+                                    loading={loading}
+                                    loadMore={() => loadDynamics(dynamicPageNum)}
+                                    isEnd={isDynamicEnd}/>
+        }
+    }
 
     return (
         <>
             <Helmet title="首页"/>
-            <SwitchHotWrapper>
-                <Button type={isHotClick ? "link" : "text"}
-                        style={{fontSize: 30}}
-                        onClick={() => setHotClick(false)}>推荐</Button>
-                <Button type={isHotClick ? "text" : "link"}
-                        style={{fontSize: 30}}
-                        onClick={() => setHotClick(true)}>热榜</Button>
-            </SwitchHotWrapper>
-
-            {!isHotClick &&
-            <>
-                {questions.map((item, index) => <QuestionCard item={item} key={index}/>)}
-                {loading &&
-                <>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                </>}
-                <LoadMoreButton type="link" block onClick={loadQuestion}>点击加载更多</LoadMoreButton>
-            </>
-            }
-
-            {isHotClick &&
-            <>
-                {hotQuestions.map((item, index) =>
-                    <HotQuestionCard item={item} index={index + 1} key={item.question.id}/>)
-                }
-                {loading &&
-                <>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                    <Skeleton active/>
-                </>}
-            </>
-            }
+            <TagSwitch tagClicked={tagClicked} setTagClicked={setTagClicked} loginUser={loginUser}/>
+            {content()}
         </>
     )
 }

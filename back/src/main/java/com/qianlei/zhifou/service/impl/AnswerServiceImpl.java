@@ -1,17 +1,21 @@
 package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.http.HtmlUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qianlei.zhifou.common.Constant;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.es.AnswerDao;
 import com.qianlei.zhifou.dao.es.QuestionDao;
 import com.qianlei.zhifou.pojo.Agree;
+import com.qianlei.zhifou.pojo.UserEvent;
 import com.qianlei.zhifou.pojo.es.Answer;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.UserVo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -20,12 +24,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.qianlei.zhifou.common.Constant.KafkaConstant.DELETE_USER_EVENT_TOPIC;
+import static com.qianlei.zhifou.common.Constant.UserEventConstant.DynamicAction.AGREE_ANSWER;
+import static com.qianlei.zhifou.common.Constant.UserEventConstant.DynamicAction.CREATE_ANSWER;
+import static com.qianlei.zhifou.common.Constant.UserEventConstant.TABLE_NAME_ANSWER;
 
 /** @author qianlei */
 @Service
@@ -37,11 +47,17 @@ public class AnswerServiceImpl implements IAnswerService {
   @Autowired private IQuestionService questionService;
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;
+  @Autowired private ObjectMapper objectMapper;
+
+  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+  @Autowired
+  private KafkaTemplate<String, String> kafkaTemplate;
 
   private static final List<String> SUPPORTED_SORT_BY_PROPERTIES =
       List.of("createTime", "updateTime");
   private static final List<String> SUPPORT_SORT_DIRECTION = List.of("asc", "desc");
 
+  @SneakyThrows
   @Override
   public Answer createAnswer(Answer answer, UserVo user) {
     // XSS 过滤
@@ -60,6 +76,17 @@ public class AnswerServiceImpl implements IAnswerService {
     answer.setUpdateTime(LocalDateTime.now());
     answer.setCreateTime(LocalDateTime.now());
     answerDao.save(answer);
+    // 向消息队列中发送相关的消息
+    var userEvent =
+        new UserEvent(
+            null,
+            user.getId(),
+            CREATE_ANSWER.getId(),
+            TABLE_NAME_ANSWER,
+            answer.getId(),
+            answer.getCreateTime());
+    kafkaTemplate.send(
+        Constant.KafkaConstant.ADD_USER_EVENT_TOPIC, objectMapper.writeValueAsString(userEvent));
     questionService.improveQuestionHeatLevel(answer.getQuestionId(), 100);
     return answer;
   }
@@ -80,6 +107,7 @@ public class AnswerServiceImpl implements IAnswerService {
     }
   }
 
+  @SneakyThrows
   @Override
   public void agree(String answerId, UserVo user) {
     if (!answerDao.existsById(answerId)) {
@@ -89,11 +117,28 @@ public class AnswerServiceImpl implements IAnswerService {
       throw new ZhiFouException("不能重复点赞");
     }
     agreeDao.save(new Agree(null, user.getId(), answerId));
+
+    // 向消息队列中发送相关的消息
+    var userEvent =
+        new UserEvent(
+            null,
+            user.getId(),
+            AGREE_ANSWER.getId(),
+            TABLE_NAME_ANSWER,
+            answerId,
+            LocalDateTime.now());
+    kafkaTemplate.send(
+        Constant.KafkaConstant.ADD_USER_EVENT_TOPIC, objectMapper.writeValueAsString(userEvent));
   }
 
+  @SneakyThrows
   @Override
   public void deleteAgree(String answerId, UserVo user) {
     agreeDao.deleteByAnswerIdAndUserId(answerId, user.getId());
+    // 向消息队列中发送相关的消息
+    var userEvent =
+        new UserEvent(null, user.getId(), AGREE_ANSWER.getId(), TABLE_NAME_ANSWER, answerId, null);
+    kafkaTemplate.send(DELETE_USER_EVENT_TOPIC, objectMapper.writeValueAsString(userEvent));
   }
 
   @Override

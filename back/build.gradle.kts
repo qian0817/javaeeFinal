@@ -27,7 +27,6 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-web")
     implementation("org.springframework.kafka", "spring-kafka")
     implementation("org.springframework.session", "spring-session-data-redis")
-    implementation("org.redisson", "redisson-spring-boot-starter", "3.14.0")
     implementation("org.apache.commons", "commons-lang3")
     implementation("com.nimbusds", "nimbus-jose-jwt")
     implementation("cn.hutool", "hutool-all", "5.5.1")

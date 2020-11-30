@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.crypto.digest.BCrypt;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.FollowDao;
@@ -13,6 +14,7 @@ import com.qianlei.zhifou.requestparam.RegisterParam;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.UserInfo;
 import com.qianlei.zhifou.vo.UserVo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -31,7 +33,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static com.qianlei.zhifou.common.Constant.KafkaConstant.SEND_REGISTER_CODE_EMAIL_TOPIC;
+import static com.qianlei.zhifou.common.Constant.KafkaConstant.*;
 import static com.qianlei.zhifou.common.Constant.RedisConstant.REGISTER_CODE_PREFIX;
 import static com.qianlei.zhifou.common.Constant.RedisConstant.REGISTER_MAIL_SEND_PREFIX;
 
@@ -46,6 +48,7 @@ public class UserServiceImpl implements IUserService {
   @Autowired private AgreeDao agreeDao;
   @Autowired private AnswerDao answerDao;
   @Autowired private StringRedisTemplate redisTemplate;
+  @Autowired private ObjectMapper objectMapper;
 
   @Value("${spring.mail.username}")
   private String emailFrom;
@@ -72,13 +75,11 @@ public class UserServiceImpl implements IUserService {
     var totalFollower = followDao.countByFollowerUserId(userId);
     var totalFollowing = followDao.countByFollowingUserId(userId);
     var canFollow =
-        user == null || followDao.existsByFollowerUserIdAndFollowingUserId(userId, user.getId());
-    var isMe = user != null && user.getId().equals(userId);
+        user != null && followDao.existsByFollowerUserIdAndFollowingUserId(userId, user.getId());
     return new UserInfo(
         findUser.getId(),
         findUser.getUsername(),
         canFollow,
-        isMe,
         totalAnswer,
         totalAgree,
         totalFollowing,
@@ -169,6 +170,7 @@ public class UserServiceImpl implements IUserService {
     return existedUser.get();
   }
 
+  @SneakyThrows
   @Override
   public void follow(Integer followerUserId, Integer followingUserId) {
     if (Objects.equals(followerUserId, followingUserId)) {
@@ -177,11 +179,19 @@ public class UserServiceImpl implements IUserService {
     if (followDao.existsByFollowerUserIdAndFollowingUserId(followerUserId, followingUserId)) {
       throw new ZhiFouException("已关注该用户");
     }
-    followDao.save(new Follow(null, followerUserId, followingUserId));
+    var follow = new Follow(null, followerUserId, followingUserId);
+    followDao.save(follow);
+    kafkaTemplate.send(FOLLOW_USER_TOPIC, objectMapper.writeValueAsString(follow));
   }
 
+  @SneakyThrows
   @Override
   public void unfollow(Integer unfollowerUserId, Integer unfollowingUserId) {
+    if (!followDao.existsByFollowerUserIdAndFollowingUserId(unfollowerUserId, unfollowingUserId)) {
+      throw new ZhiFouException("未关注该用户");
+    }
     followDao.deleteAllByFollowerUserIdAndFollowingUserId(unfollowerUserId, unfollowingUserId);
+    var follow = new Follow(null, unfollowerUserId, unfollowingUserId);
+    kafkaTemplate.send(UNFOLLOW_USER_TOPIC, objectMapper.writeValueAsString(follow));
   }
 }

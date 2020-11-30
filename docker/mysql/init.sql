@@ -31,3 +31,22 @@ CREATE TABLE IF NOT EXISTS zhifou_follow
     follower_user_id  INT    NOT NULL COMMENT '被关注者用户 id',
     following_user_id INT    NOT NULL COMMENT '关注者用户 id'
 );
+
+CREATE TABLE zhifou_user_event
+(
+    id          BIGINT      NOT NULL PRIMARY KEY AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT         NOT NULL,
+    operation   VARCHAR(20) NOT NULL,
+    table_name  VARCHAR(20) NOT NULL,
+    table_id    VARCHAR(50) NOT NULL,
+    create_time TIMESTAMP   NOT NULL
+) COMMENT '用户动态表';
+
+CREATE TABLE zhifou_feed
+(
+    id             BIGINT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_id        INT       NOT NULL,
+    create_user_id INT       NOT NULL,
+    event_id       BIGINT    NOT NULL,
+    create_time    TIMESTAMP NOT NULL
+) COMMENT 'feed 表';

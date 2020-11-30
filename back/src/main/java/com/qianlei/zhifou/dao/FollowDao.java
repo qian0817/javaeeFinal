@@ -3,9 +3,12 @@ package com.qianlei.zhifou.dao;
 import com.qianlei.zhifou.pojo.Follow;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface FollowDao extends JpaRepository<Follow, Long> {
-  boolean existsByFollowerUserIdAndFollowingUserId(
-      Integer followerUserId, Integer followingUserId);
+  boolean existsByFollowerUserIdAndFollowingUserId(Integer followerUserId, Integer followingUserId);
+
+  List<Follow> findAllByFollowerUserId(Integer followerUserId);
 
   long countByFollowerUserId(int followerUserId);
 

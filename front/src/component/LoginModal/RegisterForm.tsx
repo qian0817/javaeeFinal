@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Col, Form, Input, message, Row} from "antd";
 import {LockOutlined, MailOutlined, SafetyCertificateOutlined, UserOutlined} from "@ant-design/icons";
 import {useDispatch} from "react-redux";
@@ -11,6 +11,7 @@ const RegisterForm = () => {
     const dispatch = useDispatch()
     const [form] = Form.useForm();
     const [remain, setRemain] = useState(0);
+    let interval: number = 0;
 
     const onFinish = async (value: any) => {
         const username = value.username;
@@ -26,12 +27,16 @@ const RegisterForm = () => {
         dispatch(setVisible(false))
     }
 
+    useEffect(() => {
+        return () => clearInterval(interval)
+    }, [interval])
+
     const sendEmail = async () => {
         const email = form.getFieldValue("email")
         await instance.post("/api/user/registerCode/", {email})
         setRemain(60);
         message.info("验证码已发送")
-        const interval = setInterval(() => {
+        interval = setInterval(() => {
             setRemain(remain => {
                 if (remain <= 0) {
                     clearInterval(interval)

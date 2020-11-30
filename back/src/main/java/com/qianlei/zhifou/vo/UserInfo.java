@@ -15,8 +15,6 @@ public class UserInfo {
   private String username;
   /** 是否可以被关注 */
   private Boolean following;
-  /** 是否为自己 */
-  private Boolean isMe;
   /** 总回答数 */
   private Long totalAnswer;
   /** 总赞同数 */

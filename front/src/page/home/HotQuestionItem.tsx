@@ -10,7 +10,7 @@ interface HotQuestionCardProps {
     index: number
 }
 
-const HotQuestionCard: React.FC<HotQuestionCardProps> = ({item, index}) => {
+const HotQuestionItem: React.FC<HotQuestionCardProps> = ({item, index}) => {
     const history = useHistory()
 
     const getIndexColor = (index: number): string => {
@@ -39,4 +39,4 @@ const HotQuestionCard: React.FC<HotQuestionCardProps> = ({item, index}) => {
     )
 }
 
-export default HotQuestionCard;
+export default HotQuestionItem;

@@ -6,7 +6,7 @@ import QuestionDetail from "./page/questionDetail";
 import AnswerDetail from "./page/answerDetail";
 import Home from "./page/home/Home";
 import Search from "./page/search";
-import NotFound from "./page/NotFound";
+import NotFound from "./page/notFound";
 import LoginModal from "./component/LoginModal";
 import UserPage from "./page/user";
 
