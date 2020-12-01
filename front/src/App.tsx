@@ -17,7 +17,7 @@ function App() {
         <>
             <Header/>
             <LoginModal/>
-            <Row>
+            <Row style={{marginTop:10}}>
                 <Col xs={{span: 22, offset: 1}}
                      sm={{span: 20, offset: 2}}
                      md={{span: 18, offset: 3}}
