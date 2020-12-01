@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.vo;
 
-import com.qianlei.zhifou.pojo.es.Question;
+import com.qianlei.zhifou.pojo.es.QuestionEs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,6 @@ import org.springframework.data.domain.Page;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionDetailVo {
-  private Question question;
+  private QuestionEs questionEs;
   private Page<AnswerVo> answers;
 }

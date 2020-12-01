@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.pojo.es.Question;
+import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.AnswerVo;
@@ -27,13 +27,13 @@ public class QuestionController {
 
   @GetMapping("/id/{id}")
   public QuestionVo getQuestionById(
-      @PathVariable String id, @RequestAttribute(value = "user", required = false) UserVo user) {
+      @PathVariable Integer id, @RequestAttribute(value = "user", required = false) UserVo user) {
     return questionService.getQuestionVoById(id, user);
   }
 
   @GetMapping("/id/{id}/answers/")
   public Page<AnswerVo> getAnswerByQuestionId(
-      @PathVariable("id") String questionId,
+      @PathVariable("id") Integer questionId,
       @RequestParam(value = "sort_direction", defaultValue = "desc") String sortDirection,
       @RequestParam(value = "sort_by", defaultValue = "createTime") String sortBy,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,

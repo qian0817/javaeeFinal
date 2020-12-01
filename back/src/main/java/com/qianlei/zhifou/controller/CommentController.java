@@ -24,7 +24,7 @@ public class CommentController {
 
   @PostMapping("/answer/{answerId}")
   public CommentVo createComment(
-      @PathVariable("answerId") String answerId,
+      @PathVariable("answerId") Integer answerId,
       @RequestBody Comment comment,
       @RequestAttribute(value = "user") UserVo user) {
     comment.setAnswerId(answerId);

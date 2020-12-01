@@ -13,8 +13,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Question {
-  @Id private String id;
+public class QuestionEs {
+  @Id private Integer id;
 
   @Field(
       value = "title",
@@ -22,9 +22,6 @@ public class Question {
       analyzer = "ik_max_word",
       searchAnalyzer = "ik_smart")
   private String title;
-
-  @Field(value = "tags", type = FieldType.Text)
-  private String tags;
 
   @Field(
       value = "content",

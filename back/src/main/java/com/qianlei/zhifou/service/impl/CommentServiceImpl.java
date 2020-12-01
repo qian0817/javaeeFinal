@@ -1,8 +1,8 @@
 package com.qianlei.zhifou.service.impl;
 
 import com.qianlei.zhifou.common.ZhiFouException;
+import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.CommentDao;
-import com.qianlei.zhifou.dao.es.AnswerDao;
 import com.qianlei.zhifou.pojo.Comment;
 import com.qianlei.zhifou.service.ICommentService;
 import com.qianlei.zhifou.service.IQuestionService;

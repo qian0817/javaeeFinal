@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 import static com.qianlei.zhifou.common.Constant.UserEventConstant.DynamicAction;
 /** @author qianlei */
-@Entity
+@Entity(name = "user_event")
 @Table(name = "zhifou_user_event")
 @Data
 @NoArgsConstructor
@@ -31,7 +31,7 @@ public class UserEvent {
   private String tableName;
 
   @Column(name = "table_id")
-  private String tableId;
+  private Integer tableId;
 
   @Column(name = "create_time")
   @CreationTimestamp

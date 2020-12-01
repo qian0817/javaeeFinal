@@ -10,7 +10,7 @@ import java.util.List;
 /** @author qianlei */
 public interface UserEventDao extends JpaRepository<UserEvent, Long> {
   UserEvent findByUserIdAndOperationAndTableNameAndTableId(
-      Integer userId, Integer operation, String tableName, String tableId);
+      Integer userId, Integer operation, String tableName, Integer tableId);
 
   Page<UserEvent> findAllByUserId(Integer userId, Pageable pageable);
 

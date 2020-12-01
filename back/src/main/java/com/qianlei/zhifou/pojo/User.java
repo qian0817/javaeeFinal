@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /** @author qianlei */
 @Table(name = "zhifou_user")
-@Entity
+@Entity(name = "user")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

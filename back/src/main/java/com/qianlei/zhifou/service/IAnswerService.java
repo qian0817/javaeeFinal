@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.pojo.es.Answer;
+import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.jetbrains.annotations.Nullable;
@@ -11,20 +11,20 @@ public interface IAnswerService {
   /**
    * 根据 id 获取回答信息
    *
-   * @param id 回答id
+   * @param answerId 回答id
    * @param user 希望获取回答的用户
    * @return 回答信息
    */
-  AnswerVo getAnswerByQuestionId(String id, @Nullable UserVo user);
+  AnswerVo getAnswerByQuestionId(Integer answerId, @Nullable UserVo user);
 
   /**
    * 创建回答
    *
-   * @param answer 回答内容
+   * @param answerEs 回答内容
    * @param user 创建者
    * @return 创建的回答信息
    */
-  Answer createAnswer(Answer answer, UserVo user);
+  Answer createAnswer(Answer answerEs, UserVo user);
 
   /**
    * 赞同回答
@@ -32,7 +32,7 @@ public interface IAnswerService {
    * @param answerId 回答 id
    * @param user 赞同者
    */
-  void agree(String answerId, UserVo user);
+  void agree(Integer answerId, UserVo user);
 
   /**
    * 取消赞同回答
@@ -40,7 +40,7 @@ public interface IAnswerService {
    * @param answerId 回答 id
    * @param user 取消赞同者
    */
-  void deleteAgree(String answerId, UserVo user);
+  void deleteAgree(Integer answerId, UserVo user);
 
   /**
    * 获取每页的回答信息
@@ -54,7 +54,7 @@ public interface IAnswerService {
    * @return 回答信息
    */
   Page<AnswerVo> getAllAnswerByQuestionId(
-      String questionId,
+          Integer questionId,
       String sortDirection,
       String sortBy,
       int pageNum,

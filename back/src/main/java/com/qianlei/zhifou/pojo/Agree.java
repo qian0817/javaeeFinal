@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 /** @author qianlei */
 @Table(name = "zhifou_agree")
-@Entity
+@Entity(name = "agree")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,5 +22,5 @@ public class Agree {
   private Integer userId;
 
   @Column(name = "answer_id")
-  private String answerId;
+  private Integer answerId;
 }

@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlei.zhifou.common.Constant;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
-import com.qianlei.zhifou.dao.es.AnswerDao;
-import com.qianlei.zhifou.dao.es.QuestionDao;
+import com.qianlei.zhifou.dao.AnswerDao;
+import com.qianlei.zhifou.dao.QuestionDao;
+import com.qianlei.zhifou.dao.es.AnswerElasticsearchDao;
+import com.qianlei.zhifou.dao.es.QuestionElasticsearchDao;
 import com.qianlei.zhifou.pojo.Agree;
+import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.pojo.UserEvent;
-import com.qianlei.zhifou.pojo.es.Answer;
+import com.qianlei.zhifou.pojo.es.AnswerEs;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
@@ -44,6 +47,8 @@ import static com.qianlei.zhifou.common.Constant.UserEventConstant.TABLE_NAME_AN
 public class AnswerServiceImpl implements IAnswerService {
   @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
+  @Autowired private AnswerElasticsearchDao answerElasticsearchDao;
+  @Autowired private QuestionElasticsearchDao questionElasticsearchDao;
   @Autowired private IQuestionService questionService;
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;
@@ -76,6 +81,8 @@ public class AnswerServiceImpl implements IAnswerService {
     answer.setUpdateTime(LocalDateTime.now());
     answer.setCreateTime(LocalDateTime.now());
     answerDao.save(answer);
+    answerElasticsearchDao.save(
+        new AnswerEs(answer.getId(), Jsoup.clean(answer.getContent(), Whitelist.none())));
     // 向消息队列中发送相关的消息
     var userEvent =
         new UserEvent(
@@ -92,7 +99,7 @@ public class AnswerServiceImpl implements IAnswerService {
   }
 
   @Override
-  public AnswerVo getAnswerByQuestionId(String answerId, @Nullable UserVo user) {
+  public AnswerVo getAnswerByQuestionId(Integer answerId, @Nullable UserVo user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
@@ -109,8 +116,8 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @SneakyThrows
   @Override
-  public void agree(String answerId, UserVo user) {
-    if (!answerDao.existsById(answerId)) {
+  public void agree(Integer answerId, UserVo user) {
+    if (!answerElasticsearchDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
     if (agreeDao.existsByAnswerIdAndUserId(answerId, user.getId())) {
@@ -133,7 +140,7 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @SneakyThrows
   @Override
-  public void deleteAgree(String answerId, UserVo user) {
+  public void deleteAgree(Integer answerId, UserVo user) {
     agreeDao.deleteByAnswerIdAndUserId(answerId, user.getId());
     // 向消息队列中发送相关的消息
     var userEvent =
@@ -143,7 +150,7 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @Override
   public Page<AnswerVo> getAllAnswerByQuestionId(
-      String questionId,
+      Integer questionId,
       String sortDirection,
       String sortBy,
       int pageNum,

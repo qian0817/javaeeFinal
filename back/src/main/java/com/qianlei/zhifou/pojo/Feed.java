@@ -8,8 +8,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /** @author qianlei */
-@Entity
 @Table(name = "zhifou_feed")
+@Entity(name = "feed")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

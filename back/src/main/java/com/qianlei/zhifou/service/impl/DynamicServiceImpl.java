@@ -2,11 +2,7 @@ package com.qianlei.zhifou.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qianlei.zhifou.dao.FeedDao;
-import com.qianlei.zhifou.dao.FollowDao;
-import com.qianlei.zhifou.dao.UserEventDao;
-import com.qianlei.zhifou.dao.es.AnswerDao;
-import com.qianlei.zhifou.dao.es.QuestionDao;
+import com.qianlei.zhifou.dao.*;
 import com.qianlei.zhifou.pojo.Feed;
 import com.qianlei.zhifou.pojo.Follow;
 import com.qianlei.zhifou.pojo.UserEvent;

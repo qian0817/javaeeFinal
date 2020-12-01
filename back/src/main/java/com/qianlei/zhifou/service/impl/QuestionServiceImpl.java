@@ -2,9 +2,12 @@ package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.http.HtmlUtil;
 import com.qianlei.zhifou.common.ZhiFouException;
-import com.qianlei.zhifou.dao.es.AnswerDao;
-import com.qianlei.zhifou.dao.es.QuestionDao;
-import com.qianlei.zhifou.pojo.es.Question;
+import com.qianlei.zhifou.dao.AnswerDao;
+import com.qianlei.zhifou.dao.QuestionDao;
+import com.qianlei.zhifou.dao.es.AnswerElasticsearchDao;
+import com.qianlei.zhifou.dao.es.QuestionElasticsearchDao;
+import com.qianlei.zhifou.pojo.Question;
+import com.qianlei.zhifou.pojo.es.QuestionEs;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import com.qianlei.zhifou.vo.QuestionVo;
@@ -24,12 +27,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /** @author qianlei */
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class QuestionServiceImpl implements IQuestionService {
+  @Autowired private AnswerElasticsearchDao answerElasticsearchDao;
+  @Autowired private QuestionElasticsearchDao questionElasticsearchDao;
   @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
   @Autowired private StringRedisTemplate redisTemplate;
@@ -45,31 +51,45 @@ public class QuestionServiceImpl implements IQuestionService {
       throw new ZhiFouException("标题不能为空");
     }
     question.setId(null);
-    return questionDao.save(question);
+    questionDao.save(question);
+    questionElasticsearchDao.save(
+        new QuestionEs(
+            question.getId(),
+            question.getTitle(),
+            Jsoup.clean(question.getContent(), Whitelist.none())));
+    return question;
   }
 
   @Override
-  public Question getQuestionById(String questionId) {
+  public Question getQuestionById(Integer questionId) {
     return questionDao.findById(questionId).orElseThrow(() -> new ZhiFouException("问题id不存在"));
   }
 
   @Override
-  public void improveQuestionHeatLevel(String questionId, int number) {
+  public void improveQuestionHeatLevel(Integer questionId, int number) {
     // 设置每小时的热榜
-    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd HH"));
+    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:HH"));
     // 将热榜的信息保存到 redis 之中。
     redisTemplate
         .boundZSetOps("zhifou:question:hot:" + currentHour)
-        .incrementScore(questionId, number);
+        .incrementScore(questionId.toString(), number);
   }
 
   @Override
   public Page<Question> searchQuestion(String keyword, int pageNum, int pageSize) {
-    return questionDao.findAllByTitleContaining(keyword, PageRequest.of(pageNum, pageSize));
+    return questionElasticsearchDao
+        .findAllByTitleContaining(keyword, PageRequest.of(pageNum, pageSize))
+        .map(QuestionEs::getId)
+        .map(id -> questionDao.findById(id).orElse(null));
+    //    return questionDao.findAllByContentContainsOrTitleContains(
+    //        keyword, keyword, PageRequest.of(pageNum, pageSize));
+    //    return questionElasticsearchDao.findAllByTitleContaining(
+    //        keyword, PageRequest.of(pageNum, pageSize));
+    //    return null;
   }
 
   @Override
-  public QuestionVo getQuestionVoById(String id, UserVo user) {
+  public QuestionVo getQuestionVoById(Integer id, UserVo user) {
     var question = getQuestionById(id);
     improveQuestionHeatLevel(id, 1);
     if (user == null) {
@@ -85,7 +105,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
   @Override
   public List<QuestionHotVo> getHottestQuestion() {
-    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd HH"));
+    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:HH"));
     // 从 redis 之中获取热榜的数据
     var questionIdList =
         redisTemplate
@@ -100,7 +120,7 @@ public class QuestionServiceImpl implements IQuestionService {
               if (tuple.getScore() == null || tuple.getValue() == null) {
                 return null;
               }
-              var questionId = tuple.getValue();
+              var questionId = Integer.valueOf(tuple.getValue());
               var score = tuple.getScore().longValue();
               var question = questionDao.findById(questionId).orElseThrow();
               return new QuestionHotVo(question, score);
@@ -114,6 +134,13 @@ public class QuestionServiceImpl implements IQuestionService {
     if (num < 1) {
       num = 1;
     }
-    return questionDao.findRandomQuestion(PageRequest.of(0, num));
+    var totalQuestion = questionDao.count();
+    if (totalQuestion == 0) {
+      return new ArrayList<>();
+    }
+    return new Random()
+        .longs(num, 0, totalQuestion)
+        .mapToObj(questionDao::findOne)
+        .collect(Collectors.toList());
   }
 }

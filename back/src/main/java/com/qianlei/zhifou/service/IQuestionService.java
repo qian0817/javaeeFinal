@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.pojo.es.Question;
+import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import com.qianlei.zhifou.vo.QuestionVo;
 import com.qianlei.zhifou.vo.UserVo;
@@ -24,7 +24,7 @@ public interface IQuestionService {
    * @param id 问题id
    * @return 问题信息
    */
-  Question getQuestionById(String id);
+  Question getQuestionById(Integer id);
 
   /**
    * 获取指定数量的数量的随机问题
@@ -40,7 +40,7 @@ public interface IQuestionService {
    * @param questionId 问题 id
    * @param number 热度
    */
-  void improveQuestionHeatLevel(String questionId, int number);
+  void improveQuestionHeatLevel(Integer questionId, int number);
 
   /**
    * 获取热榜问题，取前30位
@@ -51,5 +51,5 @@ public interface IQuestionService {
 
   Page<Question> searchQuestion(String keyword, int pageNum, int pageSize);
 
-  QuestionVo getQuestionVoById(String id, UserVo user);
+  QuestionVo getQuestionVoById(Integer id, UserVo user);
 }

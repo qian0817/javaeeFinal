@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.vo;
 
-import com.qianlei.zhifou.pojo.es.Question;
+import com.qianlei.zhifou.pojo.Question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuestionVo {
   private Question question;
-  private boolean canCreateAnswer;
-  private String myAnswerId;
+  private Boolean canCreateAnswer;
+  private Integer myAnswerId;
 }

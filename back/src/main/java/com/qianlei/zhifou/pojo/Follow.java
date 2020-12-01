@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 /** @author qianlei */
-@Entity
 @Table(name = "zhifou_follow")
+@Entity(name = "follow")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
