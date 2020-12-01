@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect} from "react";
-import {LogoWrapper, TopContentWrapper, TopWrapper} from "./style";
+import {LogoWrapper, SearchWrapper, TopContentWrapper, TopWrapper} from "./style";
 import {Affix, Button, Input} from "antd";
 import {Link, useHistory} from "react-router-dom";
 import instance from "../../axiosInstance";
@@ -46,25 +46,39 @@ const Header = () => {
     return (
         <Affix offsetTop={0}>
             <TopWrapper>
-                <LogoWrapper>
+                <LogoWrapper span={3} offset={1}>
                     <Link to="/">知否</Link>
                 </LogoWrapper>
-                <TopContentWrapper>
+                <SearchWrapper
+                    xs={{span: 9}}
+                    sm={{span: 7, offset: 2}}
+                    md={{span: 6, offset: 3}}
+                    lg={{span: 5, offset: 4}}
+                    xl={{span: 5, offset: 5}}>
                     <Input.Search
                         enterButton
-                        style={{width: 300, marginRight: 200}}
                         placeholder="搜索"
-                        onSearch={onSearch}
-                    />
-                    {loginUser ? (
-                        <>
-                            <Button type="primary" onClick={() => history.push("/question/action/create")}>提问</Button>
-                            <Button type="link" onClick={() => history.push(`/user/${loginUser?.id}`)}>我的主页</Button>
-                            <Button type="link" onClick={logout}>登出</Button>
-                        </>
-                    ) : (
-                        <Button type="link" onClick={() => dispatch(setVisible(true))}>登录</Button>
-                    )}
+                        onSearch={onSearch}/>
+                </SearchWrapper>
+                <TopContentWrapper xs={{span: 11}}
+                                   sm={{span: 10,offset:1}}
+                                   md={{span: 9,offset:2}}
+                                   lg={{span: 8,offset:3}}
+                                   xl={{span: 7,offset:3}}>
+                    <span style={{float: "right"}}>
+                        {loginUser ? (
+                            <>
+                                <Button type="primary"
+                                        onClick={() => history.push("/question/action/create")}>提问</Button>
+                                <Button type="link"
+                                        onClick={() => history.push(`/user/${loginUser?.id}`)}>我的主页</Button>
+                                <Button type="link" onClick={logout}>登出</Button>
+                            </>
+                        ) : (
+                            <Button type="link"
+                                    onClick={() => dispatch(setVisible(true))}>登录</Button>
+                        )}
+                    </span>
                 </TopContentWrapper>
             </TopWrapper>
         </Affix>

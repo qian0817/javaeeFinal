@@ -1,6 +1,7 @@
 import styled from 'styled-components'
+import {Col, Row} from "antd";
 
-export const TopWrapper = styled.div`
+export const TopWrapper = styled(Row)`
   z-index: 1;
   position: relative;
   color: white;
@@ -9,16 +10,17 @@ export const TopWrapper = styled.div`
   border-bottom: 1px solid #f0f0f0;
 `
 
-export const TopContentWrapper = styled.span`
+export const TopContentWrapper = styled(Col)`
   margin-top: 10px;
   float: right;
-  margin-right: 20px;
 `
 
-export const LogoWrapper = styled.span`
-  margin-top: 5px;
+export const LogoWrapper = styled(Col)`
+  margin-top: 3px;
   font-size: 30px;
   font-weight: bolder;
-  float: left;
-  margin-left: 1%;
+`
+
+export const SearchWrapper=styled(Col)`
+  margin-top: 10px;
 `
