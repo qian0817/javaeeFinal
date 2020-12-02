@@ -2,12 +2,12 @@ import React from "react";
 import {Button, Form, Input} from "antd";
 import {useHistory} from "react-router";
 import {Store} from "rc-field-form/lib/interface";
-import BraftEditor from "braft-editor";
 import {Question} from "../../entity/Question";
 import instance from "../../axiosInstance";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
 import {Helmet} from "react-helmet";
+import Editor from "../../component/editor/Editor";
 
 const CreateQuestion = () => {
     const [form] = Form.useForm();
@@ -48,7 +48,7 @@ const CreateQuestion = () => {
                     name="content"
                     label="问题内容"
                     rules={[{required: true, message: '请填写问题内容'}]}>
-                    <BraftEditor/>
+                    <Editor/>
                 </Form.Item>
                 <Form.Item wrapperCol={{offset: 2, span: 16}}>
                     <Button type="primary" htmlType="submit">提交</Button>

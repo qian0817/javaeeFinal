@@ -7,6 +7,8 @@ import com.qianlei.zhifou.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/answer")
@@ -21,7 +23,7 @@ public class AnswerController {
 
   @PostMapping("/")
   public Answer createAnswer(
-          @RequestBody Answer answer, @RequestAttribute(value = "user") UserVo user) {
+      @RequestBody Answer answer, @RequestAttribute(value = "user") UserVo user) {
     return answerService.createAnswer(answer, user);
   }
 
@@ -35,5 +37,11 @@ public class AnswerController {
   public void removeAgree(
       @PathVariable("answerId") Integer answerId, @RequestAttribute(value = "user") UserVo user) {
     answerService.deleteAgree(answerId, user);
+  }
+
+  @GetMapping("/recommend")
+  public List<AnswerVo> getRecommendAnswer(
+      @RequestParam(defaultValue = "10") int num, @RequestAttribute(value = "user") UserVo user) {
+    return answerService.getRecommendAnswer(num,user);
   }
 }

@@ -1,7 +1,7 @@
 export interface Answer {
-    id: string,
-    userId: string;
-    questionId: string;
+    id: number,
+    userId: number;
+    questionId: number;
     content: string;
     createTime: string;
     updateTime: string;

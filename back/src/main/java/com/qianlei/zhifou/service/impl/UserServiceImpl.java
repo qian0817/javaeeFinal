@@ -57,9 +57,7 @@ public class UserServiceImpl implements IUserService {
   @Autowired
   private JavaMailSender mailSender;
 
-  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-  @Autowired
-  private KafkaTemplate<String, String> kafkaTemplate;
+  @Autowired private KafkaTemplate<String, String> kafkaTemplate;
 
   @Override
   public UserVo getUserInfoByUserId(Integer userId) {

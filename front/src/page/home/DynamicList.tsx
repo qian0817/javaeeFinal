@@ -1,11 +1,12 @@
 import React from "react";
 import {DynamicWithUserVo} from "../../entity/DynamicWithUserVo";
-import {Divider, Skeleton} from "antd";
+import {Skeleton} from "antd";
 import {LoadMoreButton} from "./style";
 import {Link} from "react-router-dom";
-import {AnswerWithQuestionVo} from "../../entity/AnswerWithQuestionVo";
 import {Question} from "../../entity/Question";
 import {getTimeRange} from "../../utils/DateUtils";
+import {AnswerVo} from "../../entity/AnswerVo";
+import AnswerCard from "../../component/answerCard";
 
 interface DynamicListProps {
     dynamics: DynamicWithUserVo[],
@@ -17,7 +18,7 @@ interface DynamicListProps {
 const DynamicList: React.FC<DynamicListProps> = ({dynamics, loading, loadMore, isEnd}) => {
 
 
-    const cardContent = (content: AnswerWithQuestionVo | Question) => {
+    const cardContent = (content: AnswerVo | Question) => {
         if ('tags' in content) {
             const question = content as Question;
             return (
@@ -31,18 +32,8 @@ const DynamicList: React.FC<DynamicListProps> = ({dynamics, loading, loadMore, i
                 </div>
             )
         } else {
-            const answer = content as AnswerWithQuestionVo;
-            return (
-                <div>
-                    <Link to={`/question/${answer.question.id}`}>
-                        <h2>{answer.question.title}</h2>
-                    </Link>
-                    <Link
-                        to={`/question/${answer.question.id}/answer/${answer.answer.id}`}>
-                        <div dangerouslySetInnerHTML={{__html: answer.answer.content}}/>
-                    </Link>
-                </div>
-            )
+            const answer = content as AnswerVo;
+            return <AnswerCard answer={answer} showUser={true} showQuestion={true}/>
         }
     }
 
@@ -52,7 +43,6 @@ const DynamicList: React.FC<DynamicListProps> = ({dynamics, loading, loadMore, i
             {dynamic.action}
             <div style={{float: "right"}}>{getTimeRange(dynamic.createTime)}</div>
             {cardContent(dynamic.content)}
-            <Divider/>
         </>
     }
 

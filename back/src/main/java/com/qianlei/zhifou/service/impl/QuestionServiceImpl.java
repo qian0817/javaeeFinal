@@ -9,12 +9,11 @@ import com.qianlei.zhifou.dao.es.QuestionElasticsearchDao;
 import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.pojo.es.QuestionEs;
 import com.qianlei.zhifou.service.IQuestionService;
+import com.qianlei.zhifou.utils.HtmlUtils;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import com.qianlei.zhifou.vo.QuestionVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +42,7 @@ public class QuestionServiceImpl implements IQuestionService {
   @Override
   public Question createQuestion(Question question) {
     // XSS 过滤
-    question.setContent(Jsoup.clean(question.getContent(), Whitelist.relaxed()));
+    question.setContent(HtmlUtils.cleanHtmlRelaxed(question.getContent()));
     if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(question.getContent()))) {
       throw new ZhiFouException("问题内容不能为空");
     }
@@ -56,7 +55,7 @@ public class QuestionServiceImpl implements IQuestionService {
         new QuestionEs(
             question.getId(),
             question.getTitle(),
-            Jsoup.clean(question.getContent(), Whitelist.none())));
+            HtmlUtils.cleanHtmlPlain(question.getContent())));
     return question;
   }
 
@@ -81,11 +80,6 @@ public class QuestionServiceImpl implements IQuestionService {
         .findAllByTitleContaining(keyword, PageRequest.of(pageNum, pageSize))
         .map(QuestionEs::getId)
         .map(id -> questionDao.findById(id).orElse(null));
-    //    return questionDao.findAllByContentContainsOrTitleContains(
-    //        keyword, keyword, PageRequest.of(pageNum, pageSize));
-    //    return questionElasticsearchDao.findAllByTitleContaining(
-    //        keyword, PageRequest.of(pageNum, pageSize));
-    //    return null;
   }
 
   @Override

@@ -6,6 +6,8 @@ import com.qianlei.zhifou.vo.UserVo;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 /** @author qianlei */
 public interface IAnswerService {
   /**
@@ -54,10 +56,17 @@ public interface IAnswerService {
    * @return 回答信息
    */
   Page<AnswerVo> getAllAnswerByQuestionId(
-          Integer questionId,
+      Integer questionId,
       String sortDirection,
       String sortBy,
       int pageNum,
       int pageSize,
       UserVo user);
+
+  /**
+   * 获取推荐的答案
+   * @param num 数量
+   * @return 推荐的答案
+   */
+  List<AnswerVo> getRecommendAnswer(int num,@Nullable UserVo user);
 }

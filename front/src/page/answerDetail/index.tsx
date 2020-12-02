@@ -5,7 +5,7 @@ import {Affix, Divider, Skeleton} from "antd";
 import {TitleWrapper} from "./style";
 import instance from "../../axiosInstance";
 import CommentView from "./CommentView";
-import AgreeButton from "../../component/AgreeButton";
+import AgreeButton from "../../component/agreeButton";
 import {Helmet} from "react-helmet";
 import {Link} from "react-router-dom";
 
@@ -17,7 +17,7 @@ const AnswerDetail = () => {
     useEffect(() => {
         const loadAnswer = async () => {
             const response = await instance.get<AnswerVo>(`/api/answer/id/${answerId}`)
-            if (response.data.questionId !== questionId) {
+            if (response.data.questionId !== Number(questionId)) {
                 history.push(`/question/${questionId}`)
             } else {
                 setAnswer(response.data)
@@ -47,8 +47,8 @@ const AnswerDetail = () => {
                     <div style={{backgroundColor: "white", padding: 10}}>
                         <AgreeButton canAgree={answer.canAgree}
                                      agreeNumber={answer.agreeNumber}
-                                     answerId={answerId}
-                                     setAgreeStatus={setAgreeStatus}/>
+                                     answerId={Number(answerId)}
+                                     onChange={setAgreeStatus}/>
                     </div>
                 </Affix>
                 <Divider/>

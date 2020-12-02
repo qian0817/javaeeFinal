@@ -32,7 +32,7 @@ public interface Constant {
       /** 回答问题 */
       CREATE_ANSWER(1, "回答了问题"),
       /** 赞同问题 */
-      AGREE_ANSWER(2, "赞同了问题");
+      AGREE_ANSWER(2, "赞同了回答");
       private final int id;
       @JsonValue private final String desc;
     }

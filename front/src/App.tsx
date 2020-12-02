@@ -7,7 +7,7 @@ import AnswerDetail from "./page/answerDetail";
 import Home from "./page/home/Home";
 import Search from "./page/search";
 import NotFound from "./page/notFound";
-import LoginModal from "./component/LoginModal";
+import LoginModal from "./component/loginModal";
 import UserPage from "./page/user";
 import {Col, Row} from "antd";
 

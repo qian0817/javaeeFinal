@@ -19,14 +19,15 @@ public class DynamicController {
       @RequestAttribute("user") UserVo user,
       @RequestParam(value = "pageNum", defaultValue = "0") Integer pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-    return dynamicService.getDynamicVoUserFollowing(user.getId(), pageNum, pageSize);
+    return dynamicService.getDynamicVoUserFollowing(user, pageNum, pageSize);
   }
 
   @GetMapping("/user/{userId}")
   public Page<DynamicVo> getUserDynamic(
       @PathVariable("userId") Integer userId,
+      @RequestAttribute(value = "user", required = false) UserVo user,
       @RequestParam(value = "pageNum", defaultValue = "0") Integer pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-    return dynamicService.getDynamicByUser(userId, pageNum, pageSize);
+    return dynamicService.getDynamicByUser(userId, user, pageNum, pageSize);
   }
 }

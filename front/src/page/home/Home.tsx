@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {Question} from "../../entity/Question";
 import instance from "../../axiosInstance";
 import {Helmet} from "react-helmet";
 import {QuestionHotVo} from "../../entity/QuestionHotVo";
@@ -11,9 +10,10 @@ import {DynamicWithUserVo} from "../../entity/DynamicWithUserVo";
 import {Page} from "../../entity/Page";
 import DynamicList from "./DynamicList";
 import TagSwitch from "./TagSwitch";
+import {AnswerVo} from "../../entity/AnswerVo";
 
 const Home = () => {
-    const [questions, setQuestions] = useState<Array<Question>>([])
+    const [recommend, setRecommend] = useState<Array<AnswerVo>>([])
     const [hotQuestions, setHotQuestions] = useState<Array<QuestionHotVo>>([])
     const [tagClicked, setTagClicked] = useState<'推荐' | '热榜' | '关注'>('推荐');
     const [loading, setLoading] = useState(false);
@@ -22,12 +22,11 @@ const Home = () => {
     const [isDynamicEnd, setDynamicEnd] = useState(true)
     const loginUser = useSelector((root: RootState) => root.login)
 
-    const loadQuestion = async () => {
+    const loadRecommend = async () => {
         setLoading(true)
         try {
-            const response = await instance.get<Array<Question>>('/api/question/random',
-                {params: {num: 20}})
-            setQuestions(questions => [...questions, ...response.data])
+            const response = await instance.get<Array<AnswerVo>>('/api/answer/recommend')
+            setRecommend(recommend => [...recommend, ...response.data])
         } finally {
             setLoading(false)
         }
@@ -65,15 +64,14 @@ const Home = () => {
                 loadDynamics(dynamicPageNum)
                 break;
             case "推荐":
-                setQuestions([])
-                loadQuestion()
+                setRecommend([])
+                loadRecommend()
                 break;
             case "热榜":
                 loadHotQuestion();
                 break;
         }
-        // eslint-disable-next-line
-    }, [tagClicked])
+    }, [dynamicPageNum, tagClicked])
 
 
     const content = () => {
@@ -81,7 +79,7 @@ const Home = () => {
             case "热榜":
                 return <HotQuestionList hotQuestions={hotQuestions} loading={loading}/>;
             case "推荐":
-                return <RecommendQuestionList questions={questions} loading={loading} loadMore={loadQuestion}/>
+                return <RecommendQuestionList recommend={recommend} loading={loading} loadMore={loadRecommend}/>
             case "关注":
                 return <DynamicList dynamics={dynamics}
                                     loading={loading}

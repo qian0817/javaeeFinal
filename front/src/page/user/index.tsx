@@ -2,16 +2,18 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {UserInfo} from "../../entity/UserInfo";
 import instance from "../../axiosInstance";
-import {Button, Descriptions, Divider, PageHeader, Skeleton} from "antd";
+import {Button, Descriptions, PageHeader, Skeleton} from "antd";
 import {DynamicVo} from "../../entity/DynamicVo";
 import {Page} from "../../entity/Page";
 import {Question} from "../../entity/Question";
-import {AnswerWithQuestionVo} from "../../entity/AnswerWithQuestionVo";
 import {Link} from "react-router-dom";
 import {getTimeRange} from "../../utils/DateUtils";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store";
 import {setVisible} from "../../reducers/loginFormVisible/actionCreate";
+import {getOverView} from "../../utils/StringUtils";
+import AnswerCard from "../../component/answerCard";
+import {AnswerVo} from "../../entity/AnswerVo";
 
 
 const UserPage = () => {
@@ -54,19 +56,16 @@ const UserPage = () => {
         </>);
     }
 
-    const showContent = (content: AnswerWithQuestionVo | Question) => {
+    const showContent = (content: AnswerVo | Question) => {
         if ('tags' in content) {
             const question = content as Question;
             return <Link to={`/question/${question.id}`}>
                 <h2>{question.title}</h2>
-                <div dangerouslySetInnerHTML={{__html: question.content}}/>
+                <div dangerouslySetInnerHTML={{__html: getOverView(question.content)[0]}}/>
             </Link>
         } else {
-            const answer = content as AnswerWithQuestionVo;
-            return <Link to={`/question/${answer.question.id}/answer/${answer.answer.id}`}>
-                <h2>{answer.question.title}</h2>
-                <div dangerouslySetInnerHTML={{__html: answer.answer.content}}/>
-            </Link>
+            const answer = content as AnswerVo;
+            return <AnswerCard showUser={false} answer={answer} showQuestion={true}/>
         }
     }
 
@@ -77,10 +76,10 @@ const UserPage = () => {
                 title={user.username}
                 extra={
                     <>{
-                        loginUser?.id!==user.id && user.following &&
+                        loginUser?.id !== user.id && user.following &&
                         <Button type="primary" danger onClick={unfollow}>取消关注</Button>
                     }{
-                        loginUser?.id!==user.id && !user.following &&
+                        loginUser?.id !== user.id && !user.following &&
                         <Button type="primary" onClick={follow}>关注</Button>
                     }
                     </>
@@ -97,7 +96,6 @@ const UserPage = () => {
                     {dynamic.action}
                     <div style={{float: "right"}}>{getTimeRange(dynamic.createTime)}</div>
                     {showContent(dynamic.content)}
-                    <Divider dashed/>
                 </div>)
             }
         </>

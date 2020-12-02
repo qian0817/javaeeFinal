@@ -21,8 +21,7 @@ public class AnswerVo {
   private LocalDateTime updateTime;
   private Boolean canAgree;
   private Long agreeNumber;
-  private Question questionEs;
-
+  private Question question;
   public AnswerVo(
           Answer answer, UserVo user, Question question, Boolean canAgree, Long agreeNumber) {
     setId(answer.getId());
@@ -30,7 +29,7 @@ public class AnswerVo {
     setContent(answer.getContent());
     setCreateTime(answer.getCreateTime());
     setUpdateTime(answer.getUpdateTime());
-    setQuestionEs(question);
+    setQuestion(question);
     setUser(user);
     setCanAgree(canAgree);
     setAgreeNumber(agreeNumber);

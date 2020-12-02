@@ -1,19 +1,22 @@
-import QuestionCard from "./QuestionCard";
 import {Skeleton} from "antd";
 import {LoadMoreButton} from "./style";
 import React from "react";
-import {Question} from "../../entity/Question";
+import {AnswerVo} from "../../entity/AnswerVo";
+import AnswerCard from "../../component/answerCard";
 
 interface ListProps {
-    questions: Question[],
+    recommend: AnswerVo[],
     loading: boolean,
     loadMore: React.MouseEventHandler<HTMLElement>
 }
 
-const RecommendQuestionList: React.FC<ListProps> = ({questions, loading, loadMore}) => {
+const RecommendQuestionList: React.FC<ListProps> = ({recommend, loading, loadMore}) => {
     return (
         <>
-            {questions.map((item, index) => <QuestionCard item={item} key={index}/>)}
+            {recommend.map((item, index) =>
+                <AnswerCard showQuestion={true}
+                            showUser={true}
+                            answer={item} key={index}/>)}
             {
                 loading &&
                 <>

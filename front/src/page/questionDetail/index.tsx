@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
 import {Button, Skeleton} from "antd";
-import AnswerView from "./AnswerView";
 import {TotalAnswerWrapper} from "./style";
 import WriteAnswerForm from "./WriteAnswerForm";
 import instance from "../../axiosInstance";
@@ -13,6 +12,7 @@ import {RootState} from "../../store";
 import {Helmet} from "react-helmet";
 import {setVisible} from "../../reducers/loginFormVisible/actionCreate";
 import {QuestionVo} from "../../entity/QuestionVo";
+import AnswerCard from "../../component/answerCard";
 
 const QuestionDetail = () => {
     const {id} = useParams<{ id: string }>();
@@ -80,7 +80,7 @@ const QuestionDetail = () => {
             </>
             }
             {!questionDetail && <Skeleton active/>}
-            {answers && answers.map(item => <AnswerView answer={item} key={item.id}/>)}
+            {answers && answers.map(item => <AnswerCard answer={item} showUser={true} showTime={true} key={item.id}/>)}
             {!last && <Button block type="link" onClick={loadMore}>加载更多</Button>}
             {!answers && <>
                 <Skeleton active/>

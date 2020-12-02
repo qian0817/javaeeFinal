@@ -16,7 +16,7 @@ public class CommentController {
 
   @GetMapping("/answer/{answerId}")
   public Page<CommentVo> getCommentVo(
-      @PathVariable String answerId,
+      @PathVariable Integer answerId,
       @RequestParam(value = "pageNum", defaultValue = "0") Integer pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
     return commentService.getComment(answerId, pageNum, pageSize);

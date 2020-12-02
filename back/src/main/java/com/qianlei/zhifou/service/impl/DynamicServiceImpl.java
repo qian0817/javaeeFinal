@@ -10,10 +10,12 @@ import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IDynamicService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
-import com.qianlei.zhifou.vo.AnswerWithQuestionVo;
+import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.DynamicVo;
 import com.qianlei.zhifou.vo.DynamicWithUserVo;
+import com.qianlei.zhifou.vo.UserVo;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +39,7 @@ public class DynamicServiceImpl implements IDynamicService {
   @Autowired private AnswerDao answerDao;
   @Autowired private QuestionDao questionDao;
   @Autowired private FollowDao followDao;
+  @Autowired private AgreeDao agreeDao;
   @Autowired private IUserService userService;
   @Autowired private ObjectMapper mapper;
 
@@ -96,43 +99,46 @@ public class DynamicServiceImpl implements IDynamicService {
   }
 
   @Override
-  public Page<DynamicVo> getDynamicByUser(Integer userId, Integer pageNum, Integer pageSize) {
+  public Page<DynamicVo> getDynamicByUser(
+      Integer userId, UserVo user, Integer pageNum, Integer pageSize) {
     var userEvents =
         userEventDao.findAllByUserId(
             userId, PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createTime")));
-    return userEvents.map(this::getDynamicByEvent);
+    return userEvents.map(event -> getDynamicByEvent(event, user));
   }
 
   @Override
   public Page<DynamicWithUserVo> getDynamicVoUserFollowing(
-      Integer userId, Integer pageNum, Integer pageSize) {
+      UserVo user, Integer pageNum, Integer pageSize) {
     var feeds =
         feedDao.findAllByUserId(
-            userId, PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createTime")));
+            user.getId(),
+            PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createTime")));
     return feeds
         .map(
             feed -> {
-              var event = userEventDao.findById(feed.getEventId());
-              if (event.isEmpty()) {
-                return null;
-              }
-              return getDynamicByEvent(event.get());
+              var event = userEventDao.findById(feed.getEventId()).orElseThrow();
+              return getDynamicByEvent(event, user);
             })
         .map(
             dynamicVo -> {
-              var user = userService.getUserInfoByUserId(dynamicVo.getUserId());
-              return new DynamicWithUserVo(dynamicVo, user);
+              var createUser = userService.getUserInfoByUserId(dynamicVo.getUserId());
+              return new DynamicWithUserVo(dynamicVo, createUser);
             });
   }
 
-  private DynamicVo getDynamicByEvent(UserEvent event) {
+  private DynamicVo getDynamicByEvent(UserEvent event, @Nullable UserVo user) {
     var operation = event.action();
     Object content = null;
     switch (event.getTableName()) {
       case TABLE_NAME_ANSWER:
         var answer = answerDao.findById(event.getTableId()).orElseThrow();
         var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
-        content = new AnswerWithQuestionVo(answer, question);
+        var createUser = userService.getUserInfoByUserId(event.getUserId());
+        var agrees = agreeDao.countByAnswerId(answer.getId());
+        var canAgree =
+            user == null || !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
+        content = new AnswerVo(answer, createUser, question, canAgree, agrees);
         break;
       case TABLE_NAME_QUESTION:
         content = questionDao.findById(event.getTableId()).orElse(null);

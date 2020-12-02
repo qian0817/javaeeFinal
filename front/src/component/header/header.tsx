@@ -51,10 +51,10 @@ const Header = () => {
                 </LogoWrapper>
                 <SearchWrapper
                     xs={{span: 9}}
-                    sm={{span: 7, offset: 2}}
-                    md={{span: 6, offset: 3}}
-                    lg={{span: 5, offset: 4}}
-                    xl={{span: 5, offset: 5}}>
+                    sm={{span: 8, offset: 1}}
+                    md={{span: 8, offset: 2}}
+                    lg={{span: 8, offset: 3}}
+                    xl={{span: 8, offset: 4}}>
                     <Input.Search
                         enterButton
                         placeholder="搜索"
@@ -62,9 +62,9 @@ const Header = () => {
                 </SearchWrapper>
                 <TopContentWrapper xs={{span: 11}}
                                    sm={{span: 10,offset:1}}
-                                   md={{span: 9,offset:2}}
-                                   lg={{span: 8,offset:3}}
-                                   xl={{span: 7,offset:3}}>
+                                   md={{span: 9,offset:1}}
+                                   lg={{span: 8,offset:1}}
+                                   xl={{span: 7,offset:1}}>
                     <span style={{float: "right"}}>
                         {loginUser ? (
                             <>

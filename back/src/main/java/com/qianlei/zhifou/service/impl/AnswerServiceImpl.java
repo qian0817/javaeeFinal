@@ -16,13 +16,13 @@ import com.qianlei.zhifou.pojo.es.AnswerEs;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
+import com.qianlei.zhifou.utils.HtmlUtils;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.UserVo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +33,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.qianlei.zhifou.common.Constant.KafkaConstant.DELETE_USER_EVENT_TOPIC;
 import static com.qianlei.zhifou.common.Constant.UserEventConstant.DynamicAction.AGREE_ANSWER;
@@ -53,10 +56,7 @@ public class AnswerServiceImpl implements IAnswerService {
   @Autowired private IUserService userService;
   @Autowired private AgreeDao agreeDao;
   @Autowired private ObjectMapper objectMapper;
-
-  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-  @Autowired
-  private KafkaTemplate<String, String> kafkaTemplate;
+  @Autowired private KafkaTemplate<String, String> kafkaTemplate;
 
   private static final List<String> SUPPORTED_SORT_BY_PROPERTIES =
       List.of("createTime", "updateTime");
@@ -66,7 +66,7 @@ public class AnswerServiceImpl implements IAnswerService {
   @Override
   public Answer createAnswer(Answer answer, UserVo user) {
     // XSS 过滤
-    answer.setContent(Jsoup.clean(answer.getContent(), Whitelist.relaxed()));
+    answer.setContent(HtmlUtils.cleanHtmlRelaxed(answer.getContent()));
     if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(answer.getContent()))) {
       throw new ZhiFouException("回答不能为空");
     }
@@ -82,7 +82,7 @@ public class AnswerServiceImpl implements IAnswerService {
     answer.setCreateTime(LocalDateTime.now());
     answerDao.save(answer);
     answerElasticsearchDao.save(
-        new AnswerEs(answer.getId(), Jsoup.clean(answer.getContent(), Whitelist.none())));
+        new AnswerEs(answer.getId(), HtmlUtils.cleanHtmlPlain(answer.getContent())));
     // 向消息队列中发送相关的消息
     var userEvent =
         new UserEvent(
@@ -102,16 +102,25 @@ public class AnswerServiceImpl implements IAnswerService {
   public AnswerVo getAnswerByQuestionId(Integer answerId, @Nullable UserVo user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
+    return getAnswerFromAnswer(user, answer);
+  }
+
+  /**
+   * 将 Answer 类转化为 answerVo 类
+   *
+   * @param user 当前用户
+   * @param answer 回答信息
+   * @return AnswerVo
+   */
+  @NotNull
+  private AnswerVo getAnswerFromAnswer(UserVo user, Answer answer) {
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
     var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
     long agreeNumber = agreeDao.countByAnswerId(answer.getId());
+    boolean canAgree =
+        user == null || !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
     questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1);
-    if (user == null) {
-      return new AnswerVo(answer, answerUser, question, true, agreeNumber);
-    } else {
-      boolean canAgree = !agreeDao.existsByAnswerIdAndUserId(answerId, user.getId());
-      return new AnswerVo(answer, answerUser, question, canAgree, agreeNumber);
-    }
+    return new AnswerVo(answer, answerUser, question, canAgree, agreeNumber);
   }
 
   @SneakyThrows
@@ -170,12 +179,26 @@ public class AnswerServiceImpl implements IAnswerService {
             answer -> {
               var answerUser = userService.getUserInfoByUserId(answer.getUserId());
               var agreeNumber = agreeDao.countByAnswerId(answer.getId());
-              if (user != null) {
-                var canAgree = !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
-                return new AnswerVo(answer, answerUser, null, canAgree, agreeNumber);
-              } else {
-                return new AnswerVo(answer, answerUser, null, true, agreeNumber);
-              }
+              var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
+              var canAgree =
+                  user == null || !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
+              return new AnswerVo(answer, answerUser, question, canAgree, agreeNumber);
             });
+  }
+
+  @Override
+  public List<AnswerVo> getRecommendAnswer(int num, @Nullable UserVo user) {
+    if (num < 1) {
+      num = 1;
+    }
+    var totalAnswer = answerDao.count();
+    if (totalAnswer == 0) {
+      return new ArrayList<>();
+    }
+    return new Random()
+        .longs(num, 0, totalAnswer)
+        .mapToObj(answerDao::findOne)
+        .map(answer -> getAnswerFromAnswer(user, answer))
+        .collect(Collectors.toList());
   }
 }
