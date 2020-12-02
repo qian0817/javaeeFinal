@@ -9,4 +9,5 @@
 /front/public/login.html
 /docker/nginx/html/*
 /front/build/
+/front/.eslintcache
 *.jks

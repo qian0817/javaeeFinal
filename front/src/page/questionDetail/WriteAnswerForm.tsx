@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Form} from "antd";
-import BraftEditor from "braft-editor";
 import {Answer} from "../../entity/Answer";
 import {useHistory} from "react-router";
 import instance from "../../axiosInstance";
+import Editor from "../../component/editor/Editor";
 
 interface WriteAnswerFormProps {
     hidden: boolean,
@@ -22,7 +22,7 @@ const WriteAnswerForm: React.FC<WriteAnswerFormProps> = ({hidden, questionId}) =
         <Form hidden={hidden} onFinish={submitAnswer}>
             <Form.Item name="content"
                        rules={[{required: true, message: '请填写回答内容'}]}>
-                <BraftEditor/>
+                <Editor/>
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit">发表回答</Button>

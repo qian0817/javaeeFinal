@@ -41,7 +41,8 @@ public class AnswerController {
 
   @GetMapping("/recommend")
   public List<AnswerVo> getRecommendAnswer(
-      @RequestParam(defaultValue = "10") int num, @RequestAttribute(value = "user") UserVo user) {
-    return answerService.getRecommendAnswer(num,user);
+      @RequestParam(defaultValue = "10") int num,
+      @RequestAttribute(value = "user", required = false) UserVo user) {
+    return answerService.getRecommendAnswer(num, user);
   }
 }
