@@ -21,6 +21,10 @@ const QuestionSearchResult = () => {
         setIsLast(response.data.last)
         setQuestions(questions => questions.concat(response.data.content))
     }
+    useEffect(() => {
+        setQuestions([])
+        setCurrent(0)
+    }, [keyword])
 
     useEffect(() => {
         loadQuestion(keyword, current)

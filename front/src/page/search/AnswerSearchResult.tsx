@@ -21,6 +21,11 @@ const AnswerSearchResult = () => {
     }
 
     useEffect(() => {
+        setAnswers([])
+        setCurrent(0)
+    }, [keyword])
+
+    useEffect(() => {
         loadAnswer(keyword, current)
     }, [keyword, current])
 
