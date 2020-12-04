@@ -10,7 +10,7 @@ export const LoadMoreButton = styled(Button)`
    margin-bottom: 30px;
 `
 
-export const TitleWrapper = styled.h1`
+export const TitleWrapper = styled.h2`
   cursor:pointer;
   color:#1890ff;
   :hover{

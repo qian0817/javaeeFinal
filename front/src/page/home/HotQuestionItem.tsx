@@ -4,6 +4,7 @@ import {HotIndexWrapper, HotQuestionWrapper, TitleWrapper} from "./style";
 import {Divider} from "antd";
 import {useHistory} from "react-router";
 import hotsvg from './hot.svg'
+import {getOverView} from "../../utils/StringUtils";
 
 interface HotQuestionCardProps {
     item: QuestionHotVo,
@@ -22,6 +23,9 @@ const HotQuestionItem: React.FC<HotQuestionCardProps> = ({item, index}) => {
     }
 
     const indexColor = getIndexColor(index);
+
+    const overView = getOverView(item.question.content, 50)
+
     return (
         <>
             <HotIndexWrapper>
@@ -31,6 +35,7 @@ const HotQuestionItem: React.FC<HotQuestionCardProps> = ({item, index}) => {
                 <TitleWrapper onClick={() => history.push(`/question/${item.question.id}`)}>
                     {item.question.title}
                 </TitleWrapper>
+                <div>{overView}</div>
                 <img src={hotsvg} style={{width: 15, height: 15}} alt=""/>
                 {item.hot}热度
                 <Divider/>

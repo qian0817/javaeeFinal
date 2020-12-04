@@ -8,6 +8,7 @@ import com.qianlei.zhifou.dao.es.AnswerElasticsearchDao;
 import com.qianlei.zhifou.dao.es.QuestionElasticsearchDao;
 import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.pojo.es.QuestionEs;
+import com.qianlei.zhifou.requestparam.CreateQuestionParam;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.utils.HtmlUtils;
 import com.qianlei.zhifou.vo.QuestionHotVo;
@@ -40,16 +41,16 @@ public class QuestionServiceImpl implements IQuestionService {
   @Autowired private StringRedisTemplate redisTemplate;
 
   @Override
-  public Question createQuestion(Question question) {
+  public Question createQuestion(CreateQuestionParam param) {
     // XSS 过滤
-    question.setContent(HtmlUtils.cleanHtmlRelaxed(question.getContent()));
-    if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(question.getContent()))) {
+    param.setContent(HtmlUtils.cleanHtmlRelaxed(param.getContent()));
+    if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(param.getContent()))) {
       throw new ZhiFouException("问题内容不能为空");
     }
-    if (StringUtils.isBlank(question.getTitle())) {
+    if (StringUtils.isBlank(param.getTitle())) {
       throw new ZhiFouException("标题不能为空");
     }
-    question.setId(null);
+    var question = param.toQuestion();
     questionDao.save(question);
     questionElasticsearchDao.save(
         new QuestionEs(

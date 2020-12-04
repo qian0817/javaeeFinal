@@ -3,7 +3,7 @@ package com.qianlei.zhifou.service.impl;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.CommentDao;
-import com.qianlei.zhifou.pojo.Comment;
+import com.qianlei.zhifou.requestparam.CreateCommentParam;
 import com.qianlei.zhifou.service.ICommentService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
@@ -36,16 +36,14 @@ public class CommentServiceImpl implements ICommentService {
   }
 
   @Override
-  public CommentVo createNewComment(Comment comment, UserVo user) {
-    if (StringUtils.isBlank(comment.getContent())) {
+  public CommentVo createNewComment(CreateCommentParam param, Integer answerId, UserVo user) {
+    if (StringUtils.isBlank(param.getContent())) {
       throw new ZhiFouException("请输入评论内容");
     }
-    if (!answerDao.existsById(comment.getAnswerId())) {
+    if (!answerDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
-    comment.setUserId(user.getId());
-    comment.setId(null);
-    comment.setCreateTime(null);
+    var comment = param.toComment(answerId);
     commentDao.save(comment);
     var answer = answerDao.findById(comment.getAnswerId()).orElseThrow();
     // 每条新的评论为问题增加 30 个热度

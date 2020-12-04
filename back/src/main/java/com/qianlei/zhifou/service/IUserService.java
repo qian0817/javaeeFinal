@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.requestparam.RegisterParam;
+import com.qianlei.zhifou.requestparam.UserLoginParam;
 import com.qianlei.zhifou.vo.UserInfo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.jetbrains.annotations.Nullable;
@@ -43,10 +44,10 @@ public interface IUserService {
   /**
    * 用户登录
    *
-   * @param user 登陆的用户信息，包括用户名和密码
+   * @param param 包括用户名和密码
    * @return 完整的用户登录信息
    */
-  User login(User user);
+  User login(UserLoginParam param);
 
   /**
    * 关注某人

@@ -11,6 +11,7 @@ import com.qianlei.zhifou.dao.UserDao;
 import com.qianlei.zhifou.pojo.Follow;
 import com.qianlei.zhifou.pojo.User;
 import com.qianlei.zhifou.requestparam.RegisterParam;
+import com.qianlei.zhifou.requestparam.UserLoginParam;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.UserInfo;
 import com.qianlei.zhifou.vo.UserVo;
@@ -157,12 +158,12 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
-  public User login(User user) {
-    var existedUser = userDao.findByUsername(user.getUsername());
+  public User login(UserLoginParam param) {
+    var existedUser = userDao.findByUsername(param.getUsername());
     if (existedUser.isEmpty()) {
       throw new ZhiFouException("用户名或密码错误");
     }
-    if (!BCrypt.checkpw(user.getPassword(), existedUser.get().getPassword())) {
+    if (!BCrypt.checkpw(param.getPassword(), existedUser.get().getPassword())) {
       throw new ZhiFouException("用户名或密码错误");
     }
     return existedUser.get();

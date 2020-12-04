@@ -1,6 +1,6 @@
 package com.qianlei.zhifou.service;
 
-import com.qianlei.zhifou.pojo.Comment;
+import com.qianlei.zhifou.requestparam.CreateCommentParam;
 import com.qianlei.zhifou.vo.CommentVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.springframework.data.domain.Page;
@@ -20,9 +20,10 @@ public interface ICommentService {
   /**
    * 创建新的评论
    *
-   * @param comment 评论内容
+   * @param param 评论内容
+   * @param answerId 评论的回答 id
    * @param user 创建者
    * @return 评论信息
    */
-  CommentVo createNewComment(Comment comment, UserVo user);
+  CommentVo createNewComment(CreateCommentParam param, Integer answerId, UserVo user);
 }

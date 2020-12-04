@@ -1,6 +1,7 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.pojo.Answer;
+import com.qianlei.zhifou.requestparam.CreateAnswerParam;
 import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.jetbrains.annotations.Nullable;
@@ -22,11 +23,11 @@ public interface IAnswerService {
   /**
    * 创建回答
    *
-   * @param answerEs 回答内容
+   * @param param 回答内容
    * @param user 创建者
    * @return 创建的回答信息
    */
-  Answer createAnswer(Answer answerEs, UserVo user);
+  Answer createAnswer(CreateAnswerParam param, UserVo user);
 
   /**
    * 赞同回答

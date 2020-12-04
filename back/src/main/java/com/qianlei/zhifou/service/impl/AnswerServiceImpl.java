@@ -13,6 +13,7 @@ import com.qianlei.zhifou.pojo.Agree;
 import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.pojo.UserEvent;
 import com.qianlei.zhifou.pojo.es.AnswerEs;
+import com.qianlei.zhifou.requestparam.CreateAnswerParam;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.service.IUserService;
@@ -64,22 +65,19 @@ public class AnswerServiceImpl implements IAnswerService {
 
   @SneakyThrows
   @Override
-  public Answer createAnswer(Answer answer, UserVo user) {
+  public Answer createAnswer(CreateAnswerParam param, UserVo user) {
     // XSS 过滤
-    answer.setContent(HtmlUtils.cleanHtmlRelaxed(answer.getContent()));
-    if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(answer.getContent()))) {
+    param.setContent(HtmlUtils.cleanHtmlRelaxed(param.getContent()));
+    if (StringUtils.isBlank(HtmlUtil.cleanHtmlTag(param.getContent()))) {
       throw new ZhiFouException("回答不能为空");
     }
-    if (!questionDao.existsById(answer.getQuestionId())) {
+    if (!questionDao.existsById(param.getQuestionId())) {
       throw new ZhiFouException("问题不存在");
     }
-    if (answerDao.findByUserIdAndQuestionId(user.getId(), answer.getQuestionId()) != null) {
+    if (answerDao.findByUserIdAndQuestionId(user.getId(), param.getQuestionId()) != null) {
       throw new ZhiFouException("已回答该问题");
     }
-    answer.setId(null);
-    answer.setUserId(user.getId());
-    answer.setUpdateTime(LocalDateTime.now());
-    answer.setCreateTime(LocalDateTime.now());
+    var answer = param.toAnswer(user.getId());
     answerDao.save(answer);
     answerElasticsearchDao.save(
         new AnswerEs(answer.getId(), HtmlUtils.cleanHtmlPlain(answer.getContent())));

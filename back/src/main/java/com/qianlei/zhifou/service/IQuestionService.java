@@ -1,6 +1,7 @@
 package com.qianlei.zhifou.service;
 
 import com.qianlei.zhifou.pojo.Question;
+import com.qianlei.zhifou.requestparam.CreateQuestionParam;
 import com.qianlei.zhifou.vo.QuestionHotVo;
 import com.qianlei.zhifou.vo.QuestionVo;
 import com.qianlei.zhifou.vo.UserVo;
@@ -13,10 +14,10 @@ public interface IQuestionService {
   /**
    * 创建问题
    *
-   * @param question 问题内容
+   * @param param 问题内容
    * @return 问题内容，添加id信息
    */
-  Question createQuestion(Question question);
+  Question createQuestion(CreateQuestionParam param);
 
   /**
    * 根据id获取问题信息

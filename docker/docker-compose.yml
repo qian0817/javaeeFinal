@@ -47,7 +47,7 @@ services:
       - zookeeper-server
     environment:
       #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://zhifou-server:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.21.128.1:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.30.0.1:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
   nginx-server:

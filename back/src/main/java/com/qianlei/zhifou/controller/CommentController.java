@@ -1,9 +1,11 @@
 package com.qianlei.zhifou.controller;
 
-import com.qianlei.zhifou.pojo.Comment;
+import com.qianlei.zhifou.requestparam.CreateCommentParam;
 import com.qianlei.zhifou.service.ICommentService;
 import com.qianlei.zhifou.vo.CommentVo;
 import com.qianlei.zhifou.vo.UserVo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -14,20 +16,23 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
   @Autowired private ICommentService commentService;
 
+  @Operation(summary = "根据回答 id 获取评论信息，结果以分页信息展示")
   @GetMapping("/answer/{answerId}")
   public Page<CommentVo> getCommentVo(
-      @PathVariable Integer answerId,
-      @RequestParam(value = "pageNum", defaultValue = "0") Integer pageNum,
-      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+      @Parameter(description = "回答 id") @PathVariable Integer answerId,
+      @Parameter(description = "需要查看的页数，从0开始") @RequestParam(value = "pageNum", defaultValue = "0")
+          Integer pageNum,
+      @Parameter(description = "每页的数量") @RequestParam(value = "pageSize", defaultValue = "10")
+          Integer pageSize) {
     return commentService.getComment(answerId, pageNum, pageSize);
   }
 
+  @Operation(summary = "创建新的评论")
   @PostMapping("/answer/{answerId}")
   public CommentVo createComment(
-      @PathVariable("answerId") Integer answerId,
-      @RequestBody Comment comment,
+      @Parameter(description = "回答id") @PathVariable("answerId") Integer answerId,
+      @Parameter(description = "评论信息") @RequestBody CreateCommentParam param,
       @RequestAttribute(value = "user") UserVo user) {
-    comment.setAnswerId(answerId);
-    return commentService.createNewComment(comment, user);
+    return commentService.createNewComment(param, answerId, user);
   }
 }

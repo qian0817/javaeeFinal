@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.session", "spring-session-data-redis")
     implementation("org.apache.commons", "commons-lang3")
     implementation("com.nimbusds", "nimbus-jose-jwt")
+    implementation("org.springdoc", "springdoc-openapi-ui","1.5.0")
     implementation("cn.hutool", "hutool-all", "5.5.1")
     implementation("org.jetbrains", "annotations", "20.1.0")
     implementation("org.jsoup", "jsoup", "1.13.1")
