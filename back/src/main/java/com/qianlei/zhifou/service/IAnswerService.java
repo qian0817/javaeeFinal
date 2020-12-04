@@ -66,8 +66,11 @@ public interface IAnswerService {
 
   /**
    * 获取推荐的答案
+   *
    * @param num 数量
    * @return 推荐的答案
    */
-  List<AnswerVo> getRecommendAnswer(int num,@Nullable UserVo user);
+  List<AnswerVo> getRecommendAnswer(int num, @Nullable UserVo user);
+
+  Page<AnswerVo> searchAnswer(String keyword, int pageNum, int pageSize, @Nullable UserVo user);
 }

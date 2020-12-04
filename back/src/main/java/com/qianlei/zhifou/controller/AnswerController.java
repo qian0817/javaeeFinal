@@ -8,6 +8,7 @@ import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,5 +57,15 @@ public class AnswerController {
       @Parameter(description = "需要推荐的数量") @RequestParam(defaultValue = "10") int num,
       @RequestAttribute(value = "user", required = false) UserVo user) {
     return answerService.getRecommendAnswer(num, user);
+  }
+
+  @Operation(summary = "搜索回答")
+  @GetMapping("/keyword/{keyword}")
+  public Page<AnswerVo> searchAnswer(
+      @Parameter(description = "关键词") @PathVariable String keyword,
+      @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
+      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+      @RequestAttribute(value = "user", required = false) UserVo user) {
+    return answerService.searchAnswer(keyword, pageNum, pageSize, user);
   }
 }

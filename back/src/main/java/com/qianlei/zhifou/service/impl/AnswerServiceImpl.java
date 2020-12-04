@@ -199,4 +199,13 @@ public class AnswerServiceImpl implements IAnswerService {
         .map(answer -> getAnswerFromAnswer(user, answer))
         .collect(Collectors.toList());
   }
+
+  @Override
+  public Page<AnswerVo> searchAnswer(String keyword, int pageNum, int pageSize, UserVo user) {
+    return answerElasticsearchDao
+        .findAllByContentContains(keyword, PageRequest.of(pageNum, pageSize))
+        .map(AnswerEs::getId)
+        .map(id -> answerDao.findById(id).orElse(null))
+        .map(answer -> getAnswerFromAnswer(user, answer));
+  }
 }

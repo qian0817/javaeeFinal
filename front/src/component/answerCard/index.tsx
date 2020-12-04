@@ -6,15 +6,18 @@ import {OverViewWrapper, TimeWrapper, TitleWrapper, UsernameWrapper} from "./sty
 import {Divider} from "antd";
 import {getTimeRange} from "../../utils/DateUtils";
 import AgreeButton from "../agreeButton";
+import Highlighter from "react-highlight-words";
 
 interface AnswerCardProps {
     answer: AnswerVo,
     showUser?: boolean,
     showTime?: boolean,
-    showQuestion?: boolean
+    showQuestion?: boolean,
+    hiddenAgree?: boolean,
+    keyword?: string[]
 }
 
-const AnswerCard: React.FC<AnswerCardProps> = ({answer, showUser, showTime, showQuestion}) => {
+const AnswerCard: React.FC<AnswerCardProps> = ({answer, showUser, hiddenAgree, showTime, showQuestion, keyword}) => {
     const [overView] = getOverView(answer.content);
     const [agreeNumber, setAgreeNumber] = useState(answer.agreeNumber);
     const [canAgree, setCanAgree] = useState(answer.canAgree);
@@ -46,14 +49,23 @@ const AnswerCard: React.FC<AnswerCardProps> = ({answer, showUser, showTime, show
                 {showTime && <TimeWrapper>{formatTime(answer.createTime, answer.updateTime)}</TimeWrapper>}
             </div>
             <Link to={`/question/${answer.questionId}/answer/${answer.id}`}>
-                <OverViewWrapper>{overView}</OverViewWrapper>
+                <OverViewWrapper>
+                    {keyword ? <Highlighter highlightStyle={{
+                        margin: 0,
+                        padding: 0,
+                        color: "red",
+                        backgroundColor: "white"
+                    }} searchWords={keyword} textToHighlight={overView}/> : overView}
+                </OverViewWrapper>
             </Link>
-            <AgreeButton
-                style={{marginTop:30}}
-                canAgree={canAgree}
-                onChange={agreeChange}
-                agreeNumber={agreeNumber}
-                answerId={answer.id}/>
+            {
+                !hiddenAgree && <AgreeButton
+                    style={{marginTop: 30}}
+                    canAgree={canAgree}
+                    onChange={agreeChange}
+                    agreeNumber={agreeNumber}
+                    answerId={answer.id}/>
+            }
             <Divider dashed/>
         </div>
     )
