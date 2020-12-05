@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.KeyStore;
 
 /** @author qianlei */
@@ -19,7 +20,14 @@ public class JwtConfig {
   @Bean
   public RSAKey getRsaKey() throws Exception {
     // keytool -genkey -alias jwt -keyalg RSA -keystore jwt.jks
-    var file = new File(new ClassPathResource(keyProperties.keyFilename).getURI());
+    var resource = new ClassPathResource(keyProperties.keyFilename);
+    var inputStream = resource.getInputStream();
+    var file = File.createTempFile("jwt", "jks");
+    var bytes = inputStream.readAllBytes();
+    try (var output = new FileOutputStream(file)) {
+      output.write(bytes);
+    }
+    //    var file = new ClassPathResource(keyProperties.keyFilename).getFile();
     var keyStore = KeyStore.getInstance(file, keyProperties.password.toCharArray());
     return RSAKey.load(keyStore, keyProperties.alias, keyProperties.password.toCharArray());
   }
