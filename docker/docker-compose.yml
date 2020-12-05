@@ -2,7 +2,6 @@ version: "3.3"
 services:
   mysql-server:
     image: mysql:8.0.21
-    container_name: mysql
     ports:
       - "3306:3306"
     environment:
@@ -14,12 +13,10 @@ services:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
   redis-server:
     image: redis:6.0.8
-    container_name: redis
     ports:
       - "6379:6379"
   elasticsearch-server:
     image: elasticsearch:7.6.2
-    container_name: elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -28,19 +25,18 @@ services:
       - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
   kubana-server:
     image: kibana:7.6.2
-    container_name: kubana
     ports:
       - "5601:5601"
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch-server:9200
+    depends_on:
+      - elasticsearch-server
   zookeeper-server:
     image: zookeeper:3.6.2
-    container_name: zookeeper
     ports:
       - "2181:2181"
   kafka-server:
     image: wurstmeister/kafka:2.13-2.6.0
-    container_name: kafka
     ports:
       - "9092:9092"
     depends_on:
@@ -52,12 +48,18 @@ services:
   zhifou-server:
     build: ../back/.
     scale: 2
+    depends_on:
+      - kafka-server
+      - elasticsearch-server
+      - redis-server
+      - mysql-server
   nginx-server:
     image: nginx:1.19.2
-    container_name: nginx
     ports:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf.nginx:/etc/nginx/nginx.conf
       - ./nginx/conf.d/:/etc/nginx/conf.d/
       - ./nginx/html/:/usr/share/nginx/html
+    depends_on:
+      - zhifou-server
