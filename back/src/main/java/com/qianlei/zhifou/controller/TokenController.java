@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /** @author qianlei */
@@ -27,9 +29,10 @@ public class TokenController {
     return JwtUtils.createJwt(new UserVo(user), rsaKey);
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "获取当前登录用户信息")
   @GetMapping("/")
-  public UserVo getUserInfo(@RequestAttribute(value = "user", required = false) UserVo user) {
+  public UserVo getUserInfo(@AuthenticationPrincipal UserVo user) {
     return user;
   }
 }

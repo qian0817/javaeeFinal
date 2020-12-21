@@ -1,7 +1,6 @@
 package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.core.lang.Validator;
-import cn.hutool.crypto.digest.BCrypt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AgreeDao;
@@ -27,6 +26,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +50,7 @@ public class UserServiceImpl implements IUserService {
   @Autowired private AnswerDao answerDao;
   @Autowired private StringRedisTemplate redisTemplate;
   @Autowired private ObjectMapper objectMapper;
+  @Autowired private PasswordEncoder passwordEncoder;
 
   @Value("${spring.mail.username}")
   private String emailFrom;
@@ -110,7 +111,7 @@ public class UserServiceImpl implements IUserService {
     if (!code.equalsIgnoreCase(param.getCode())) {
       throw new ZhiFouException("邮箱验证码错误");
     }
-    var encryptPassword = BCrypt.hashpw(param.getPassword());
+    var encryptPassword = passwordEncoder.encode(param.getPassword());
     var user = new User(null, param.getUsername(), encryptPassword, param.getEmail());
     userDao.save(user);
     return user;
@@ -163,7 +164,7 @@ public class UserServiceImpl implements IUserService {
     if (existedUser.isEmpty()) {
       throw new ZhiFouException("用户名或密码错误");
     }
-    if (!BCrypt.checkpw(param.getPassword(), existedUser.get().getPassword())) {
+    if (!passwordEncoder.matches(param.getPassword(), existedUser.get().getPassword())) {
       throw new ZhiFouException("用户名或密码错误");
     }
     return existedUser.get();

@@ -21,6 +21,11 @@ public interface Constant {
     String REGISTER_CODE_PREFIX = "user:register:email:code:";
   }
 
+  interface SecurityConstant {
+    String TOKEN_HEADER = "Authorization";
+    String TOKEN_PREFIX = "Bearer ";
+  }
+
   interface UserEventConstant {
 
     String TABLE_NAME_ANSWER = "answer";

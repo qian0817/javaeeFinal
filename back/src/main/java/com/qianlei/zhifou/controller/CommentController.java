@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /** @author qianlei */
@@ -27,12 +29,13 @@ public class CommentController {
     return commentService.getComment(answerId, pageNum, pageSize);
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "创建新的评论")
   @PostMapping("/answer/{answerId}")
   public CommentVo createComment(
       @Parameter(description = "回答id") @PathVariable("answerId") Integer answerId,
       @Parameter(description = "评论信息") @RequestBody CreateCommentParam param,
-      @RequestAttribute(value = "user") UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return commentService.createNewComment(param, answerId, user);
   }
 }

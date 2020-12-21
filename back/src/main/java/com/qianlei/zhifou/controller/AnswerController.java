@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,31 +25,34 @@ public class AnswerController {
   @GetMapping("/id/{id}")
   public AnswerVo getAnswerById(
       @Parameter(description = "问题 id") @PathVariable Integer id,
-      @RequestAttribute(value = "user", required = false) UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return answerService.getAnswerByQuestionId(id, user);
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "回答问题")
   @PostMapping("/")
   public Answer createAnswer(
       @Parameter(description = "回答的内容") @RequestBody CreateAnswerParam param,
-      @RequestAttribute(value = "user") UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return answerService.createAnswer(param, user);
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "赞同回答")
   @PostMapping("/id/{answerId}/agree/")
   public void agree(
       @Parameter(description = "赞同的回答 id") @PathVariable("answerId") Integer answerId,
-      @RequestAttribute(value = "user") UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     answerService.agree(answerId, user);
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "取消赞同")
   @DeleteMapping("/id/{answerId}/agree/")
   public void removeAgree(
       @Parameter(description = "需要取消赞同的回答 id") @PathVariable("answerId") Integer answerId,
-      @RequestAttribute(value = "user") UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     answerService.deleteAgree(answerId, user);
   }
 
@@ -55,7 +60,7 @@ public class AnswerController {
   @GetMapping("/recommend")
   public List<AnswerVo> getRecommendAnswer(
       @Parameter(description = "需要推荐的数量") @RequestParam(defaultValue = "10") int num,
-      @RequestAttribute(value = "user", required = false) UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return answerService.getRecommendAnswer(num, user);
   }
 
@@ -65,7 +70,7 @@ public class AnswerController {
       @Parameter(description = "关键词") @PathVariable String keyword,
       @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-      @RequestAttribute(value = "user", required = false) UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return answerService.searchAnswer(keyword, pageNum, pageSize, user);
   }
 }

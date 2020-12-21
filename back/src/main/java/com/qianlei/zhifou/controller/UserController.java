@@ -10,6 +10,8 @@ import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /** @author qianlei */
@@ -36,23 +38,25 @@ public class UserController {
   @GetMapping("/{id}")
   public UserInfo getUserInfo(
       @Parameter(description = "被获取信息的用户 id") @PathVariable("id") Integer id,
-      @RequestAttribute(value = "user", required = false) UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return userService.getUserInfoByUserId(id, user);
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "关注某人")
   @PostMapping("/{follower}/following/")
   public void follow(
       @Parameter(description = "被关注的人的用户 id") @PathVariable("follower") Integer follower,
-      @RequestAttribute("user") UserVo following) {
+      @AuthenticationPrincipal UserVo following) {
     userService.follow(follower, following.getId());
   }
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "取消关注")
   @DeleteMapping("/{follower}/following/")
   public void unfollow(
       @Parameter(description = "被取消关注的人的用户 id") @PathVariable("follower") Integer follower,
-      @RequestAttribute("user") UserVo following) {
+      @AuthenticationPrincipal UserVo following) {
     userService.unfollow(follower, following.getId());
   }
 }

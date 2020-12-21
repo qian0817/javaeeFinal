@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,12 +25,11 @@ public class QuestionController {
   @Autowired private IQuestionService questionService;
   @Autowired private IAnswerService answerService;
 
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "创建新问题")
   @PostMapping("/")
   public Question createQuestion(
-      @Parameter(description = "新问题的内容") @RequestBody CreateQuestionParam param,
-      @RequestAttribute(value = "user") UserVo user) {
-
+      @Parameter(description = "新问题的内容") @RequestBody CreateQuestionParam param) {
     return questionService.createQuestion(param);
   }
 
@@ -36,7 +37,7 @@ public class QuestionController {
   @GetMapping("/id/{id}")
   public QuestionVo getQuestionById(
       @Parameter(description = "问题id") @PathVariable Integer id,
-      @RequestAttribute(value = "user", required = false) UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return questionService.getQuestionVoById(id, user);
   }
 
@@ -53,7 +54,7 @@ public class QuestionController {
           int pageNum,
       @Parameter(description = "每页数量") @RequestParam(value = "pageSize", defaultValue = "10")
           int pageSize,
-      @RequestAttribute(value = "user", required = false) UserVo user) {
+      @AuthenticationPrincipal UserVo user) {
     return answerService.getAllAnswerByQuestionId(
         questionId, sortDirection, sortBy, pageNum, pageSize, user);
   }
