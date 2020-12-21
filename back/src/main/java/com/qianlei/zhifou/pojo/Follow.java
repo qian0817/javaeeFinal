@@ -7,7 +7,15 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 /** @author qianlei */
-@Table(name = "zhifou_follow")
+@Table(
+    name = "zhifou_follow",
+    indexes = {
+      @Index(name = "idx_follower_user_id", columnList = "follower_user_id"),
+      @Index(name = "idx_following_user_id", columnList = "following_user_id"),
+      @Index(
+          name = "idx_following_user_id_and_follower_user_id",
+          columnList = "following_user_id, follower_user_id")
+    })
 @Entity(name = "follow")
 @Data
 @NoArgsConstructor
@@ -18,9 +26,9 @@ public class Follow {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   /** 被关注者 */
-  @Column(name = "follower_user_id")
+  @Column(name = "follower_user_id", nullable = false)
   private Integer followerUserId;
   /** 关注者 */
-  @Column(name = "following_user_id")
+  @Column(name = "following_user_id", nullable = false)
   private Integer followingUserId;
 }

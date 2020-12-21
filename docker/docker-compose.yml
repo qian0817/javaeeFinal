@@ -9,8 +9,6 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: qianlei
       MYSQL_PASSWORD: 123456
-    volumes:
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
   redis-server:
     image: redis:6.0.8
     ports:

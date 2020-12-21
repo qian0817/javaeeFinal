@@ -10,7 +10,13 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /** @author qianlei */
-@Table(name = "zhifou_answer")
+@Table(
+    name = "zhifou_answer",
+    indexes = {
+      @Index(name = "idx_user_id", columnList = "user_id"),
+      @Index(name = "idx_question_id", columnList = "question_id"),
+      @Index(name = "idx_question_id_and_user_id", columnList = "question_id, user_id")
+    })
 @Entity(name = "answer")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,20 +27,22 @@ public class Answer {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name = "user_id")
+  @Column(name = "user_id", nullable = false)
   private Integer userId;
 
-  @Column(name = "question_id")
+  @Column(name = "question_id", nullable = false)
   private Integer questionId;
 
-  @Column(name = "content")
+  @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+  @Lob
+  @Basic(fetch = FetchType.LAZY)
   private String content;
 
-  @Column(name = "create_time")
+  @Column(name = "create_time", nullable = false)
   @CreationTimestamp
   private LocalDateTime createTime;
 
-  @Column(name = "update_time")
+  @Column(name = "update_time", nullable = false)
   @UpdateTimestamp
   private LocalDateTime updateTime;
 }

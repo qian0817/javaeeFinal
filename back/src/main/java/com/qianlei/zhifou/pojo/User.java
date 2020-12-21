@@ -5,23 +5,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /** @author qianlei */
-@Table(name = "zhifou_user")
+@Table(
+    name = "zhifou_user",
+    indexes = {
+      @Index(name = "idx_email", columnList = "email"),
+      @Index(name = "idx_username", columnList = "username")
+    })
 @Entity(name = "user")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
+public class User {
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
-  @Column(name = "username")
+
+  @Column(name = "username", length = 20, nullable = false)
   private String username;
-  @Column(name = "password")
+
+  @Column(name = "password", length = 60, columnDefinition = "CHAR(60)", nullable = false)
   private String password;
-  @Column(name = "email")
+
+  @Column(name = "email", length = 30, nullable = false)
   private String email;
 }

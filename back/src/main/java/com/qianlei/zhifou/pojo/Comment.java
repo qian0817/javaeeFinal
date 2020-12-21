@@ -9,7 +9,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /** @author qianlei */
-@Table(name = "zhifou_comment")
+@Table(
+    name = "zhifou_comment",
+    indexes = {
+      @Index(name = "idx_answer_id_and_create_time", columnList = "answer_id, create_time")
+    })
 @Entity(name = "comment")
 @Data
 @NoArgsConstructor
@@ -20,16 +24,16 @@ public class Comment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name = "answer_id")
+  @Column(name = "answer_id", nullable = false)
   private Integer answerId;
 
-  @Column(name = "content")
+  @Column(name = "content", nullable = false)
   private String content;
 
-  @Column(name = "user_id")
+  @Column(name = "user_id", nullable = false)
   private Integer userId;
 
-  @Column(name = "create_time")
+  @Column(name = "create_time", nullable = false)
   @CreationTimestamp
   private LocalDateTime createTime;
 }

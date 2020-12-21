@@ -44,7 +44,7 @@ public class CommentServiceImpl implements ICommentService {
     if (!answerDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
-    var comment = param.toComment(answerId);
+    var comment = param.toComment(answerId,user.getId());
     commentDao.save(comment);
     var answer = answerDao.findById(comment.getAnswerId()).orElseThrow();
     // 每条新的评论为问题增加 30 个热度

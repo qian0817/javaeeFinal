@@ -21,20 +21,22 @@ public class Question {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(name = "title")
+  @Column(name = "title", length = 30, nullable = false)
   private String title;
 
-  @Column(name = "tags")
+  @Column(name = "tags", nullable = false)
   private String tags;
 
-  @Column(name = "content")
+  @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+  @Lob
+  @Basic(fetch = FetchType.LAZY)
   private String content;
 
-  @Column(name = "create_time")
+  @Column(name = "create_time", nullable = false)
   @CreationTimestamp
   private LocalDateTime createTime;
 
-  @Column(name = "update_time")
+  @Column(name = "update_time", nullable = false)
   @UpdateTimestamp
   private LocalDateTime updateTime;
 }
