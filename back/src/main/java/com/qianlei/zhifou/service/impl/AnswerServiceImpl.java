@@ -8,7 +8,6 @@ import com.qianlei.zhifou.dao.AgreeDao;
 import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.QuestionDao;
 import com.qianlei.zhifou.dao.es.AnswerElasticsearchDao;
-import com.qianlei.zhifou.dao.es.QuestionElasticsearchDao;
 import com.qianlei.zhifou.pojo.Agree;
 import com.qianlei.zhifou.pojo.Answer;
 import com.qianlei.zhifou.pojo.UserEvent;
@@ -24,7 +23,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,6 +31,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,15 +48,14 @@ import static com.qianlei.zhifou.common.Constant.UserEventConstant.TABLE_NAME_AN
 @Slf4j
 @Transactional(rollbackFor = RuntimeException.class)
 public class AnswerServiceImpl implements IAnswerService {
-  @Autowired private AnswerDao answerDao;
-  @Autowired private QuestionDao questionDao;
-  @Autowired private AnswerElasticsearchDao answerElasticsearchDao;
-  @Autowired private QuestionElasticsearchDao questionElasticsearchDao;
-  @Autowired private IQuestionService questionService;
-  @Autowired private IUserService userService;
-  @Autowired private AgreeDao agreeDao;
-  @Autowired private ObjectMapper objectMapper;
-  @Autowired private KafkaTemplate<String, String> kafkaTemplate;
+  @Resource private AnswerDao answerDao;
+  @Resource private QuestionDao questionDao;
+  @Resource private AnswerElasticsearchDao answerElasticsearchDao;
+  @Resource private IQuestionService questionService;
+  @Resource private IUserService userService;
+  @Resource private AgreeDao agreeDao;
+  @Resource private ObjectMapper objectMapper;
+  @Resource private KafkaTemplate<String, String> kafkaTemplate;
 
   private static final List<String> SUPPORTED_SORT_BY_PROPERTIES =
       List.of("createTime", "updateTime");

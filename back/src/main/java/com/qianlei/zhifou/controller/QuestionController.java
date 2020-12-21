@@ -10,20 +10,21 @@ import com.qianlei.zhifou.vo.QuestionVo;
 import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/question")
 public class QuestionController {
-  @Autowired private IQuestionService questionService;
-  @Autowired private IAnswerService answerService;
+  @Resource
+  private IQuestionService questionService;
+  @Resource private IAnswerService answerService;
 
   @PreAuthorize("isAuthenticated()")
   @Operation(summary = "创建新问题")

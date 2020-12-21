@@ -7,19 +7,20 @@ import com.qianlei.zhifou.vo.AnswerVo;
 import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/answer")
 public class AnswerController {
-  @Autowired private IAnswerService answerService;
+  @Resource
+  private IAnswerService answerService;
 
   @Operation(summary = "根据回答的 id 获取对应的回答信息")
   @GetMapping("/id/{id}")

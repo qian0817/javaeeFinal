@@ -6,17 +6,19 @@ import com.qianlei.zhifou.vo.CommentVo;
 import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/comment")
 public class CommentController {
-  @Autowired private ICommentService commentService;
+  @Resource
+  private ICommentService commentService;
 
   @Operation(summary = "根据回答 id 获取评论信息，结果以分页信息展示")
   @GetMapping("/answer/{answerId}")

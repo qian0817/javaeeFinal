@@ -6,17 +6,19 @@ import com.qianlei.zhifou.vo.DynamicWithUserVo;
 import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/dynamic")
 public class DynamicController {
-  @Autowired private IDynamicService dynamicService;
+  @Resource
+  private IDynamicService dynamicService;
 
   @PreAuthorize("isAuthenticated()")
   @Operation(summary = "获取当前登录用户关注的人的动态，结果以分页的形式展示")

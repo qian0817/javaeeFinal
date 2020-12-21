@@ -3,7 +3,6 @@ package com.qianlei.zhifou.config;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.qianlei.zhifou.utils.JwtUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +30,8 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 /** @author qianlei */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-  @Autowired private RSAKey rsaKey;
+  @Resource
+  private RSAKey rsaKey;
 
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {

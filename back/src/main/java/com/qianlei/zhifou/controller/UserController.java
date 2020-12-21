@@ -9,17 +9,19 @@ import com.qianlei.zhifou.vo.UserInfo;
 import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-  @Autowired private IUserService userService;
-  @Autowired private RSAKey rsaKey;
+  @Resource
+  private IUserService userService;
+  @Resource private RSAKey rsaKey;
 
   @Operation(summary = "用户注册")
   @PostMapping("/")

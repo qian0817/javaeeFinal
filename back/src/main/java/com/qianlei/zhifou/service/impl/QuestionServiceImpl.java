@@ -4,7 +4,6 @@ import cn.hutool.http.HtmlUtil;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.AnswerDao;
 import com.qianlei.zhifou.dao.QuestionDao;
-import com.qianlei.zhifou.dao.es.AnswerElasticsearchDao;
 import com.qianlei.zhifou.dao.es.QuestionElasticsearchDao;
 import com.qianlei.zhifou.pojo.Question;
 import com.qianlei.zhifou.pojo.es.QuestionEs;
@@ -15,13 +14,13 @@ import com.qianlei.zhifou.vo.QuestionHotVo;
 import com.qianlei.zhifou.vo.QuestionVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,11 +33,10 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class QuestionServiceImpl implements IQuestionService {
-  @Autowired private AnswerElasticsearchDao answerElasticsearchDao;
-  @Autowired private QuestionElasticsearchDao questionElasticsearchDao;
-  @Autowired private AnswerDao answerDao;
-  @Autowired private QuestionDao questionDao;
-  @Autowired private StringRedisTemplate redisTemplate;
+  @Resource private QuestionElasticsearchDao questionElasticsearchDao;
+  @Resource private AnswerDao answerDao;
+  @Resource private QuestionDao questionDao;
+  @Resource private StringRedisTemplate stringRedisTemplate;
 
   @Override
   public Question createQuestion(CreateQuestionParam param) {
@@ -70,7 +68,7 @@ public class QuestionServiceImpl implements IQuestionService {
     // 设置每小时的热榜
     var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:HH"));
     // 将热榜的信息保存到 redis 之中。
-    redisTemplate
+    stringRedisTemplate
         .boundZSetOps("zhifou:question:hot:" + currentHour)
         .incrementScore(questionId.toString(), number);
   }
@@ -103,7 +101,7 @@ public class QuestionServiceImpl implements IQuestionService {
     var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:HH"));
     // 从 redis 之中获取热榜的数据
     var questionIdList =
-        redisTemplate
+        stringRedisTemplate
             .boundZSetOps("zhifou:question:hot:" + currentHour)
             .reverseRangeWithScores(0, 29);
     if (questionIdList == null) {

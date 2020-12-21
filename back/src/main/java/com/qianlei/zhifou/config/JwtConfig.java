@@ -2,12 +2,12 @@ package com.qianlei.zhifou.config;
 
 import com.nimbusds.jose.jwk.RSAKey;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
@@ -15,7 +15,8 @@ import java.security.KeyStore;
 /** @author qianlei */
 @Configuration
 public class JwtConfig {
-  @Autowired private RsaKeyProperties keyProperties;
+  @Resource
+  private RsaKeyProperties keyProperties;
 
   @Bean
   public RSAKey getRsaKey() throws Exception {

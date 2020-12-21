@@ -8,17 +8,19 @@ import com.qianlei.zhifou.vo.UserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /** @author qianlei */
 @RestController
 @RequestMapping("/api/token")
 public class TokenController {
-  @Autowired private IUserService userService;
-  @Autowired private RSAKey rsaKey;
+  @Resource
+  private IUserService userService;
+  @Resource private RSAKey rsaKey;
 
   @Operation(
       summary = "用户登录",

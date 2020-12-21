@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -29,6 +28,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Random;
@@ -44,22 +44,18 @@ import static com.qianlei.zhifou.common.Constant.RedisConstant.REGISTER_MAIL_SEN
 @Transactional(rollbackOn = RuntimeException.class)
 public class UserServiceImpl implements IUserService {
 
-  @Autowired private FollowDao followDao;
-  @Autowired private UserDao userDao;
-  @Autowired private AgreeDao agreeDao;
-  @Autowired private AnswerDao answerDao;
-  @Autowired private StringRedisTemplate redisTemplate;
-  @Autowired private ObjectMapper objectMapper;
-  @Autowired private PasswordEncoder passwordEncoder;
+  @Resource private FollowDao followDao;
+  @Resource private UserDao userDao;
+  @Resource private AgreeDao agreeDao;
+  @Resource private AnswerDao answerDao;
+  @Resource private StringRedisTemplate stringRedisTemplate;
+  @Resource private KafkaTemplate<String, String> kafkaTemplate;
+  @Resource private ObjectMapper objectMapper;
+  @Resource private PasswordEncoder passwordEncoder;
+  @Resource private JavaMailSender mailSender;
 
   @Value("${spring.mail.username}")
   private String emailFrom;
-
-  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-  @Autowired
-  private JavaMailSender mailSender;
-
-  @Autowired private KafkaTemplate<String, String> kafkaTemplate;
 
   @Override
   public UserVo getUserInfoByUserId(Integer userId) {
@@ -104,7 +100,7 @@ public class UserServiceImpl implements IUserService {
       throw new ZhiFouException("该邮箱已经被注册");
     }
     // 从 redis 中获取发送的验证码
-    String code = redisTemplate.opsForValue().get(REGISTER_CODE_PREFIX + param.getEmail());
+    String code = stringRedisTemplate.opsForValue().get(REGISTER_CODE_PREFIX + param.getEmail());
     if (code == null) {
       throw new ZhiFouException("未发送验证码");
     }
@@ -127,7 +123,7 @@ public class UserServiceImpl implements IUserService {
     }
     // 判断验证码在之前是否已经发送 设置过期时间为 1 分钟
     var isNotSend =
-        redisTemplate
+        stringRedisTemplate
             .opsForValue()
             .setIfAbsent(REGISTER_MAIL_SEND_PREFIX + email, email, 1, TimeUnit.MINUTES);
     if (isNotSend == null || !isNotSend) {
@@ -153,7 +149,7 @@ public class UserServiceImpl implements IUserService {
     message.setText("您的验证码是" + String.format("%4d", code) + "\n有效时间为 5 分钟");
     mailSender.send(message);
     // 将其验证码保存在 redis 中，设置 5 分钟的过期时间
-    redisTemplate
+    stringRedisTemplate
         .opsForValue()
         .set(REGISTER_CODE_PREFIX + email, String.valueOf(code), 5, TimeUnit.MINUTES);
   }

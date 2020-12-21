@@ -10,20 +10,21 @@ import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.CommentVo;
 import com.qianlei.zhifou.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+
 /** @author qianlei */
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
 public class CommentServiceImpl implements ICommentService {
-  @Autowired private IUserService userService;
-  @Autowired private IQuestionService questionService;
-  @Autowired private CommentDao commentDao;
-  @Autowired private AnswerDao answerDao;
+  @Resource private IUserService userService;
+  @Resource private IQuestionService questionService;
+  @Resource private CommentDao commentDao;
+  @Resource private AnswerDao answerDao;
 
   @Override
   public Page<CommentVo> getComment(Integer answerId, Integer pageNum, Integer pageSize) {
