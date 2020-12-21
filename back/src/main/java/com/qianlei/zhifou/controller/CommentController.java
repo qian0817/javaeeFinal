@@ -17,8 +17,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/comment")
 public class CommentController {
-  @Resource
-  private ICommentService commentService;
+  @Resource private ICommentService commentService;
 
   @Operation(summary = "根据回答 id 获取评论信息，结果以分页信息展示")
   @GetMapping("/answer/{answerId}")

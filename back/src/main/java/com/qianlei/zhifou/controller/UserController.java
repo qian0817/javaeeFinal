@@ -19,8 +19,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-  @Resource
-  private IUserService userService;
+  @Resource private IUserService userService;
   @Resource private RSAKey rsaKey;
 
   @Operation(summary = "用户注册")

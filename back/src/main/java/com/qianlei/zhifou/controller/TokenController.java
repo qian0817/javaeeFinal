@@ -18,8 +18,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/token")
 public class TokenController {
-  @Resource
-  private IUserService userService;
+  @Resource private IUserService userService;
   @Resource private RSAKey rsaKey;
 
   @Operation(

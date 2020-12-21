@@ -17,8 +17,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/dynamic")
 public class DynamicController {
-  @Resource
-  private IDynamicService dynamicService;
+  @Resource private IDynamicService dynamicService;
 
   @PreAuthorize("isAuthenticated()")
   @Operation(summary = "获取当前登录用户关注的人的动态，结果以分页的形式展示")

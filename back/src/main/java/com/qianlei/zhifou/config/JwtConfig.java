@@ -15,8 +15,7 @@ import java.security.KeyStore;
 /** @author qianlei */
 @Configuration
 public class JwtConfig {
-  @Resource
-  private RsaKeyProperties keyProperties;
+  @Resource private RsaKeyProperties keyProperties;
 
   @Bean
   public RSAKey getRsaKey() throws Exception {
@@ -28,7 +27,6 @@ public class JwtConfig {
     try (var output = new FileOutputStream(file)) {
       output.write(bytes);
     }
-    //    var file = new ClassPathResource(keyProperties.keyFilename).getFile();
     var keyStore = KeyStore.getInstance(file, keyProperties.password.toCharArray());
     return RSAKey.load(keyStore, keyProperties.alias, keyProperties.password.toCharArray());
   }

@@ -22,8 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/question")
 public class QuestionController {
-  @Resource
-  private IQuestionService questionService;
+  @Resource private IQuestionService questionService;
   @Resource private IAnswerService answerService;
 
   @PreAuthorize("isAuthenticated()")

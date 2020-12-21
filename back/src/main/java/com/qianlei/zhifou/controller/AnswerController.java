@@ -19,8 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/answer")
 public class AnswerController {
-  @Resource
-  private IAnswerService answerService;
+  @Resource private IAnswerService answerService;
 
   @Operation(summary = "根据回答的 id 获取对应的回答信息")
   @GetMapping("/id/{id}")

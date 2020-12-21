@@ -30,8 +30,7 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 /** @author qianlei */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-  @Resource
-  private RSAKey rsaKey;
+  @Resource private RSAKey rsaKey;
 
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
