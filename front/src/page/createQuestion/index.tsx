@@ -30,8 +30,8 @@ const CreateQuestion = () => {
         <>
             <Helmet title={`创建问题`}/>
             <Form form={form}
-                  labelCol={{span: 2}}
-                  wrapperCol={{span: 20}}
+                  labelCol={{span: 4}}
+                  wrapperCol={{span: 16}}
                   onFinish={onFinish}>
                 <Form.Item
                     name="title"
