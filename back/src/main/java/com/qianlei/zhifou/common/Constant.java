@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.format.DateTimeFormatter;
+
 public interface Constant {
   interface KafkaConstant {
     // 发送用户注册验证码的 kafka topic
@@ -19,6 +21,8 @@ public interface Constant {
     String REGISTER_MAIL_SEND_PREFIX = "user:register:email:send:";
     // 发送的验证码信息
     String REGISTER_CODE_PREFIX = "user:register:email:code:";
+    // 热榜排序信息
+    String HOT_QUESTION_REDIS_PREFIX ="zhifou:question:hot:";
   }
 
   interface SecurityConstant {
@@ -41,5 +45,10 @@ public interface Constant {
       private final int id;
       @JsonValue private final String desc;
     }
+  }
+
+  interface HotQuestionConstant{
+    String TIME_PATTERN ="yyyy:MM:dd:HH";
+    DateTimeFormatter HOT_QUESTION_TIME_FORMATTER =DateTimeFormatter.ofPattern(TIME_PATTERN);
   }
 }

@@ -29,6 +29,9 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.qianlei.zhifou.common.Constant.HotQuestionConstant.HOT_QUESTION_TIME_FORMATTER;
+import static com.qianlei.zhifou.common.Constant.RedisConstant.HOT_QUESTION_REDIS_PREFIX;
+
 /** @author qianlei */
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
@@ -64,12 +67,21 @@ public class QuestionServiceImpl implements IQuestionService {
   }
 
   @Override
-  public void improveQuestionHeatLevel(Integer questionId, int number) {
+  public void improveQuestionHeatLevel(Integer questionId, Long number) {
     // 设置每小时的热榜
-    var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:HH"));
-    // 将热榜的信息保存到 redis 之中。
+    var currentHour = LocalDateTime.now().format(HOT_QUESTION_TIME_FORMATTER);
+    improveQuestionHeatLevel(questionId, number, currentHour);
+  }
+
+  @Override
+  public void improveQuestionHeatLevel(Integer questionId, Long number, String time) {
+    if (number <= 0) {
+      return;
+    }
+    // 检查格式是否符合要求
+    LocalDateTime.parse(time, HOT_QUESTION_TIME_FORMATTER);
     stringRedisTemplate
-        .boundZSetOps("zhifou:question:hot:" + currentHour)
+        .boundZSetOps(HOT_QUESTION_REDIS_PREFIX + time)
         .incrementScore(questionId.toString(), number);
   }
 
@@ -84,7 +96,7 @@ public class QuestionServiceImpl implements IQuestionService {
   @Override
   public QuestionVo getQuestionVoById(Integer id, UserVo user) {
     var question = getQuestionById(id);
-    improveQuestionHeatLevel(id, 1);
+    improveQuestionHeatLevel(id, 1L);
     if (user == null) {
       return new QuestionVo(question, true, null);
     }
@@ -97,13 +109,13 @@ public class QuestionServiceImpl implements IQuestionService {
   }
 
   @Override
-  public List<QuestionHotVo> getHottestQuestion() {
+  public List<QuestionHotVo> getHottestQuestion(int num) {
     var currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:HH"));
     // 从 redis 之中获取热榜的数据
     var questionIdList =
         stringRedisTemplate
-            .boundZSetOps("zhifou:question:hot:" + currentHour)
-            .reverseRangeWithScores(0, 29);
+            .boundZSetOps(HOT_QUESTION_REDIS_PREFIX + currentHour)
+            .reverseRangeWithScores(0, num - 1);
     if (questionIdList == null) {
       return new ArrayList<>();
     }

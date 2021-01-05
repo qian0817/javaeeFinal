@@ -41,14 +41,23 @@ public interface IQuestionService {
    * @param questionId 问题 id
    * @param number 热度
    */
-  void improveQuestionHeatLevel(Integer questionId, int number);
+  void improveQuestionHeatLevel(Integer questionId, Long number);
 
   /**
-   * 获取热榜问题，取前30位
+   * 为问题增加指定的热度
    *
+   * @param questionId 问题 id
+   * @param number 热度
+   * @param time 指定增加热度的时间 格式为 yyyy:MM:dd:HH
+   */
+  void improveQuestionHeatLevel(Integer questionId, Long number, String time);
+  /**
+   * 获取热榜问题
+   *
+   * @param num 热榜需要的数量
    * @return 热榜问题
    */
-  List<QuestionHotVo> getHottestQuestion();
+  List<QuestionHotVo> getHottestQuestion(int num);
 
   Page<Question> searchQuestion(String keyword, int pageNum, int pageSize);
 

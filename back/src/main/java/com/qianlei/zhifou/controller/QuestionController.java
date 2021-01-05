@@ -69,7 +69,7 @@ public class QuestionController {
   @Operation(summary = "获取最火热的问题（热榜）")
   @GetMapping("/hot/")
   public List<QuestionHotVo> getHottestQuestion() {
-    return questionService.getHottestQuestion();
+    return questionService.getHottestQuestion(30);
   }
 
   @Operation(summary = "搜索问题")

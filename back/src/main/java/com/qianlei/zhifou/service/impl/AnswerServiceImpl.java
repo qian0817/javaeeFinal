@@ -90,7 +90,7 @@ public class AnswerServiceImpl implements IAnswerService {
             answer.getCreateTime());
     kafkaTemplate.send(
         Constant.KafkaConstant.ADD_USER_EVENT_TOPIC, objectMapper.writeValueAsString(userEvent));
-    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 100);
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 100L);
     return answer;
   }
 
@@ -115,7 +115,7 @@ public class AnswerServiceImpl implements IAnswerService {
     long agreeNumber = agreeDao.countByAnswerId(answer.getId());
     boolean canAgree =
         user == null || !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
-    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1);
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1L);
     return new AnswerVo(answer, answerUser, question, canAgree, agreeNumber);
   }
 

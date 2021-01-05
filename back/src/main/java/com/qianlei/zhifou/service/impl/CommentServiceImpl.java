@@ -48,7 +48,7 @@ public class CommentServiceImpl implements ICommentService {
     commentDao.save(comment);
     var answer = answerDao.findById(comment.getAnswerId()).orElseThrow();
     // 每条新的评论为问题增加 30 个热度
-    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 30);
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 30L);
     return new CommentVo(user, comment);
   }
 }
