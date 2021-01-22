@@ -21,6 +21,11 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+  logstash-server:
+    image: logstash:7.6.2
+    volumes:
+      - ./logstash/mysql-connector-java-8.0.21.jar:/usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
   kubana-server:
     image: kibana:7.6.2
     ports:

@@ -3,7 +3,6 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: true
-    show-sql: true
     generate-ddl: true
   data:
     redis:

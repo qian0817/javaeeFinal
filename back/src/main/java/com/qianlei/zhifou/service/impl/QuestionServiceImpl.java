@@ -53,11 +53,6 @@ public class QuestionServiceImpl implements IQuestionService {
     }
     var question = param.toQuestion();
     questionDao.save(question);
-    questionElasticsearchDao.save(
-        new QuestionEs(
-            question.getId(),
-            question.getTitle(),
-            HtmlUtils.cleanHtmlPlain(question.getContent())));
     return question;
   }
 

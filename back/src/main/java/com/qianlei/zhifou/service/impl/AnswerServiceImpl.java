@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -77,8 +77,6 @@ public class AnswerServiceImpl implements IAnswerService {
     }
     var answer = param.toAnswer(user.getId());
     answerDao.save(answer);
-    answerElasticsearchDao.save(
-        new AnswerEs(answer.getId(), HtmlUtils.cleanHtmlPlain(answer.getContent())));
     // 向消息队列中发送相关的消息
     var userEvent =
         new UserEvent(
@@ -98,7 +96,8 @@ public class AnswerServiceImpl implements IAnswerService {
   public AnswerVo getAnswerByQuestionId(Integer answerId, @Nullable UserVo user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
-    return getAnswerFromAnswer(user, answer);
+    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1L);
+    return assemblyAnswerVo(user, answer);
   }
 
   /**
@@ -109,13 +108,12 @@ public class AnswerServiceImpl implements IAnswerService {
    * @return AnswerVo
    */
   @NotNull
-  private AnswerVo getAnswerFromAnswer(UserVo user, Answer answer) {
+  private AnswerVo assemblyAnswerVo(UserVo user, Answer answer) {
     var answerUser = userService.getUserInfoByUserId(answer.getUserId());
     var question = questionDao.findById(answer.getQuestionId()).orElseThrow();
     long agreeNumber = agreeDao.countByAnswerId(answer.getId());
     boolean canAgree =
         user == null || !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
-    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1L);
     return new AnswerVo(answer, answerUser, question, canAgree, agreeNumber);
   }
 
@@ -189,12 +187,12 @@ public class AnswerServiceImpl implements IAnswerService {
     }
     var totalAnswer = answerDao.count();
     if (totalAnswer == 0) {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
     return new Random()
         .longs(num, 0, totalAnswer)
         .mapToObj(answerDao::findOne)
-        .map(answer -> getAnswerFromAnswer(user, answer))
+        .map(answer -> assemblyAnswerVo(user, answer))
         .collect(Collectors.toList());
   }
 
@@ -204,6 +202,6 @@ public class AnswerServiceImpl implements IAnswerService {
         .findAllByContentContains(keyword, PageRequest.of(pageNum, pageSize))
         .map(AnswerEs::getId)
         .map(id -> answerDao.findById(id).orElse(null))
-        .map(answer -> getAnswerFromAnswer(user, answer));
+        .map(answer -> assemblyAnswerVo(user, answer));
   }
 }
