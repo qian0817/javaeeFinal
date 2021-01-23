@@ -120,7 +120,7 @@ public class AnswerServiceImpl implements IAnswerService {
   @SneakyThrows
   @Override
   public void agree(Integer answerId, UserVo user) {
-    if (!answerElasticsearchDao.existsById(answerId)) {
+    if (!answerDao.existsById(answerId)) {
       throw new ZhiFouException("回答不存在");
     }
     if (agreeDao.existsByAnswerIdAndUserId(answerId, user.getId())) {
