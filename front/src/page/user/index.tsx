@@ -27,35 +27,36 @@ const UserPage = () => {
     const loginUser = useSelector((root: RootState) => root.login)
     const dispatch = useDispatch()
 
-    const loadUser = async (userId: string) => {
-        const user = await instance.get<UserVo>(`/api/user/${userId}`)
-        setUser(user.data)
-        const dynamics = await instance.get<Page<DynamicVo>>(`/api/dynamic/user/${userId}`)
-        setDynamics(dynamics.data.content)
-        const totalAnswer = await instance.get<number>(`/api/answer/user/${userId}/count`)
-        setTotalAnswer(totalAnswer.data)
-        const totalAgree = await instance.get<number>(`/api/answer/agrees/user/${userId}/count`)
-        setTotalAgree(totalAgree.data)
-        const totalFollower = await instance.get<number>(`/api/followers/user/${userId}/follower/count`)
-        setTotalFollower(totalFollower.data)
-        const totalFollowing = await instance.get<number>(`/api/followers/user/${userId}/following/count`)
-        setTotalFollowing(totalFollowing.data)
-    }
-
-    const loadFollowing = async (userId: string) => {
-        if (loginUser == null) {
-            setFollowing(false)
-        } else if (loginUser.id.toString() !== userId) {
-            const isFollowing = await instance.get <boolean>(`/api/followers/${userId}/following/${loginUser.id}`)
-            console.log(isFollowing.data, loginUser.id, userId)
-            setFollowing(isFollowing.data)
-        }
-    }
     useEffect(() => {
+        const loadFollowing = async (userId: string) => {
+            if (loginUser == null) {
+                setFollowing(false)
+            } else if (loginUser.id.toString() !== userId) {
+                const isFollowing = await instance.get <boolean>(`/api/followers/${userId}/following/${loginUser.id}`)
+                console.log(isFollowing.data, loginUser.id, userId)
+                setFollowing(isFollowing.data)
+            }
+        }
+
         loadFollowing(userId)
     }, [loginUser, userId])
 
     useEffect(() => {
+        const loadUser = async (userId: string) => {
+            const user = await instance.get<UserVo>(`/api/user/${userId}`)
+            setUser(user.data)
+            const dynamics = await instance.get<Page<DynamicVo>>(`/api/dynamic/user/${userId}`)
+            setDynamics(dynamics.data.content)
+            const totalAnswer = await instance.get<number>(`/api/answer/user/${userId}/count`)
+            setTotalAnswer(totalAnswer.data)
+            const totalAgree = await instance.get<number>(`/api/answer/agrees/user/${userId}/count`)
+            setTotalAgree(totalAgree.data)
+            const totalFollower = await instance.get<number>(`/api/followers/user/${userId}/follower/count`)
+            setTotalFollower(totalFollower.data)
+            const totalFollowing = await instance.get<number>(`/api/followers/user/${userId}/following/count`)
+            setTotalFollowing(totalFollowing.data)
+        }
+
         loadUser(userId);
     }, [userId])
 
