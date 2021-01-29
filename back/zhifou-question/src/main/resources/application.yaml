@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: zhifou-question
+  cloud:
+    consul:
+      host: localhost
+      config:
+        format: yaml
+  config:
+    import: consul:localhost:8500
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    generate-ddl: true
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoints:
+    #    prometheus:
+    #      enable: true
+    web:
+      exposure:
+        include: "*"

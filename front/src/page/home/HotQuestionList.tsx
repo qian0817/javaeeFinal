@@ -13,7 +13,7 @@ const HotQuestionList: React.FC<HotQuestionProps> = ({hotQuestions, loading}) =>
     return (
         <>
             {hotQuestions.map((item, index) =>
-                <HotQuestionItem item={item} index={index + 1} key={item.question.id}/>)
+                <HotQuestionItem item={item} index={index + 1} key={item.id}/>)
             }
             {loading &&
             <>

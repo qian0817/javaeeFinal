@@ -2,12 +2,12 @@ import React from "react";
 import {Button, Form, Input} from "antd";
 import {useHistory} from "react-router";
 import {Store} from "rc-field-form/lib/interface";
-import {Question} from "../../entity/Question";
 import instance from "../../axiosInstance";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
 import {Helmet} from "react-helmet";
 import Editor from "../../component/editor/Editor";
+import {QuestionVo} from "../../entity/QuestionVo";
 
 const CreateQuestion = () => {
     const [form] = Form.useForm();
@@ -22,7 +22,7 @@ const CreateQuestion = () => {
         const title = value.title
         const content = value.content.toHTML()
         const tags = value.tags
-        const response = await instance.post<Question>('/api/question/', {title, content, tags})
+        const response = await instance.post<QuestionVo>('/api/question/', {title, content, tags})
         history.push(`/question/${response.data.id}`)
     }
 

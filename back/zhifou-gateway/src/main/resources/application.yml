@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: mall-gateway
+  cloud:
+    consul:
+      port: 8500
+    gateway:
+      discovery:
+        locator:
+          enabled: true

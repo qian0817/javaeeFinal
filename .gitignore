@@ -1,6 +1,6 @@
 # Project exclude paths
 /back/.gradle/
-/back/build/
+/**/build/
 /front/node_modules/
 *.iml
 /.idea
@@ -8,6 +8,5 @@
 /back/src/main/resources/application-dev.yml
 /front/public/login.html
 /docker/nginx/html/*
-/front/build/
 /front/.eslintcache
 *.jks

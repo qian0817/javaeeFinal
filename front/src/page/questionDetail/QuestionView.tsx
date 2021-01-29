@@ -1,10 +1,10 @@
 import React from "react";
-import {Question} from "../../entity/Question";
 import {Tag} from "antd";
 import {ContentWrapper} from "./style";
+import {QuestionVo} from "../../entity/QuestionVo";
 
 interface QuestionProps {
-    question: Question
+    question: QuestionVo
 }
 
 const QuestionView: React.FC<QuestionProps> = ({question}) => {

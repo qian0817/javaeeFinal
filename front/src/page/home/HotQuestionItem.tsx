@@ -24,7 +24,7 @@ const HotQuestionItem: React.FC<HotQuestionCardProps> = ({item, index}) => {
 
     const indexColor = getIndexColor(index);
 
-    const overView = getOverView(item.question.content, 50)
+    const overView = getOverView(item.content, 50)
 
     return (
         <>
@@ -32,8 +32,8 @@ const HotQuestionItem: React.FC<HotQuestionCardProps> = ({item, index}) => {
                 <p style={{color: indexColor, fontSize: 15}}>{index}</p>
             </HotIndexWrapper>
             <HotQuestionWrapper>
-                <TitleWrapper onClick={() => history.push(`/question/${item.question.id}`)}>
-                    {item.question.title}
+                <TitleWrapper onClick={() => history.push(`/question/${item.id}`)}>
+                    {item.title}
                 </TitleWrapper>
                 <div>{overView}</div>
                 <img src={hotsvg} style={{width: 15, height: 15}} alt=""/>

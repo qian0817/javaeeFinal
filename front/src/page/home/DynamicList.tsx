@@ -3,10 +3,10 @@ import {DynamicWithUserVo} from "../../entity/DynamicWithUserVo";
 import {Skeleton} from "antd";
 import {LoadMoreButton} from "./style";
 import {Link} from "react-router-dom";
-import {Question} from "../../entity/Question";
 import {getTimeRange} from "../../utils/DateUtils";
 import {AnswerVo} from "../../entity/AnswerVo";
 import AnswerCard from "../../component/answerCard";
+import {QuestionVo} from "../../entity/QuestionVo";
 
 interface DynamicListProps {
     dynamics: DynamicWithUserVo[],
@@ -18,9 +18,9 @@ interface DynamicListProps {
 const DynamicList: React.FC<DynamicListProps> = ({dynamics, loading, loadMore, isEnd}) => {
 
 
-    const cardContent = (content: AnswerVo | Question) => {
+    const cardContent = (content: AnswerVo | QuestionVo) => {
         if ('tags' in content) {
-            const question = content as Question;
+            const question = content as QuestionVo;
             return (
                 <div>
                     <h2>

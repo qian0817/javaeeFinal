@@ -1,0 +1,27 @@
+jwt:
+  rsa:
+    alias: jwt
+    password: 123456
+    key-filename: jwt.jks
+spring:
+  application:
+    name: zhifou-user
+  cloud:
+    consul:
+      host: localhost
+      config:
+        format: yaml
+  config:
+    import: consul:localhost:8500
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    generate-ddl: true
+management:
+  endpoints:
+    #    prometheus:
+    #      enable: true
+    web:
+      exposure:
+        include: "*"

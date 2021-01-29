@@ -1,7 +1,8 @@
-import {Question} from "./Question";
-
 export interface QuestionVo {
-    question: Question,
+    id: number
+    title: string,
+    tags?: string,
+    content: string,
     canCreateAnswer: boolean,
     myAnswerId?: number
 }

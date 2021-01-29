@@ -1,21 +1,21 @@
 import {useHistory, useParams} from "react-router";
 import React, {useEffect, useState} from "react";
-import {Question} from "../../entity/Question";
 import instance from "../../axiosInstance";
 import {Page} from "../../entity/Page";
 import {Button, Divider, Skeleton} from "antd";
 import {TitleWrapper} from "./style";
 import Highlighter from "react-highlight-words";
+import {QuestionVo} from "../../entity/QuestionVo";
 
 const QuestionSearchResult = () => {
     const history = useHistory();
     const {keyword} = useParams<{ keyword: string }>();
-    const [questions, setQuestions] = useState<Question[]>([])
+    const [questions, setQuestions] = useState<QuestionVo[]>([])
     const [isLast, setIsLast] = useState(false);
     const [current, setCurrent] = useState(0)
 
     const loadQuestion = async (keyword: string, current: number) => {
-        const response = await instance.get<Page<Question>>(`/api/question/keyword/${keyword}`, {
+        const response = await instance.get<Page<QuestionVo>>(`/api/question/keyword/${keyword}`, {
             params: {pageNum: current}
         })
         setIsLast(response.data.last)

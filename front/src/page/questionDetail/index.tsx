@@ -60,8 +60,8 @@ const QuestionDetail = () => {
     return (
         <>
             {questionDetail && <>
-                <Helmet title={questionDetail.question.title}/>
-                <QuestionView question={questionDetail.question}/>
+                <Helmet title={questionDetail.title}/>
+                <QuestionView question={questionDetail}/>
                 {
                     questionDetail.canCreateAnswer ?
                         <Button style={{marginBottom: 20}}
