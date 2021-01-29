@@ -3,7 +3,8 @@ spring:
     name: mall-gateway
   cloud:
     consul:
-      port: 8500
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
     gateway:
       discovery:
         locator:

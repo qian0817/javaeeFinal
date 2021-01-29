@@ -1,5 +1,9 @@
 version: "3.3"
 services:
+  consul-server:
+    image: consul:1.8.8
+    ports:
+      - "8500:8500"
   mysql-server:
     image: mysql:8.0.21
     ports:
@@ -32,8 +36,6 @@ services:
       - "5601:5601"
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch-server:9200
-    depends_on:
-      - elasticsearch-server
   zookeeper-server:
     image: zookeeper:3.6.2
     ports:
@@ -42,20 +44,41 @@ services:
     image: wurstmeister/kafka:2.13-2.6.0
     ports:
       - "9092:9092"
-    depends_on:
-      - zookeeper-server
     environment:
       KAFKA_ADVERTISED_HOST_NAME: $CF_HOST_IP
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
-  zhifou-server:
-    build: ../back/.
-    scale: 2
-    depends_on:
-      - kafka-server
-      - elasticsearch-server
-      - redis-server
-      - mysql-server
+  zhifou-user:
+    build: ../back/zhifou-user/.
+    ports:
+      - "8001:8080"
+    environment:
+      CONSUL_HOST: consul-server
+      CONSUL_PORT: 8500
+      CONSUL_CONFIG_FORMAT: yaml
+  zhifou-follow:
+    build: ../back/zhifou-follow/.
+    ports:
+      - "8002:8080"
+    environment:
+      CONSUL_HOST: consul-server
+      CONSUL_PORT: 8500
+      CONSUL_CONFIG_FORMAT: yaml
+  zhifou-question:
+    build: ../back/zhifou-question/.
+    ports:
+      - "8003:8080"
+    environment:
+      CONSUL_HOST: consul-server
+      CONSUL_PORT: 8500
+      CONSUL_CONFIG_FORMAT: yaml
+  zhifou-gateway:
+    build: ../back/zhifou-gateway/.
+    ports:
+      - "8080:8080"
+    environment:
+      CONSUL_HOST: consul-server
+      CONSUL_PORT: 8500
   nginx-server:
     image: nginx:1.19.2
     ports:
@@ -64,5 +87,3 @@ services:
       - ./nginx/nginx.conf.nginx:/etc/nginx/nginx.conf
       - ./nginx/conf.d/:/etc/nginx/conf.d/
       - ./nginx/html/:/usr/share/nginx/html
-    depends_on:
-      - zhifou-server

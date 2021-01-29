@@ -8,16 +8,19 @@ spring:
     name: zhifou-user
   cloud:
     consul:
-      host: localhost
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
       config:
-        format: yaml
+        format: ${CONSUL_CONFIG_FORMAT}
   config:
-    import: consul:localhost:8500
+    import: consul:${spring.cloud.consul.host}:${spring.cloud.consul.port}
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: true
     generate-ddl: true
+  main:
+    allow-bean-definition-overriding: true
 management:
   endpoints:
     #    prometheus:

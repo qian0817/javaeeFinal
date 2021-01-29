@@ -3,11 +3,12 @@ spring:
     name: zhifou-follow
   cloud:
     consul:
-      host: localhost
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
       config:
-        format: yaml
+        format: ${CONSUL_CONFIG_FORMAT}
   config:
-    import: consul:localhost:8500
+    import: consul:${spring.cloud.consul.host}:${spring.cloud.consul.port}
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,8 +18,8 @@ spring:
     allow-bean-definition-overriding: true
 management:
   endpoints:
-#    prometheus:
-#      enable: true
+    #    prometheus:
+    #      enable: true
     web:
       exposure:
         include: "*"
