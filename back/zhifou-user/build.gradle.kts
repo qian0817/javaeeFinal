@@ -12,6 +12,8 @@ dependencies {
     implementation("org.springframework.cloud", "spring-cloud-starter-circuitbreaker-resilience4j")
     implementation("org.springframework.cloud", "spring-cloud-starter-openfeign")
     implementation("org.springframework.cloud", "spring-cloud-starter-consul-all")
+    implementation("org.springframework.cloud", "spring-cloud-starter-sleuth")
+    implementation("org.springframework.cloud", "spring-cloud-sleuth-zipkin")
     implementation("org.springframework.kafka", "spring-kafka")
     implementation("org.redisson", "redisson-spring-boot-starter")
     implementation("org.apache.commons", "commons-lang3")

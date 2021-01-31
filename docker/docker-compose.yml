@@ -48,6 +48,11 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: $CF_HOST_IP
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
+  zipkin-server:
+    image: openzipkin/zipkin:2.21.7
+    container_name: zipkin
+    ports:
+      - "9411:9411"
   zhifou-user:
     build: ../back/zhifou-user/.
     ports:
