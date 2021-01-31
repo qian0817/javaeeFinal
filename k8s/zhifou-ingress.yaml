@@ -1,0 +1,64 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zhifou
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /api/token
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-user
+                port:
+                  number: 8080
+          - path: /api/user
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-user
+                port:
+                  number: 8080
+          - path: /api/followers
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-follow
+                port:
+                  number: 8080
+          - path: /api/dynamic
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-follow
+                port:
+                  number: 8080
+          - path: /api/question
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-question
+                port:
+                  number: 8080
+          - path: /api/comment
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-question
+                port:
+                  number: 8080
+          - path: /api/answer
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-question
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: zhifou-front
+                port:
+                  number: 80

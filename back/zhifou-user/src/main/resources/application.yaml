@@ -7,6 +7,9 @@ spring:
   application:
     name: zhifou-user
   cloud:
+    kubernetes:
+      config:
+        enabled: false
     consul:
       host: ${CONSUL_HOST}
       port: ${CONSUL_PORT}

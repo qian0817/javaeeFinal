@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consul
+  labels:
+    app: consul
+spec:
+  containers:
+    - image: consul:1.8.8
+      name: consul
+      ports:
+        - containerPort: 8500
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+spec:
+  ports:
+    - name: http
+      port: 8500
+      targetPort: 8500
+  selector:
+    app: consul
