@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
+  namespace: zhifou
   name: zhifou-user
 spec:
   replicas: 3
@@ -9,6 +10,7 @@ spec:
       app: zhifou-user
   template:
     metadata:
+      namespace: zhifou
       labels:
         app: zhifou-user
     spec:
@@ -26,6 +28,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: zhifou
   name: zhifou-user
 spec:
   ports:

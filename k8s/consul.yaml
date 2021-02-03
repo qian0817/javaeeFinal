@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: consul
+  namespace: zhifou
   labels:
     app: consul
 spec:
@@ -16,6 +17,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: consul
+  namespace: zhifou
 spec:
   ports:
     - name: http
