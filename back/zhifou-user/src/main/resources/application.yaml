@@ -6,17 +6,6 @@ jwt:
 spring:
   application:
     name: zhifou-user
-  cloud:
-    kubernetes:
-      config:
-        enabled: false
-    consul:
-      host: ${CONSUL_HOST}
-      port: ${CONSUL_PORT}
-      config:
-        format: ${CONSUL_CONFIG_FORMAT}
-  config:
-    import: consul:${spring.cloud.consul.host}:${spring.cloud.consul.port}
   jpa:
     hibernate:
       ddl-auto: update

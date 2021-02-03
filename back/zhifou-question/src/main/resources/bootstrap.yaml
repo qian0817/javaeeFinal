@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: zhifou-question
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+        mode: polling
+        period: 5000
+      config:
+        name: ${spring.application.name}
+        namespace: ${CONFIG_NAMESPACE}
+        sources:
+          - name: ${spring.application.name}

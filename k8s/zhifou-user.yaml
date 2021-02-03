@@ -1,3 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: zhifou
+  name: zhifou-user
+data:
+  application.yaml: |-
+    spring:
+      datasource:
+        url: jdbc:mysql://mysql:3306/zhifou?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Hongkong&characterEncoding=utf-8
+        username: qianlei
+        password: 123456
+      mail:
+        host: smtp.126.com
+        username: zhifou666@126.com
+        password: your-password
+        properties:
+          mail:
+            smtp:
+              auth: true
+              starttls:
+                enable: true
+                required: true
+      redis:
+        host: redis
+      kafka:
+        consumer:
+          group-id: zhifou
+          auto-offset-reset: latest
+        bootstrap-servers: kafka:9092
+      zipkin:
+        base-url: http://zipkin:9411/
+        sleuth:
+          sampler:
+            probability: 1
+---
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
@@ -18,12 +54,8 @@ spec:
         - name: zhifou-user
           image: registry.cn-hangzhou.aliyuncs.com/qian0817docker/zhifou-user:0.0.1
           env:
-            - name: CONSUL_HOST
-              value: consul
-            - name: CONSUL_PORT
-              value: "8500"
-            - name: CONSUL_CONFIG_FORMAT
-              value: yaml
+            - name: CONFIG_NAMESPACE
+              value: zhifou
 ---
 apiVersion: v1
 kind: Service

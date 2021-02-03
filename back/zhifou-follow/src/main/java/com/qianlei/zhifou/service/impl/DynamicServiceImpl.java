@@ -42,12 +42,12 @@ public class DynamicServiceImpl implements IDynamicService {
   @Resource private FollowDao followDao;
   @Autowired private UserClient userClient;
 
-  @Resource private ObjectMapper mapper;
+  @Resource private ObjectMapper objectMapper;
 
   @KafkaListener(topics = ADD_USER_EVENT_TOPIC, groupId = "add-dynamic")
   public void addDynamic(ConsumerRecord<String, String> record) throws JsonProcessingException {
     String value = record.value();
-    var userEvent = mapper.readValue(value, UserEvent.class);
+    var userEvent = objectMapper.readValue(value, UserEvent.class);
     userEventDao.save(userEvent);
     var followers = followDao.findAllByFollowerUserId(userEvent.getUserId());
     followers.forEach(
@@ -64,7 +64,7 @@ public class DynamicServiceImpl implements IDynamicService {
   @KafkaListener(topics = DELETE_USER_EVENT_TOPIC, groupId = "delete-dynamic")
   public void deleteDynamic(ConsumerRecord<String, String> record) throws JsonProcessingException {
     String value = record.value();
-    var userEvent = mapper.readValue(value, UserEvent.class);
+    var userEvent = objectMapper.readValue(value, UserEvent.class);
     userEvent =
         userEventDao.findByUserIdAndOperationAndTableNameAndTableId(
             userEvent.getUserId(),
@@ -78,7 +78,7 @@ public class DynamicServiceImpl implements IDynamicService {
   @KafkaListener(topics = FOLLOW_USER_TOPIC, groupId = "add-feed")
   public void addFeed(ConsumerRecord<String, String> record) throws JsonProcessingException {
     String value = record.value();
-    var follow = mapper.readValue(value, Follow.class);
+    var follow = objectMapper.readValue(value, Follow.class);
     var userEvents = userEventDao.findAllByUserId(follow.getFollowerUserId());
     userEvents.forEach(
         event ->
@@ -94,7 +94,7 @@ public class DynamicServiceImpl implements IDynamicService {
   @KafkaListener(topics = UNFOLLOW_USER_TOPIC, groupId = "delete-feed")
   public void deleteFeed(ConsumerRecord<String, String> record) throws JsonProcessingException {
     String value = record.value();
-    var follow = mapper.readValue(value, Follow.class);
+    var follow = objectMapper.readValue(value, Follow.class);
     feedDao.deleteAllByCreateUserIdAndUserId(
         follow.getFollowerUserId(), follow.getFollowingUserId());
   }
