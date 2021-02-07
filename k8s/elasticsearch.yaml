@@ -47,7 +47,7 @@ spec:
         - name: install-plugins
           image: elasticsearch:7.6.2
           command:
-            - sh
+            - bash
             - -c
             - |
               curl -LJO https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
