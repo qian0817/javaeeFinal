@@ -1,10 +1,10 @@
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   namespace: zhifou
   name: zhifou-front
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: zhifou-front
@@ -17,6 +17,16 @@ spec:
       containers:
         - name: zhifou-front
           image: registry.cn-hangzhou.aliyuncs.com/qian0817docker/zhifou-front:0.0.1
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /
 ---
 apiVersion: v1
 kind: Service

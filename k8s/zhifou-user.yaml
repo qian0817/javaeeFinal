@@ -27,7 +27,7 @@ data:
         consumer:
           group-id: zhifou
           auto-offset-reset: latest
-        bootstrap-servers: kafka:9092
+        bootstrap-servers: kafka-service:9092
       zipkin:
         base-url: http://zipkin:9411/
         sleuth:
@@ -35,27 +35,38 @@ data:
             probability: 1
 ---
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   namespace: zhifou
   name: zhifou-user
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: zhifou-user
   template:
     metadata:
-      namespace: zhifou
       labels:
         app: zhifou-user
     spec:
       containers:
         - name: zhifou-user
           image: registry.cn-hangzhou.aliyuncs.com/qian0817docker/zhifou-user:0.0.1
+          ports:
+            - containerPort: 8080
           env:
             - name: CONFIG_NAMESPACE
               value: zhifou
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/liveness
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/readiness
+            initialDelaySeconds: 60
 ---
 apiVersion: v1
 kind: Service

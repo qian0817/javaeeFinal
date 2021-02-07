@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: zhifou
+  name: logstash-pipeline
+  labels:
+    app: logstash
+data:
+  logstash.conf: |-
+    input {
+        jdbc {
+            type => "answer"
+            jdbc_driver_class => "com.mysql.cj.jdbc.Driver"
+            jdbc_connection_string => "jdbc:mysql://mysql:3306/zhifou?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Hongkong&characterEncoding=utf-8"
+            jdbc_user => "qianlei"
+            jdbc_password => "123456"
+            use_column_value => true
+            tracking_column => "update_time"
+            tracking_column_type => "timestamp"
+            record_last_run => true
+            last_run_metadata_path => "jdbc-position.txt"
+            schedule => "*/5 * * * * *"
+            statement => "SELECT id , content , update_time FROM zhifou_answer WHERE update_time > :sql_last_value"
+        }
+        jdbc {
+            type => "question"
+            jdbc_driver_class => "com.mysql.cj.jdbc.Driver"
+            jdbc_connection_string => "jdbc:mysql://mysql:3306/zhifou?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Hongkong&characterEncoding=utf-8"
+            jdbc_user => "qianlei"
+            jdbc_password => "123456"
+            use_column_value => true
+            tracking_column => "update_time"
+            tracking_column_type => "timestamp"
+            record_last_run => true
+            last_run_metadata_path => "jdbc-question-position.txt"
+            schedule => "*/5 * * * * *"
+            statement => "SELECT id , title , content , update_time FROM zhifou_question WHERE update_time > :sql_last_value"
+        }
+    }
+
+    output {
+        if[type] == "answer" {
+            elasticsearch {
+                hosts => "elasticsearch:9200"
+                index => "zhifou_answer"
+                timeout => 300
+                document_id => "%{id}"
+            }
+        }
+        if[type] == "question" {
+            elasticsearch {
+                hosts => "elasticsearch:9200"
+                index => "zhifou_question"
+                timeout => 300
+                document_id => "%{id}"
+            }
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: zhifou
+  name: logstash
+  labels:
+    app: logstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      initContainers:
+        - name: init
+          image: busybox:1.28
+          command:
+            - "wget"
+            - "https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar"
+            - "-O"
+            - "/usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar"
+          volumeMounts:
+            - mountPath: /usr/share/logstash/logstash-core/lib/jars/
+              name: initdir
+      containers:
+        - name: logstash
+          image: logstash:7.6.2
+          volumeMounts:
+            - mountPath: /usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
+              subPath: mysql-connector-java.jar
+              name: initdir
+            - mountPath: /usr/share/logstash/pipeline
+              name: pipeline
+      volumes:
+        - name: initdir
+          emptyDir: { }
+        - name: pipeline
+          configMap:
+            name: logstash-pipeline
