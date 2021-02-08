@@ -1,10 +1,14 @@
 package com.qianlei.zhifou.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
+import com.qianlei.zhifou.utils.JwtUtils;
 import com.qianlei.zhifou.vo.UserVo;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +23,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URL;
 import java.util.List;
 
 import static com.qianlei.zhifou.common.Constant.SecurityConstant.TOKEN_HEADER;
@@ -29,6 +34,9 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 /** @author qianlei */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+  @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+  private String jwkSetUri;
+
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
@@ -44,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .and()
         // 添加自定义Filter
-        .addFilter(new JwtAuthorizationFilter(authenticationManager()))
+        .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwkSetUri))
         // 不需要session（不创建会话）
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -56,9 +64,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   public static class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+    private final JWKSet jwkSet;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+    @SneakyThrows
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, String jwkSetUri) {
       super(authenticationManager);
+      jwkSet = JWKSet.load(new URL(jwkSetUri));
     }
 
     @SneakyThrows
@@ -67,13 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
       var authorization = request.getHeader(TOKEN_HEADER);
       if (StringUtils.startsWithIgnoreCase(authorization, TOKEN_PREFIX)) {
-        var jwtToken = authorization.substring(7);
-        var signedJwt = SignedJWT.parse(jwtToken);
-        ObjectMapper mapper = new ObjectMapper();
-        var user =
-                mapper.readValue(
-                        mapper.writeValueAsString(signedJwt.getJWTClaimsSet().getJSONObjectClaim("user")),
-                        UserVo.class);
+        var jwtToken = authorization.substring(TOKEN_PREFIX.length());
+        RSAKey rsaKey = RSAKey.parse(jwkSet.getKeys().get(0).toJSONObject());
+        UserVo user = JwtUtils.checkJwt(jwtToken, rsaKey);
         if (user != null) {
           var auth = new UsernamePasswordAuthenticationToken(user, jwtToken, List.of());
           SecurityContextHolder.getContext().setAuthentication(auth);

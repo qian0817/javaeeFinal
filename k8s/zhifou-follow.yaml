@@ -6,6 +6,11 @@ metadata:
 data:
   application.yaml: |-
     spring:
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              jwk-set-uri: http://zhifou-user:8080/.well-known/jwks.json
       datasource:
         url: jdbc:mysql://mysql:3306/zhifou?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Hongkong&characterEncoding=utf-8
         username: qianlei
@@ -16,7 +21,7 @@ data:
         consumer:
           group-id: zhifou
           auto-offset-reset: latest
-        bootstrap-servers: kafka-server:9092
+        bootstrap-servers: kafka-service:9092
       zipkin:
         base-url: http://zipkin:9411/
         sleuth:
@@ -40,7 +45,7 @@ spec:
     spec:
       containers:
         - name: zhifou-follow
-          image: registry.cn-hangzhou.aliyuncs.com/qian0817docker/zhifou-follow:0.0.1
+          image: registry.cn-hangzhou.aliyuncs.com/qian0817docker/zhifou-follow:0.0.2
           ports:
             - containerPort: 8080
           env:
