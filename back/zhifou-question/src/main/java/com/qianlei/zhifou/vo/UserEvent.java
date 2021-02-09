@@ -19,13 +19,4 @@ public class UserEvent {
   private String tableName;
   private Integer tableId;
   private LocalDateTime createTime;
-
-  public DynamicAction action() {
-    for (DynamicAction action : DynamicAction.values()) {
-      if (action.getId() == operation) {
-        return action;
-      }
-    }
-    return null;
-  }
 }

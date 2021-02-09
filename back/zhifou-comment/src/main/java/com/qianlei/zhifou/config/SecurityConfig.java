@@ -58,13 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   public static class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    private final RSAKey rsaKey;
+    private final JWKSet jwkSet;
 
     @SneakyThrows
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, String jwkSetUri) {
       super(authenticationManager);
-      var jwkSet = JWKSet.load(new URL(jwkSetUri));
-      rsaKey = RSAKey.parse(jwkSet.getKeys().get(0).toJSONObject());
+      jwkSet = JWKSet.load(new URL(jwkSetUri));
     }
 
     @SneakyThrows
@@ -74,6 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       var authorization = request.getHeader(TOKEN_HEADER);
       if (StringUtils.startsWithIgnoreCase(authorization, TOKEN_PREFIX)) {
         var jwtToken = authorization.substring(7);
+        RSAKey rsaKey = RSAKey.parse(jwkSet.getKeys().get(0).toJSONObject());
         UserVo user = JwtUtils.checkJwt(jwtToken, rsaKey);
         if (user != null) {
           var auth = new UsernamePasswordAuthenticationToken(user, jwtToken, List.of());

@@ -46,7 +46,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: zhifou-question
+                name: zhifou-comment
                 port:
                   number: 8080
           - path: /api/answer

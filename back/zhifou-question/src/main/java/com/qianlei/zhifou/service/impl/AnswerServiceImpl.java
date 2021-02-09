@@ -2,6 +2,7 @@ package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.http.HtmlUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qianlei.zhifou.bo.KafkaAddHotMessage;
 import com.qianlei.zhifou.client.UserClient;
 import com.qianlei.zhifou.common.Constant;
 import com.qianlei.zhifou.common.ZhiFouException;
@@ -39,6 +40,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.qianlei.zhifou.common.Constant.KafkaConstant.DELETE_USER_EVENT_TOPIC;
+import static com.qianlei.zhifou.common.Constant.KafkaConstant.IMPROVE_HOT_TOPIC;
 import static com.qianlei.zhifou.common.Constant.UserEventConstant.DynamicAction.AGREE_ANSWER;
 import static com.qianlei.zhifou.common.Constant.UserEventConstant.DynamicAction.CREATE_ANSWER;
 import static com.qianlei.zhifou.common.Constant.UserEventConstant.TABLE_NAME_ANSWER;
@@ -88,15 +90,20 @@ public class AnswerServiceImpl implements IAnswerService {
             answer.getCreateTime());
     kafkaTemplate.send(
         Constant.KafkaConstant.ADD_USER_EVENT_TOPIC, objectMapper.writeValueAsString(userEvent));
-    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 100L);
+    kafkaTemplate.send(
+        IMPROVE_HOT_TOPIC,
+        objectMapper.writeValueAsString(new KafkaAddHotMessage(answer.getQuestionId(), 100)));
     return assemblyAnswerVo(user, answer);
   }
 
+  @SneakyThrows
   @Override
-  public AnswerVo getAnswerByQuestionId(Integer answerId, @Nullable UserVo user) {
+  public AnswerVo userViewAnswer(Integer answerId, @Nullable UserVo user) {
     var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
-    questionService.improveQuestionHeatLevel(answer.getQuestionId(), 1L);
+    kafkaTemplate.send(
+        IMPROVE_HOT_TOPIC,
+        objectMapper.writeValueAsString(new KafkaAddHotMessage(answer.getQuestionId(), 1)));
     return assemblyAnswerVo(user, answer);
   }
 

@@ -18,7 +18,7 @@ public interface IAnswerService {
    * @param user 希望获取回答的用户
    * @return 回答信息
    */
-  AnswerVo getAnswerByQuestionId(Integer answerId, @Nullable UserVo user);
+  AnswerVo userViewAnswer(Integer answerId, @Nullable UserVo user);
 
   /**
    * 创建回答

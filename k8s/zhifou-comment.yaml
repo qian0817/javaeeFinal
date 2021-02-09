@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: zhifou
+  name: zhifou-comment
+data:
+  application.yaml: |-
+    spring:
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              jwk-set-uri: http://zhifou-user:8080/.well-known/jwks.json
+      datasource:
+        url: jdbc:mysql://mysql:3306/zhifou?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Hongkong&characterEncoding=utf-8
+        username: qianlei
+        password: 123456
+      redis:
+        host: redis
+      kafka:
+        consumer:
+          group-id: zhifou
+          auto-offset-reset: latest
+        bootstrap-servers: kafka-service:9092
+      zipkin:
+        base-url: http://zipkin:9411/
+        sleuth:
+          sampler:
+            probability: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zhifou-comment
+  namespace: zhifou
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zhifou-comment
+  template:
+    metadata:
+      labels:
+        app: zhifou-comment
+    spec:
+      containers:
+        - name: zhifou-comment
+          image: registry.cn-hangzhou.aliyuncs.com/qian0817docker/zhifou-comment:0.0.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CONFIG_NAMESPACE
+              value: zhifou
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/liveness
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/readiness
+            initialDelaySeconds: 60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zhifou-comment
+  namespace: zhifou
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: zhifou-comment

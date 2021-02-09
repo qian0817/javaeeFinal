@@ -33,14 +33,6 @@ public interface IQuestionService {
    *
    * @param questionId 问题 id
    * @param number 热度
-   */
-  void improveQuestionHeatLevel(Integer questionId, Long number);
-
-  /**
-   * 为问题增加指定的热度
-   *
-   * @param questionId 问题 id
-   * @param number 热度
    * @param time 指定增加热度的时间 格式为 yyyy:MM:dd:HH
    */
   void improveQuestionHeatLevel(Integer questionId, Long number, String time);

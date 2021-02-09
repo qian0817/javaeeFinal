@@ -25,7 +25,7 @@ public class AnswerController {
   public AnswerVo getAnswerById(
       @Parameter(description = "问题 id") @PathVariable Integer id,
       @AuthenticationPrincipal UserVo user) {
-    return answerService.getAnswerByQuestionId(id, user);
+    return answerService.userViewAnswer(id, user);
   }
 
   @PreAuthorize("isAuthenticated()")
