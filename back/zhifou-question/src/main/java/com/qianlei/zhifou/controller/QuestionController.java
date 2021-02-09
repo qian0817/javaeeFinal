@@ -38,7 +38,7 @@ public class QuestionController {
   public QuestionVo getQuestionById(
       @Parameter(description = "问题id") @PathVariable Integer id,
       @AuthenticationPrincipal UserVo user) {
-    return questionService.getQuestionById(id, user);
+    return questionService.userVisitQuestion(id, user);
   }
 
   @Operation(summary = "根据问题 id 获取回答信息")

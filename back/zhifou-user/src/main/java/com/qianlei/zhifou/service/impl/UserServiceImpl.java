@@ -1,6 +1,7 @@
 package com.qianlei.zhifou.service.impl;
 
 import cn.hutool.core.lang.Validator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qianlei.zhifou.common.ZhiFouException;
 import com.qianlei.zhifou.dao.UserDao;
 import com.qianlei.zhifou.po.User;
@@ -8,6 +9,7 @@ import com.qianlei.zhifou.requestparam.RegisterParam;
 import com.qianlei.zhifou.requestparam.UserLoginParam;
 import com.qianlei.zhifou.service.IUserService;
 import com.qianlei.zhifou.vo.UserVo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -26,8 +28,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static com.qianlei.zhifou.common.Constant.KafkaConstant.SEND_REGISTER_CODE_EMAIL_TOPIC;
-import static com.qianlei.zhifou.common.Constant.RedisConstant.REGISTER_CODE_PREFIX;
-import static com.qianlei.zhifou.common.Constant.RedisConstant.REGISTER_MAIL_SEND_PREFIX;
+import static com.qianlei.zhifou.common.Constant.RedisConstant.*;
 
 /** @author qianlei */
 @Service
@@ -39,14 +40,31 @@ public class UserServiceImpl implements IUserService {
   @Resource private KafkaTemplate<String, String> kafkaTemplate;
   @Resource private PasswordEncoder passwordEncoder;
   @Resource private JavaMailSender mailSender;
+  @Resource private ObjectMapper objectMapper;
 
   @Value("${spring.mail.username}")
   private String emailFrom;
 
+  @SneakyThrows
   @Override
   public UserVo getUserInfoByUserId(Integer userId) {
-    var user = userDao.findById(userId).orElseThrow(() -> new ZhiFouException("该用户不存在"));
-    return new UserVo(user);
+    String cacheUser = stringRedisTemplate.opsForValue().get(USER_CACHE_REDIS_PREFIX + userId);
+    if (cacheUser == null) {
+      var user = userDao.findById(userId).orElseThrow(() -> new ZhiFouException("该用户不存在"));
+      UserVo userVo = new UserVo(user);
+      // 添加到缓存中
+      stringRedisTemplate
+          .opsForValue()
+          .set(
+              USER_CACHE_REDIS_PREFIX + userId,
+              objectMapper.writeValueAsString(userVo),
+              1,
+              TimeUnit.HOURS);
+      return userVo;
+    } else {
+      // 直接从缓存中返回
+      return objectMapper.readValue(cacheUser, UserVo.class);
+    }
   }
 
   @Override

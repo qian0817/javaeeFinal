@@ -24,9 +24,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -36,7 +39,9 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.qianlei.zhifou.common.Constant.KafkaConstant.DELETE_USER_EVENT_TOPIC;
@@ -58,6 +63,8 @@ public class AnswerServiceImpl implements IAnswerService {
   @Resource private AgreeDao agreeDao;
   @Resource private ObjectMapper objectMapper;
   @Resource private KafkaTemplate<String, String> kafkaTemplate;
+  @Resource private StringRedisTemplate stringRedisTemplate;
+  @Resource private RedissonClient redissonClient;
 
   private static final List<String> SUPPORTED_SORT_BY_PROPERTIES =
       List.of("createTime", "updateTime");
@@ -99,12 +106,47 @@ public class AnswerServiceImpl implements IAnswerService {
   @SneakyThrows
   @Override
   public AnswerVo userViewAnswer(Integer answerId, @Nullable UserVo user) {
-    var answer = answerDao.findById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
+    var answer = getAnswerById(answerId).orElseThrow(() -> new ZhiFouException("问题不存在"));
     // 回答者用户信息
     kafkaTemplate.send(
         IMPROVE_HOT_TOPIC,
         objectMapper.writeValueAsString(new KafkaAddHotMessage(answer.getQuestionId(), 1)));
     return assemblyAnswerVo(user, answer);
+  }
+
+  @SneakyThrows
+  @NotNull
+  private Optional<Answer> getAnswerById(Integer answerId) {
+    String cacheKey = "zhifou:answer:id:" + answerId;
+    String cachedAnswer = stringRedisTemplate.opsForValue().get(cacheKey);
+    if (cachedAnswer == null) {
+      var bloomFilter = getAnswerBloomFilter();
+      if (!bloomFilter.contains(answerId)) {
+        return Optional.empty();
+      }
+      Optional<Answer> answer = answerDao.findById(answerId);
+      if (answer.isPresent()) {
+        stringRedisTemplate
+            .opsForValue()
+            .set(cacheKey, objectMapper.writeValueAsString(answer.get()), 1, TimeUnit.HOURS);
+      }
+      return answer;
+    } else {
+      // 从缓存中获取问题
+      return Optional.of(objectMapper.readValue(cachedAnswer, Answer.class));
+    }
+  }
+
+  /**
+   * 获取问题对应的布隆过滤器
+   *
+   * @return 对应的布隆过滤器
+   */
+  private RBloomFilter<Object> getAnswerBloomFilter() {
+    var bloomFilter = redissonClient.getBloomFilter("zhifou:answer:bloom");
+    // 初始化布隆过滤器，预计统计元素数量为 100000 ，期望误差率为0.03
+    bloomFilter.tryInit(100000, 0.03);
+    return bloomFilter;
   }
 
   /**
@@ -117,7 +159,7 @@ public class AnswerServiceImpl implements IAnswerService {
   @NotNull
   private AnswerVo assemblyAnswerVo(UserVo user, Answer answer) {
     var answerUser = userClient.getUserById(answer.getUserId());
-    var question = questionService.getQuestionById(answer.getQuestionId(), user);
+    var question = questionService.userVisitQuestion(answer.getQuestionId(), user);
     long agreeNumber = agreeDao.countByAnswerId(answer.getId());
     boolean canAgree =
         user == null || !agreeDao.existsByAnswerIdAndUserId(answer.getId(), user.getId());
@@ -200,7 +242,7 @@ public class AnswerServiceImpl implements IAnswerService {
     return answerElasticsearchDao
         .findAllByContentContains(keyword, PageRequest.of(pageNum, pageSize))
         .map(AnswerEs::getId)
-        .map(id -> answerDao.findById(id).orElse(null))
+        .map(id -> getAnswerById(id).orElse(null))
         .map(answer -> assemblyAnswerVo(user, answer));
   }
 

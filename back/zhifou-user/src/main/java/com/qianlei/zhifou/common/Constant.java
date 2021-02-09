@@ -22,7 +22,8 @@ public interface Constant {
     // 发送的验证码信息
     String REGISTER_CODE_PREFIX = "user:register:email:code:";
     // 热榜排序信息
-    String HOT_QUESTION_REDIS_PREFIX ="zhifou:question:hot:";
+    String HOT_QUESTION_REDIS_PREFIX = "zhifou:question:hot:";
+    String USER_CACHE_REDIS_PREFIX = "zhifou:user:id:";
   }
 
   interface SecurityConstant {
@@ -47,8 +48,8 @@ public interface Constant {
     }
   }
 
-  interface HotQuestionConstant{
-    String TIME_PATTERN ="yyyy:MM:dd:HH";
-    DateTimeFormatter HOT_QUESTION_TIME_FORMATTER =DateTimeFormatter.ofPattern(TIME_PATTERN);
+  interface HotQuestionConstant {
+    String TIME_PATTERN = "yyyy:MM:dd:HH";
+    DateTimeFormatter HOT_QUESTION_TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_PATTERN);
   }
 }

@@ -46,5 +46,5 @@ public interface IQuestionService {
 
   Page<QuestionVo> searchQuestion(String keyword, int pageNum, int pageSize, @Nullable UserVo user);
 
-  QuestionVo getQuestionById(Integer id, UserVo user);
+  QuestionVo userVisitQuestion(Integer id, UserVo user);
 }

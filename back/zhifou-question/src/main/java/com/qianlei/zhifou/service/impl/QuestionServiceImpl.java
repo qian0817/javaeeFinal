@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,10 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.qianlei.zhifou.common.Constant.HotQuestionConstant.HOT_QUESTION_TIME_FORMATTER;
@@ -51,6 +51,7 @@ public class QuestionServiceImpl implements IQuestionService {
   @Resource private ObjectMapper objectMapper;
   @Resource private StringRedisTemplate stringRedisTemplate;
   @Resource private KafkaTemplate<String, String> kafkaTemplate;
+  @Resource private RedissonClient redissonClient;
 
   @Override
   public Question createQuestion(CreateQuestionParam param) {
@@ -64,7 +65,21 @@ public class QuestionServiceImpl implements IQuestionService {
     }
     var question = param.toQuestion();
     questionDao.save(question);
+    RBloomFilter<Object> bloomFilter = getQuestionBloomFilter();
+    bloomFilter.add(question.getId());
     return question;
+  }
+
+  /**
+   * 获取问题对应的布隆过滤器
+   *
+   * @return 对应的布隆过滤器
+   */
+  private RBloomFilter<Object> getQuestionBloomFilter() {
+    var bloomFilter = redissonClient.getBloomFilter("zhifou:question:bloom");
+    // 初始化布隆过滤器，预计统计元素数量为 100000 ，期望误差率为0.03
+    bloomFilter.tryInit(100000, 0.03);
+    return bloomFilter;
   }
 
   @SneakyThrows
@@ -95,18 +110,48 @@ public class QuestionServiceImpl implements IQuestionService {
     return questionElasticsearchDao
         .findAllByTitleContaining(keyword, PageRequest.of(pageNum, pageSize))
         .map(QuestionEs::getId)
-        .map(id -> questionDao.findById(id).orElse(null))
+        .map(id -> getQuestionById(id).orElse(null))
         .map(question -> assembleQuestionVo(user, question));
   }
 
   @SneakyThrows
   @Override
-  public QuestionVo getQuestionById(Integer questionId, UserVo user) {
+  public QuestionVo userVisitQuestion(Integer questionId, UserVo user) {
     var question =
-        questionDao.findById(questionId).orElseThrow(() -> new ZhiFouException("问题id不存在"));
+        QuestionServiceImpl.this
+            .getQuestionById(questionId)
+            .orElseThrow(() -> new ZhiFouException("问题id不存在"));
     kafkaTemplate.send(
         IMPROVE_HOT_TOPIC, objectMapper.writeValueAsString(new KafkaAddHotMessage(questionId, 1)));
     return assembleQuestionVo(user, question);
+  }
+
+  @SneakyThrows
+  @NotNull
+  private Optional<Question> getQuestionById(Integer questionId) {
+    String cacheKey = "zhifou:question:id:" + questionId;
+    var cachedQuestion = stringRedisTemplate.opsForValue().get(cacheKey);
+    if (cachedQuestion != null) {
+      // 从缓存中获取
+      return Optional.of(objectMapper.readValue(cachedQuestion, Question.class));
+    } else {
+      // 使用布隆过滤器
+      RBloomFilter<Object> bloomFilter = getQuestionBloomFilter();
+      // 如果布隆过滤器中判断存在不一定存在
+      // 如果不存在一定不存在
+      if (bloomFilter.contains(questionId)) {
+        // 从数据库中获取
+        var question = questionDao.findById(questionId);
+        if (question.isPresent()) {
+          stringRedisTemplate
+              .opsForValue()
+              .set(cacheKey, objectMapper.writeValueAsString(question.get()), 1, TimeUnit.HOURS);
+        }
+        return question;
+      } else {
+        return Optional.empty();
+      }
+    }
   }
 
   @NotNull
@@ -141,7 +186,7 @@ public class QuestionServiceImpl implements IQuestionService {
               }
               var questionId = Integer.valueOf(tuple.getValue());
               var score = tuple.getScore().longValue();
-              var question = questionDao.findById(questionId).orElseThrow();
+              var question = getQuestionById(questionId).orElseThrow();
               return new QuestionHotVo(question, score);
             })
         .filter(Objects::nonNull)
