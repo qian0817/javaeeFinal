@@ -12,23 +12,34 @@ import com.qianlei.zhifou.dao.QuestionDao;
 import com.qianlei.zhifou.dao.es.AnswerElasticsearchDao;
 import com.qianlei.zhifou.po.Agree;
 import com.qianlei.zhifou.po.Answer;
-import com.qianlei.zhifou.vo.UserEvent;
 import com.qianlei.zhifou.po.es.AnswerEs;
 import com.qianlei.zhifou.requestparam.CreateAnswerParam;
 import com.qianlei.zhifou.service.IAnswerService;
 import com.qianlei.zhifou.service.IQuestionService;
 import com.qianlei.zhifou.utils.HtmlUtils;
 import com.qianlei.zhifou.vo.AnswerVo;
+import com.qianlei.zhifou.vo.UserEvent;
 import com.qianlei.zhifou.vo.UserVo;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.dynamic.RedisCommandFactory;
+import io.lettuce.core.protocol.Command;
+import io.lettuce.core.protocol.CommandArgs;
+import io.lettuce.core.protocol.CommandType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.lang.Nullable;
@@ -86,6 +97,9 @@ public class AnswerServiceImpl implements IAnswerService {
     }
     var answer = param.toAnswer(user.getId());
     answerDao.save(answer);
+    //    加到布隆过滤器中
+    var answerBloomFilter = getAnswerBloomFilter();
+    answerBloomFilter.add(answer.getId());
     // 向消息队列中发送相关的消息
     var userEvent =
         new UserEvent(
@@ -145,7 +159,9 @@ public class AnswerServiceImpl implements IAnswerService {
   private RBloomFilter<Object> getAnswerBloomFilter() {
     var bloomFilter = redissonClient.getBloomFilter("zhifou:answer:bloom");
     // 初始化布隆过滤器，预计统计元素数量为 100000 ，期望误差率为0.03
-    bloomFilter.tryInit(100000, 0.03);
+    if (!bloomFilter.isExists()) {
+      bloomFilter.tryInit(100000, 0.03);
+    }
     return bloomFilter;
   }
 

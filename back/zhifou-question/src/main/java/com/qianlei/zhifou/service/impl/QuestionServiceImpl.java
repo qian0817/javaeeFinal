@@ -78,7 +78,9 @@ public class QuestionServiceImpl implements IQuestionService {
   private RBloomFilter<Object> getQuestionBloomFilter() {
     var bloomFilter = redissonClient.getBloomFilter("zhifou:question:bloom");
     // 初始化布隆过滤器，预计统计元素数量为 100000 ，期望误差率为0.03
-    bloomFilter.tryInit(100000, 0.03);
+    if (!bloomFilter.isExists()) {
+      bloomFilter.tryInit(100000, 0.03);
+    }
     return bloomFilter;
   }
 
