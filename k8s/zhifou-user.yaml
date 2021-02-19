@@ -6,6 +6,10 @@ metadata:
 data:
   application.yaml: |-
     spring:
+      cloud:
+        sentinel:
+          transport:
+            dashboard: sentinel:8858
       datasource:
         url: jdbc:mysql://mysql:3306/zhifou?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Hongkong&characterEncoding=utf-8
         username: qianlei

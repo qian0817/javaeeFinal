@@ -1,4 +1,7 @@
 spring:
+  cloud:
+    sentinel:
+      http-method-specify: true
   jpa:
     hibernate:
       ddl-auto: update

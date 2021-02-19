@@ -4,8 +4,9 @@ jwt:
     password: 123456
     key-filename: jwt.jks
 spring:
-  application:
-    name: zhifou-user
+  cloud:
+    sentinel:
+      http-method-specify: true
   jpa:
     hibernate:
       ddl-auto: update

@@ -1,6 +1,5 @@
 package com.qianlei.zhifou.controller;
 
-import cn.hutool.system.UserInfo;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.qianlei.zhifou.requestparam.RegisterParam;
 import com.qianlei.zhifou.requestparam.SendMailParam;

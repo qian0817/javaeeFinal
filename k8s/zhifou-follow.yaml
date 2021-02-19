@@ -6,6 +6,10 @@ metadata:
 data:
   application.yaml: |-
     spring:
+      cloud:
+        sentinel:
+          transport:
+            dashboard: sentinel:8858
       security:
         oauth2:
           resourceserver:
