@@ -30,7 +30,7 @@ jobs:
         user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
         password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
         image_version: '0.0.1'
-        docker_file: './zhifou-comment/'
+        docker_file: '/back/zhifou-comment/'
     - name: Build follow Docker Image
       uses: risfeng/docker-image-build-push-action@v1.0
       with:
@@ -40,7 +40,7 @@ jobs:
         user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
         password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
         image_version: '0.0.1'
-        docker_file: './zhifou-follow/'
+        docker_file: '/back/zhifou-follow/'
     - name: Build question Docker Image
       uses: risfeng/docker-image-build-push-action@v1.0
       with:
@@ -50,7 +50,7 @@ jobs:
         user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
         password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
         image_version: '0.0.1'
-        docker_file: './zhifou-question/'
+        docker_file: '/back/zhifou-question/'
     - name: Build user Docker Image
       uses: risfeng/docker-image-build-push-action@v1.0
       with:
@@ -60,4 +60,4 @@ jobs:
         user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
         password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
         image_version: '0.0.1'
-        docker_file: './zhifou-user/'
+        docker_file: '/back/zhifou-user/'

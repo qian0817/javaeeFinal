@@ -9,6 +9,13 @@ plugins {
 group = "com.qianlei"
 version = "0.0.1-SNAPSHOT"
 
+allprojects{
+    repositories {
+        mavenCentral()
+        maven { url = uri("https://repo.spring.io/milestone") }
+    }
+}
+
 subprojects {
     apply(plugin = "java")
     apply(plugin = "io.spring.dependency-management")
@@ -23,11 +30,6 @@ subprojects {
         compileOnly {
             extendsFrom(configurations.annotationProcessor.get())
         }
-    }
-
-    repositories {
-        mavenCentral()
-        maven { url = uri("https://repo.spring.io/milestone") }
     }
 
     tasks.withType<Test> {
