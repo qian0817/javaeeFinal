@@ -13,7 +13,7 @@ jobs:
     env:
       username: ${{secrets.ALIYUN_IMAGES_HUB_USER_NAME}}
       password: ${{secrets.ALIYUN_IMAGES_HUB_TOKEN}}
-      registry_url: 'registry.cn-hangzhou.aliyuncs.com'
+      registry_url: 'registry.cn-hongkong.aliyuncs.com'
       namespaces: 'qian0817docker'
       image_version: '0.0.1'
     runs-on: ubuntu-latest
