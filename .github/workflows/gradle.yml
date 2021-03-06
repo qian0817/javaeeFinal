@@ -31,22 +31,22 @@ jobs:
     - name: Login Docker
       run: echo $password | docker login --username=$username $registry_url --password-stdin
 
-    - name: Build user Docker Image
+    - name: Build User Server Docker Image
       run: docker build -t $registry_url/$namespaces/zhifou-user:$image_version .\zhifou-user\
-    - name: Push user Docker Image
+    - name: Push User Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-user:$image_version
 
-    - name: Build follow Docker Image
+    - name: Build Follow Server Docker Image
       run: docker build -t $registry_url/$namespaces/zhifou-follow:$image_version .\zhifou-follow\
-    - name: Push follow Docker Image
+    - name: Push Follow Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-follow:$image_version
 
-    - name: Build question Docker Image
+    - name: Build Question Server Docker Image
       run: docker build -t $registry_url/$namespaces/zhifou-question:$image_version .\zhifou-question\
-    - name: Push question Docker Image
+    - name: Push Question Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-question:$image_version
 
-    - name: Build comment Docker Image
+    - name: Build Comment Server Docker Image
       run: docker build -t $registry_url/$namespaces/zhifou-comment:$image_version .\zhifou-comment\
-    - name: Push comment Docker Image
+    - name: Push Comment Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-comment:$image_version

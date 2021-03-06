@@ -37,7 +37,7 @@ jobs:
       - name: Login Docker
         run: echo $password | docker login --username=$username $registry_url --password-stdin
 
-      - name: Build front Docker Image
+      - name: Build Front Server Docker Image
         run: docker build -t $registry_url/$namespaces/zhifou-front:$image_version .
-      - name: Push front Docker Image
+      - name: Push Front Server Docker Image
         run: docker push $registry_url/$namespaces/zhifou-front:$image_version
