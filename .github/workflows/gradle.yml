@@ -10,6 +10,12 @@ defaults:
     working-directory: back
 jobs:
   build:
+    env:
+      username: ${{secrets.ALIYUN_IMAGES_HUB_USER_NAME}}
+      password: ${{secrets.ALIYUN_IMAGES_HUB_TOKEN}}
+      registry_url: 'registry.cn-hangzhou.aliyuncs.com'
+      namespaces: 'qian0817docker'
+      image_version: '0.0.1'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,43 +27,26 @@ jobs:
       run: chmod +x ./gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Build comment Docker Image
-      uses: risfeng/docker-image-build-push-action@v1.0
-      with:
-        registry_url: 'registry.cn-hangzhou.aliyuncs.com'
-        namespaces: 'qian0817docker'
-        repository_name: 'zhifou-comment'
-        user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
-        password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
-        image_version: '0.0.1'
-        docker_file: '/back/zhifou-comment/'
-    - name: Build follow Docker Image
-      uses: risfeng/docker-image-build-push-action@v1.0
-      with:
-        registry_url: 'registry.cn-hangzhou.aliyuncs.com'
-        namespaces: 'qian0817docker'
-        repository_name: 'zhifou-follow'
-        user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
-        password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
-        image_version: '0.0.1'
-        docker_file: '/back/zhifou-follow/'
-    - name: Build question Docker Image
-      uses: risfeng/docker-image-build-push-action@v1.0
-      with:
-        registry_url: 'registry.cn-hangzhou.aliyuncs.com'
-        namespaces: 'qian0817docker'
-        repository_name: 'zhifou-question'
-        user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
-        password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
-        image_version: '0.0.1'
-        docker_file: '/back/zhifou-question/'
+
+    - name: Login Docker
+      run: echo $password | docker login --username=$username $registry_url --password-stdin
+
     - name: Build user Docker Image
-      uses: risfeng/docker-image-build-push-action@v1.0
-      with:
-        registry_url: 'registry.cn-hangzhou.aliyuncs.com'
-        namespaces: 'qian0817docker'
-        repository_name: 'zhifou-user'
-        user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
-        password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
-        image_version: '0.0.1'
-        docker_file: '/back/zhifou-user/'
+      run: docker build -t $registry_url/$namespaces/zhifou-user:$image_version .\zhifou-user\
+    - name: Push user Docker Image
+      run: docker push $registry_url/$namespaces/zhifou-user:$image_version
+
+    - name: Build follow Docker Image
+      run: docker build -t $registry_url/$namespaces/zhifou-follow:$image_version .\zhifou-follow\
+    - name: Push follow Docker Image
+      run: docker push $registry_url/$namespaces/zhifou-follow:$image_version
+
+    - name: Build question Docker Image
+      run: docker build -t $registry_url/$namespaces/zhifou-question:$image_version .\zhifou-question\
+    - name: Push question Docker Image
+      run: docker push $registry_url/$namespaces/zhifou-question:$image_version
+
+    - name: Build comment Docker Image
+      run: docker build -t $registry_url/$namespaces/zhifou-comment:$image_version .\zhifou-comment\
+    - name: Push comment Docker Image
+      run: docker push $registry_url/$namespaces/zhifou-comment:$image_version

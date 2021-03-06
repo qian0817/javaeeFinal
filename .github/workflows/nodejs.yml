@@ -11,6 +11,12 @@ on:
 
 jobs:
   build:
+    env:
+      username: ${{secrets.ALIYUN_IMAGES_HUB_USER_NAME}}
+      password: ${{secrets.ALIYUN_IMAGES_HUB_TOKEN}}
+      registry_url: 'registry.cn-hangzhou.aliyuncs.com'
+      namespaces: 'qian0817docker'
+      image_version: '0.0.1'
     defaults:
       run:
         working-directory: ./front
@@ -25,16 +31,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run build --if-present
       - run: npm test
       - run: npm build
+
+      - name: Login Docker
+        run: echo $password | docker login --username=$username $registry_url --password-stdin
+
       - name: Build front Docker Image
-        uses: risfeng/docker-image-build-push-action@v1.0
-        with:
-          registry_url: 'registry.cn-hangzhou.aliyuncs.com'
-          namespaces: 'qian0817docker'
-          repository_name: 'zhifou-front'
-          user_name: ${{ secrets.ALIYUN_IMAGES_HUB_USER_NAME }}
-          password: ${{ secrets.ALIYUN_IMAGES_HUB_TOKEN }}
-          image_version: '0.0.1'
-          docker_file: '/front/'
+        run: docker build -t $registry_url/$namespaces/zhifou-front:$image_version .
+      - name: Push front Docker Image
+        run: docker push $registry_url/$namespaces/zhifou-front:$image_version
