@@ -32,21 +32,21 @@ jobs:
       run: echo $password | docker login --username=$username $registry_url --password-stdin
 
     - name: Build User Server Docker Image
-      run: docker build -t $registry_url/$namespaces/zhifou-user:$image_version .\zhifou-user\
+      run: docker build -t $registry_url/$namespaces/zhifou-user:$image_version ./zhifou-user/
     - name: Push User Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-user:$image_version
 
     - name: Build Follow Server Docker Image
-      run: docker build -t $registry_url/$namespaces/zhifou-follow:$image_version .\zhifou-follow\
+      run: docker build -t $registry_url/$namespaces/zhifou-follow:$image_version ./zhifou-follow/
     - name: Push Follow Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-follow:$image_version
 
     - name: Build Question Server Docker Image
-      run: docker build -t $registry_url/$namespaces/zhifou-question:$image_version .\zhifou-question\
+      run: docker build -t $registry_url/$namespaces/zhifou-question:$image_version ./zhifou-question/
     - name: Push Question Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-question:$image_version
 
     - name: Build Comment Server Docker Image
-      run: docker build -t $registry_url/$namespaces/zhifou-comment:$image_version .\zhifou-comment\
+      run: docker build -t $registry_url/$namespaces/zhifou-comment:$image_version ./zhifou-comment/
     - name: Push Comment Server Docker Image
       run: docker push $registry_url/$namespaces/zhifou-comment:$image_version
